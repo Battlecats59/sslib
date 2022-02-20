@@ -4,6 +4,7 @@ from pathlib import Path
 import random
 
 import yaml
+import json
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QTimer, QEvent, QStringListModel
 from PySide6.QtGui import QFontDatabase
@@ -64,7 +65,7 @@ class RandoGUI(QMainWindow):
         if os.path.isfile(self.settings_path):
             with open(self.settings_path) as f:
                 try:
-                    self.options.update_from_permalink(f.readline())
+                    self.options.update_from_dict(json.load(f))
                 except Exception as e:
                     print("couldn't update from saved settings!", e)
 
@@ -182,9 +183,6 @@ class RandoGUI(QMainWindow):
         getattr(self.ui, "option_got_starting_state").setVisible(False)
         getattr(self.ui, "label_for_option_got_dungeon_requirement").setVisible(False)
         getattr(self.ui, "option_got_dungeon_requirement").setVisible(False)
-        getattr(self.ui, "option_horde").setVisible(False)
-        getattr(self.ui, "option_g3").setVisible(False)
-        getattr(self.ui, "option_demise").setVisible(False)
         getattr(self.ui, "option_sometimes_hints").setVisible(False)
         self.enable_trick_interface()
         getattr(self.ui, "enable_location").setVisible(False)
@@ -407,7 +405,7 @@ class RandoGUI(QMainWindow):
 
     def save_settings(self):
         with open(self.settings_path, "w") as f:
-            f.write(self.options.get_permalink())
+            json.dump(self.options.to_dict(), f)
 
     def update_settings(self):
         self.options.set_option("output-folder", self.ui.output_folder.text())

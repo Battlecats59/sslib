@@ -30,6 +30,12 @@ global:
     - 180 # Thrill digger entrance CS
     - 199 # talked to sword instructor after practice sword chest
     - 804 # eldin entrance statue
+    - storyflag: 134 # Horde defeated
+      onlyif: Option "skip-horde" Enabled
+    - storyflag: 347 # Horde cutscene watched - must be set because the cutscene forces the horde fight
+      onlyif: Option "skip-horde" Enabled
+    - storyflag: 486 # Ghirahim 3 defeated
+      onlyif: Option "skip-g3" Enabled
   startitems: # careful, items are NOT progressive here (only set item flag, no text), storyflag for upgrade has to be set manually
     - 15 # sailcloth
   startsceneflags: # currently only for skyloft
@@ -47,7 +53,15 @@ global:
       - 7 # vents active
       - onlyif: Option "skip-skykeep" Enabled
         flag: 50 # horde door open
+      - onlyif: Option "skip-horde" Enabled
+        flag: 51 # door from Hylia's Realm to Hylia's Temple unlocked (since horde is skipped, this is never set)
       - 13 # door to temple unlocked
+
+      - 21 # ballad of the goddess played (item and cutscene trigger instantly activate when outside of BiT)
+      - 28 # groose cutscene watched (prevents groose cutscene from taking priority outside of BiT)
+    Eldin Volcano:
+      - 2 # gets rid of first digging mitts mogma text
+      - 58 # digging mitts mogma cutscene watched
     Lanayru Desert:
       - 68 # desert statue checked
       - 7 # pushed first minecart to end
@@ -1745,6 +1759,13 @@ F200: # Eldin main area
     layer: 1
     room: 2
     objtype: STAG
+  - name: remove ET Door if open ET
+    onlyif: Option "open-et" Enabled
+    type: objdelete
+    id: 0x2413
+    layer: 0
+    room: 4
+    objtype: OBJ
 F210: # Mogma Turf
   - name: Layer override
     type: layeroverride
@@ -1965,6 +1986,12 @@ B200: # Boss Room
       - story_flag: -1
         night: 0
         layer: 2
+  - name: delete boulder cutscene
+    type: objdelete
+    id: 0xFC36
+    layer: 2
+    room: 10
+    objtype: STAG
   - name: delete fi text
     type: objdelete
     id: 0xFC30
@@ -2801,11 +2828,11 @@ F402: # Sealed Temple
       params1: 0xC303FF02 # scenlink: 2
       params2: 0xFF5FFFFF
       posx: 0
-      posy: 7650
+      posy: 7000
       posz: 10971.697265625
-      sizex: 200
-      sizey: 200
-      sizez: 200
+      sizex: 20000
+      sizey: 20000
+      sizez: 20000
       anglex: 65535 # no trigger storyflag
       angley: 0
       anglez: 63828 # untriggered by storyflag 340 (GoT raised)
@@ -2839,6 +2866,18 @@ F402: # Sealed Temple
     layer: 3
     room: 2
     objtype: OBJ
+  - name: BotG item trigger extended #so that the player automatically gets the item and the gate of time raised, while also not getting in the way of harp tutorial in BiT
+    type: objpatch
+    index: 1
+    room: 2
+    objtype: AREA
+    object:
+      posx: 0
+      posy: 7000
+      posz: 9600
+      sizex: 3600
+      sizey: 2000
+      sizez: 3000
   - name: Remove Music and shaking
     type: objpatch
     room: 2
@@ -2900,9 +2939,6 @@ F401: # Sealed grounds Whirlpool
       - story_flag: 703
         night: 0
         layer: 2
-      - story_flag: 134
-        night: 0
-        layer: 6
       - story_flag: 133
         night: 0
         layer: 5
@@ -3066,6 +3102,27 @@ F403: # Hylia's Realm
       - story_flag: -1
         night: 0
         layer: 13
+  - name: Skip Ghirahim 3 Fight
+    onlyif: Option "skip-g3" Enabled
+    type: objpatch
+    room: 1
+    index: 1
+    objtype: EVNT
+    object:
+      exit_id: 7
+  - name: Skip Demise Fight
+    onlyif: Option "skip-demise" Enabled
+    type: objpatch
+    room: 1
+    index: 8
+    objtype: SCEN
+    object:
+      name: F404
+      room: 2
+      layer: 14
+      entrance: 5
+      byte4: 2
+      byte5: 1
 F407: # Sky Keep beaten CS
   - name: Sky Keep CS remove Storyflag
     type: objpatch

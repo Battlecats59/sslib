@@ -64,7 +64,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -970,21 +970,21 @@
         <item>
          <widget class="QCheckBox" name="option_horde">
           <property name="text">
-           <string>Horde</string>
+           <string>Skip Horde</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="option_g3">
           <property name="text">
-           <string>Ghirahim 3</string>
+           <string>Skip Ghirahim 3</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="option_demise">
           <property name="text">
-           <string>Demise</string>
+           <string>Skip Demise</string>
           </property>
          </widget>
         </item>
@@ -1074,6 +1074,13 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_open_et">
+          <property name="text">
+           <string>Open Earth Temple</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_2">
@@ -1391,7 +1398,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>171</width>
+         <width>175</width>
          <height>207</height>
         </rect>
        </property>
