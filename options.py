@@ -1,4 +1,4 @@
-from logic.constants import ALL_TYPES
+import logic.constants as constants
 from packedbits import PackedBitsReader, PackedBitsWriter
 from paths import RANDO_ROOT_PATH
 from pathlib import Path
@@ -203,6 +203,47 @@ class Options:
             else:
                 raise Exception(f'unknown type: {option["type"]}')
             self.set_option(option_name, value)
+
+    def randomize_settings(self, rando):
+        for optkey, opt in OPTIONS.items():
+            if opt["name"] in constants.NON_RANDOMIZED_SETTINGS or "permalink" in opt:
+                continue
+            elif opt["name"] == "Shop Mode":
+                # Do not allow "Always Junk" to be chosen
+                self.set_option(
+                    optkey,
+                    rando.rng.choice(
+                        [choice for choice in opt["choices"] if choice != "Always Junk"]
+                    ),
+                )
+            else:
+                if opt["type"] == "boolean":
+                    self.set_option(optkey, bool(rando.rng.randint(0, 1)))
+                elif opt["type"] == "int":
+                    self.set_option(optkey, rando.rng.randint(opt["min"], opt["max"]))
+                elif opt["type"] == "singlechoice":
+                    self.set_option(optkey, rando.rng.choice(opt["choices"]))
+                elif opt["type"] == "multichoice":
+                    self.set_option(
+                        optkey,
+                        rando.rng.sample(
+                            opt["choices"], rando.rng.randint(0, len(opt["choices"]))
+                        ),
+                    )
+
+        # Randomize banned types
+        potentially_banned_types = list(constants.POTENTIALLY_BANNED_TYPES.keys())
+        if self["small-key-mode"] == "Anywhere" and self["boss-key-mode"] == "Anywhere":
+            pass
+        else:
+            potentially_banned_types.remove("dungeon")
+        self.set_option(
+            "banned-types",
+            rando.rng.sample(
+                potentially_banned_types,
+                rando.rng.randint(0, len(potentially_banned_types) - 4),
+            ),
+        )
 
     def to_dict(self):
         opts = self.options.copy()
