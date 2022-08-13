@@ -134,6 +134,46 @@ li r5, 2
 .org 0x80198dc0
 bl unset_sandship_timestone_if_necessary
 
+; replace check for sword with check for not trial
+.org 0x80221aa8
+lis r3, SPAWN_SLAVE+0x26@ha
+lbz r3, SPAWN_SLAVE+0x26@l(r3)
+cmplwi r3, 1
+
+; remove goddess sword requirement to call fi
+.org 0x80221b50
+nop
+
+; don't prevent calling fi in water
+.org 0x80221b5c
+nop
+
+; force the language to be english
+.org 0x803d6630
+li r3, 1 ; 1 is english
+blr
+
+; always return true when checking if a treasure/insect was obtained this play session
+.org 0x80252edc
+li r3, 1
+
+; optimize some code around separating textfileindex from entrypoint
+; to then temporarily backup the current textfileindex
+; this fixes potential crashes when initiating a conversation while a Npc updates for the first time
+.org 0x800c41f8
+mullw r5, r4, r5
+subf r5, r5, r28
+rlwinm r5, r5, 0, 0x10, 0x1F
+lwz r6, GLOBAL_MESSAGE_RELATED_CONTEXT@sda21(r13)
+lwz r28, 0x2f8(r6) ; currentTextFileNumber
+b 0x800c4220 ; skip stuff we don't need anymore
+
+; restore the backed up text file number
+; the destructor here does nothing so we can overwrite it
+.org 0x800c4240
+lwz r6, GLOBAL_MESSAGE_RELATED_CONTEXT@sda21(r13)
+stw r28, 0x2f8(r6) ; currentTextFileNumber
+
 .close
 
 .open "d_a_obj_time_door_beforeNP.rel"
