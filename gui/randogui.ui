@@ -391,14 +391,14 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_39">
           <item>
-           <widget class="QLabel" name="label_for_option_randomized_settings_hints">
+           <widget class="QLabel" name="label_for_option_random_settings_weighting">
             <property name="text">
-             <string>RS Hints</string>
+             <string>RS Weighting</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="option_randomized_settings_hints"/>
+           <widget class="QComboBox" name="option_random_settings_weighting"/>
           </item>
          </layout>
         </item>

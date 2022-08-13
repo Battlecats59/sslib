@@ -226,15 +226,15 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_39 = QVBoxLayout()
         self.verticalLayout_39.setObjectName(u"verticalLayout_39")
-        self.label_for_option_randomized_settings_hints = QLabel(self.verticalLayoutWidget_15)
-        self.label_for_option_randomized_settings_hints.setObjectName(u"label_for_option_randomized_settings_hints")
+        self.label_for_option_random_settings_weighting = QLabel(self.verticalLayoutWidget_15)
+        self.label_for_option_random_settings_weighting.setObjectName(u"label_for_option_random_settings_weighting")
 
-        self.verticalLayout_39.addWidget(self.label_for_option_randomized_settings_hints)
+        self.verticalLayout_39.addWidget(self.label_for_option_random_settings_weighting)
 
-        self.option_randomized_settings_hints = QComboBox(self.verticalLayoutWidget_15)
-        self.option_randomized_settings_hints.setObjectName(u"option_randomized_settings_hints")
+        self.option_random_settings_weighting = QComboBox(self.verticalLayoutWidget_15)
+        self.option_random_settings_weighting.setObjectName(u"option_random_settings_weighting")
 
-        self.verticalLayout_39.addWidget(self.option_randomized_settings_hints)
+        self.verticalLayout_39.addWidget(self.option_random_settings_weighting)
 
 
         self.verticalLayout_37.addLayout(self.verticalLayout_39)
@@ -1154,7 +1154,7 @@ class Ui_MainWindow(object):
         self.option_allow_custom_music.setText(QCoreApplication.translate("MainWindow", u"Allow Custom Music", None))
         self.groupBox_16.setTitle(QCoreApplication.translate("MainWindow", u"Randomize Settings", None))
         self.option_randomize_settings.setText(QCoreApplication.translate("MainWindow", u"Randomize Settings", None))
-        self.label_for_option_randomized_settings_hints.setText(QCoreApplication.translate("MainWindow", u"RS Hints", None))
+        self.label_for_option_random_settings_weighting.setText(QCoreApplication.translate("MainWindow", u"RS Weighting", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Setup", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"What areas of the world should progress items appear?", None))
         self.progression_skyloft.setText(QCoreApplication.translate("MainWindow", u"Skyloft", None))

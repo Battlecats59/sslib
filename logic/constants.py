@@ -206,7 +206,7 @@ NON_RANDOMIZED_SETTINGS = [
     "No Spoiler Log",
     "Fix BiT crashes",
     "Randomize Settings",
-    "Randomized Settings Hints",
+    "Random Settings Weighting",
     "Banned Types",  # done separately
     # Currently unavailable
     "Gate of Time Starting State",

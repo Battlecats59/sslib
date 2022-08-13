@@ -566,12 +566,13 @@
   default: false
   help: If enabled, all settings will be randomized, excluding logic settings and cosmetic/setup settings. If the seed fails to generate, try again with a different seed. It is uncommon for generation to fail, but some combinations of settings can cause this.
   ui: option_randomize_settings
-- name: Randomized Settings Hints
-  command: randomized-settings-hints
+- name: Random Settings Weighting
+  command: random-settings-weighting
   type: singlechoice
   bits: 2
   choices:
     - Random
+    - RSL
   default: Random
-  help: Determines the distribution of hints when playing with randomized settings.
-  ui: option_randomized_settings_hints
+  help: Determines the weighting used when randomizing settings. For fully random settings, select random.
+  ui: option_random_settings_weighting

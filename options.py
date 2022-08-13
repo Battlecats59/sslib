@@ -205,6 +205,12 @@ class Options:
             self.set_option(option_name, value)
 
     def randomize_settings(self, rando):
+        if self["random-settings-weighting"] == "RSL":
+            with (RANDO_ROOT_PATH / "rsl_season1.yaml").open("r") as f:
+                RS_WEIGHTING = yaml.safe_load(f)
+        else:
+            RS_WEIGHTING = None
+
         for optkey, opt in OPTIONS.items():
             if opt["name"] in constants.NON_RANDOMIZED_SETTINGS or "permalink" in opt:
                 continue
@@ -218,11 +224,23 @@ class Options:
                 )
             else:
                 if opt["type"] == "boolean":
-                    self.set_option(optkey, bool(rando.rng.randint(0, 1)))
+                    if RS_WEIGHTING != None:
+                        rsopt = [o for o in RS_WEIGHTING if o["name"] == opt["name"]].pop()
+                        self.set_option(optkey, rando.rng.choices([True, False], k=1, weights=[rsopt["checked"], rsopt["unchecked"]]).pop())
+                    else:
+                        self.set_option(optkey, bool(rando.rng.randint(0, 1)))
                 elif opt["type"] == "int":
-                    self.set_option(optkey, rando.rng.randint(opt["min"], opt["max"]))
+                    if RS_WEIGHTING != None:
+                        rsopt = [o for o in RS_WEIGHTING if o["name"] == opt["name"]].pop()
+                        self.set_option(optkey, rando.rng.choices(list(rsopt["choices"].keys()), k=1, weights=rsopt["choices"].values()).pop())
+                    else:
+                        self.set_option(optkey, rando.rng.randint(opt["min"], opt["max"]))
                 elif opt["type"] == "singlechoice":
-                    self.set_option(optkey, rando.rng.choice(opt["choices"]))
+                    if RS_WEIGHTING != None:
+                        rsopt = [o for o in RS_WEIGHTING if o["name"] == opt["name"]].pop()
+                        self.set_option(optkey, rando.rng.choices(list(rsopt["choices"].keys()), k=1, weights=rsopt["choices"].values()).pop())
+                    else:
+                        self.set_option(optkey, rando.rng.choice(opt["choices"]))
                 elif opt["type"] == "multichoice":
                     self.set_option(
                         optkey,
@@ -237,13 +255,25 @@ class Options:
             pass
         else:
             potentially_banned_types.remove("dungeon")
-        self.set_option(
-            "banned-types",
-            rando.rng.sample(
-                potentially_banned_types,
-                rando.rng.randint(0, len(potentially_banned_types) - 4),
-            ),
-        )
+
+        if RS_WEIGHTING != None:
+            banned_types = []
+            rs_banned_types = [o for o in RS_WEIGHTING if o["name"] == "Banned Types"].pop()
+            banned_type_count = rando.rng.randint(rs_banned_types["min_banned_types"], rs_banned_types["max_banned_types"])
+            while banned_type_count > 0:
+                bt = rando.rng.choices(list(rs_banned_types["choices"].keys()), k=1, weights=rs_banned_types["choices"].values()).pop()
+                if bt not in banned_types:
+                    banned_types.append(bt)
+                    banned_type_count -= 1
+            self.set_option("banned-types", banned_types)
+        else:
+            self.set_option(
+                "banned-types",
+                rando.rng.sample(
+                    potentially_banned_types,
+                    rando.rng.randint(0, len(potentially_banned_types) - 4),
+                ),
+            )
 
     def to_dict(self):
         opts = self.options.copy()
