@@ -223,7 +223,6 @@ class Options:
             ) as f:
                 RS_WEIGHTING = yaml.safe_load(f)
         else:
-            print("h")
             RS_WEIGHTING = None
 
         for optkey, opt in OPTIONS.items():
