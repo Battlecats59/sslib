@@ -238,10 +238,14 @@ class HintDistribution:
                     continue
             if zone == "Sky Keep":
                 # exclude Sky Keep from the eligible barren locations if it has no open checks
-                if self.logic.rando.options["map-mode"] not in [
-                    "Removed",
-                    "Anywhere",
-                ] or self.logic.rando.options["small-key-mode"] not in ["Anywhere"]:
+                if (
+                    self.logic.rando.options["map-mode"]
+                    not in [
+                        "Removed",
+                        "Anywhere",
+                    ]
+                    or self.logic.rando.options["small-key-mode"] not in ["Anywhere"]
+                ):
                     continue
             if zone in ALL_DUNGEON_AREAS:
                 self.barren_dungeons.append(zone)

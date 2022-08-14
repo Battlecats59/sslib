@@ -572,7 +572,10 @@
   bits: 2
   choices:
     - Random
-    - RSL
+    - Fast
+    - Balanced
+    - Insanity
+    # - RSL
   default: Random
   help: Determines the weighting used when randomizing settings. For fully random settings, select random.
   ui: option_random_settings_weighting
