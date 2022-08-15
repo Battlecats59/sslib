@@ -1495,7 +1495,9 @@ class GamePatcher:
                 "name": f"Gate of Time Sword Requirement Hint",
                 "type": "textpatch",
                 "index": 44,
-                "text": "According to legend, the\nchosen hero may travel to\nthe past upon acquiring\nthe <b+<{}>>.".format(self.rando.options["got-sword-requirement"]),
+                "text": "According to legend, the\nchosen hero may travel to\nthe past upon acquiring\nthe <b+<{}>>.".format(
+                    self.rando.options["got-sword-requirement"]
+                ),
             },
         )
 
