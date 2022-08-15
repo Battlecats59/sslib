@@ -575,7 +575,7 @@
     - Fast
     - Balanced
     - Insanity
-    # - RSL
+    - RSL Season 1
   default: Random
   help: Determines the weighting used when randomizing settings. For fully random settings, select random.
   ui: option_random_settings_weighting
