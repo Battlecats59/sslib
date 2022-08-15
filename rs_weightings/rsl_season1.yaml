@@ -1,37 +1,37 @@
 - name: Banned Types
   command: banned-types
   min_banned_types: 0
-  max_banned_types: 25
+  max_banned_types: 5
   choices:
-    dungeon: 1
+    dungeon: 0
     mini dungeon: 1
-    free gift: 1
-    freestanding: 1
-    miscellaneous: 1
-    silent realm: 1
-    digging: 1
-    bombable: 1
-    combat: 1
-    song: 1
+    free gift: 0
+    freestanding: 0
+    miscellaneous: 0
+    silent realm: 2
+    digging: 0
+    bombable: 0
+    combat: 0
+    song: 0
     spiral charge: 1
-    minigame: 1
-    short: 1
+    minigame: 5
+    short: 0
     long: 1
-    fetch: 1
-    crystal quest: 1
+    fetch: 0
+    crystal quest: 0
     scrapper: 1
-    peatrice: 1
-    beedle: 1
-    cheap: 1
-    medium: 1
-    expensive: 1
-    goddess: 1
-    faron goddess: 1
-    eldin goddess: 1
-    lanayru goddess: 1
-    floria goddess: 1
-    summit goddess: 1
-    sand sea goddess: 1
+    peatrice: 4
+    beedle: 2
+    cheap: 0
+    medium: 8
+    expensive: 10
+    goddess: 6
+    faron goddess: 0
+    eldin goddess: 0
+    lanayru goddess: 0
+    floria goddess: 0
+    summit goddess: 0
+    sand sea goddess: 0
 
 
 - name: Starting Tablet Count
@@ -39,97 +39,97 @@
   type: int
   choices:
     0: 1
-    1: 1
-    2: 1
-    3: 1
+    1: 8
+    2: 5
+    3: 6
 - name: Required Dungeon Count
   command: required-dungeon-count
   type: int
   choices:
-    0: 1
-    1: 1
-    2: 1
-    3: 1
-    4: 1
-    5: 1
-    6: 1
+    0: 2
+    1: 4
+    2: 8
+    3: 12
+    4: 4
+    5: 0
+    6: 0
 - name: Demise Count
   command: demise-count
   type: int
   choices:
-    1: 1
+    1: 99
     2: 1
-    3: 1
-    4: 1
-    5: 1
-    6: 1
-    7: 1
-    8: 1
-    9: 1
-    10: 1
+    3: 0
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+    8: 0
+    9: 0
+    10: 0
 
 
 - name: Open Thunderhead
   command: open-thunderhead
   type: singlechoice
   choices:
-    Ballad: 1
-    Open: 1
+    Ballad: 6
+    Open: 4
 - name: Starting Sword
   command: starting-sword
   type: singlechoice
   choices:
-    Swordless: 1
-    Practice Sword: 1
-    Goddess Sword: 1
-    Goddess Longsword: 1
-    Goddess White Sword: 1
+    Swordless: 9
+    Practice Sword: 0
+    Goddess Sword: 14
+    Goddess Longsword: 0
+    Goddess White Sword: 0
     Master Sword: 1
     True Master Sword: 1
 - name: Randomize Entrances
   command: randomize-entrances
   type: singlechoice
   choices:
-    None: 1
-    Required Dungeons Separately: 1
-    All Dungeons: 1
+    None: 9
+    Required Dungeons Separately: 3
+    All Dungeons: 2
     All Dungeons + Sky Keep: 1
 - name: Max Batreaux Reward
   command: max-batreaux-reward
   type: singlechoice
   choices:
-    0: 1
-    5: 1
-    10: 1
-    30: 1
-    40: 1
-    50: 1
-    70: 1
-    80: 1
+    0: 0
+    5: 0
+    10: 0
+    30: 5
+    40: 10
+    50: 75
+    70: 7
+    80: 3
 - name: Shop Mode
   command: shop-mode
   type: singlechoice
   choices:
     Vanilla: 1
     Always Junk: 0 # Should always be 0
-    Randomized: 1
+    Randomized: 9
 - name: Rupoor Mode
   command: rupoor-mode
   type: singlechoice
   choices:
-    "Off": 1
-    Added: 1
-    Rupoor Mayhem: 1
+    "Off": 4
+    Added: 25
+    Rupoor Mayhem: 15
     Rupoor Insanity: 1
 - name: Gate of Time Sword Requirement
   command: got-sword-requirement
   type: singlechoice
   choices:
     Goddess Sword: 1
-    Goddess Longsword: 1
-    Goddess Whitesword: 1
-    Master Sword: 1
-    True Master Sword: 1
+    Goddess Longsword: 2
+    Goddess Whitesword: 4
+    Master Sword: 8
+    True Master Sword: 2
 - name: Open LMF
   command: open-lmf
   type: singlechoice
@@ -143,59 +143,59 @@
   choices:
     Removed: 1
     Vanilla: 1
-    Own Dungeon - Restricted: 1
-    Own Dungeon - Unrestricted: 1
-    Anywhere: 1
+    Own Dungeon - Restricted: 9
+    Own Dungeon - Unrestricted: 5
+    Anywhere: 4
 - name: Small Key Mode
   command: small-key-mode
   type: singlechoice
   choices:
-    Vanilla: 1
-    Own Dungeon - Restricted: 1
-    Lanayru Caves Key Only: 1
-    Anywhere: 1
+    Vanilla: 2
+    Own Dungeon - Restricted: 5
+    Lanayru Caves Key Only: 10
+    Anywhere: 8
 - name: Boss Key Mode
   command: boss-key-mode
   type: singlechoice
   choices:
-    Vanilla: 1
-    Own Dungeon: 1
+    Vanilla: 2
+    Own Dungeon: 4
     Anywhere: 1
 - name: Song Hints
   command: song-hints
   type: singlechoice
   choices:
     None: 1
-    Basic: 1
-    Advanced: 1
-    Direct: 1
+    Basic: 0
+    Advanced: 0
+    Direct: 0
 
 
 - name: Skip Imp 2
   command: imp2-skip
   type: boolean
-  checked: 1
+  checked: 9
   unchecked: 1
 - name: Empty unrequired Dungeons
   command: empty-unrequired-dungeons
   type: boolean
-  checked: 1
-  unchecked: 1
+  checked: 8
+  unchecked: 2
 - name: Skip Sky Keep
   command: skip-skykeep
   type: boolean
-  checked: 1
-  unchecked: 1
+  checked: 7
+  unchecked: 3
 - name: Hero Mode
   command: hero-mode
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 0
 - name: Randomize Silent Realms
   command: randomize-trials
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 9
 - name: Start with Adventure Pouch
   command: start-with-pouch
   type: boolean
@@ -204,53 +204,53 @@
 - name: Skip Horde
   command: skip-horde
   type: boolean
-  checked: 1
-  unchecked: 1
+  checked: 5
+  unchecked: 95
 - name: Skip Ghirahim 3
   command: skip-g3
   type: boolean
-  checked: 1
-  unchecked: 1
+  checked: 3
+  unchecked: 97
 - name: Skip Demise
   command: skip-demise
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 99
 - name: Past Impa Stone of Trials Hint
   command: impa-sot-hint
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 0
 - name: Force Sword Dungeon Reward
   command: sword-dungeon-reward
   type: boolean
-  checked: 1
-  unchecked: 1
+  checked: 2
+  unchecked: 8
 - name: Open Earth Temple
   command: open-et
   type: boolean
-  checked: 1
+  checked: 9
   unchecked: 1
 
 
 - name: Separate Cube SotS
   command: cube-sots
   type: boolean
-  checked: 1
+  checked: 0
   unchecked: 1
 - name: Precise Item Hints
   command: precise-item
   type: boolean
-  checked: 1
+  checked: 0
   unchecked: 1
 - name: Hint Distribution
   command: hint-distribution
   type: singlechoice
   choices:
-    Weak: 1
+    Weak: 0
     Balanced: 1
-    Junk: 1
-    Co-op S1: 1
+    Junk: 0
+    Co-op S1: 0
     S2 - 2D: 1
     S2 - 3D: 1
     S2 - 3D EUD Off: 1
