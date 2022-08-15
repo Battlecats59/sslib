@@ -875,8 +875,7 @@ class GamePatcher:
             self.add_impa_hint()
         self.add_stone_hint_patches()
         if self.placement_file.options["randomize-settings"]:
-            self.add_banned_type_hints()
-            self.add_batreaux_max_hint()
+            self.add_random_settings_hints()
         self.add_race_integrity_patches()
         self.handle_oarc_add_remove()
         self.add_rando_hash()
@@ -1417,7 +1416,8 @@ class GamePatcher:
                 },
             )
 
-    def add_banned_type_hints(self):
+    def add_random_settings_hints(self):
+        # Banned types hint
         banned_types = []
         banned_types.append(
             break_lines(
@@ -1467,7 +1467,7 @@ class GamePatcher:
             },
         )
 
-    def add_batreaux_max_hint(self):
+        # Batreaux max reward hint
         max_batreaux_hint_texts = [
             "There's a fiendish demon living in\nSkyloft!",
             "I'm tellin' ya, I came this close to\ngetting eaten by that evil beast!",
@@ -1485,6 +1485,33 @@ class GamePatcher:
                 "type": "textpatch",
                 "index": 115,
                 "text": make_mutliple_textboxes(max_batreaux_hint_texts),
+            },
+        )
+
+        # Gate of Time sword requirement hint
+        self.add_patch_to_event(
+            "107-Kanban",
+            {
+                "name": f"Gate of Time Sword Requirement Hint",
+                "type": "textpatch",
+                "index": 44,
+                "text": "According to legend, the\nchosen hero may travel to\nthe past upon acquiring\nthe <b+<{}>>.".format(self.rando.options["got-sword-requirement"]),
+            },
+        )
+
+        # Sky Keep hint
+        if self.rando.options["skip-skykeep"] == False:
+            skykeep_hint = "True to legend, the <y<Triforce>> is\nthe one thing with the power\nto vanquish Demise."
+        else:
+            skykeep_hint = "True to legend, the chosen hero\ndoes not need to complete the\nTriforce to vanquish Demise."
+
+        self.add_patch_to_event(
+            "107-Kanban",
+            {
+                "name": f"Skykeep Hint",
+                "type": "textpatch",
+                "index": 30,
+                "text": skykeep_hint,
             },
         )
 
