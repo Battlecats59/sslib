@@ -217,7 +217,7 @@ class Options:
         elif self["random-settings-weighting"] == "Insanity":
             with (RANDO_ROOT_PATH / "rs_weightings" / "insanity.yaml").open("r") as f:
                 RS_WEIGHTING = yaml.safe_load(f)
-        elif self["random-settings-weighting"] == "RSL":
+        elif self["random-settings-weighting"] == "RSL Season 1":
             with (RANDO_ROOT_PATH / "rs_weightings" / "rsl_season1.yaml").open(
                 "r"
             ) as f:
