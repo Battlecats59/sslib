@@ -60,6 +60,7 @@ a = Analysis(['randoscript.py'],
               'asm/*.txt',
               'asm/patch_diffs/*.txt',
               'hints/distributions/*.json'
+              'rs_weightings/*.yaml'
              ]),
              hiddenimports=[],
              hookspath=[],
