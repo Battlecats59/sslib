@@ -1,20 +1,20 @@
 - name: Banned Types
   command: banned-types
   min_banned_types: 0
-  max_banned_types: 20
+  max_banned_types: 10
   choices:
     dungeon: 1
-    mini dungeon: 1
-    free gift: 1
-    freestanding: 1
-    miscellaneous: 1
-    silent realm: 1
-    digging: 1
+    mini dungeon: 2
+    free gift: 0
+    freestanding: 0
+    miscellaneous: 0
+    silent realm: 2
+    digging: 0
     bombable: 1
-    combat: 1
+    combat: 2
     song: 1
-    spiral charge: 1
-    minigame: 1
+    spiral charge: 0
+    minigame: 4
     short: 1
     long: 2
     fetch: 1
@@ -22,9 +22,9 @@
     scrapper: 1
     peatrice: 2
     beedle: 1
-    cheap: 1
-    medium: 2
-    expensive: 4
+    cheap: 0
+    medium: 4
+    expensive: 8
     goddess: 1
     faron goddess: 1
     eldin goddess: 1
@@ -57,8 +57,8 @@
   command: demise-count
   type: int
   choices:
-    1: 8
-    2: 4
+    1: 32
+    2: 8
     3: 2
     4: 1
     5: 0
@@ -79,8 +79,8 @@
   command: starting-sword
   type: singlechoice
   choices:
-    Swordless: 2
-    Practice Sword: 4
+    Swordless: 8
+    Practice Sword: 2
     Goddess Sword: 8
     Goddess Longsword: 4
     Goddess White Sword: 2
@@ -110,7 +110,7 @@
   command: shop-mode
   type: singlechoice
   choices:
-    Vanilla: 2
+    Vanilla: 1
     Always Junk: 0 # Should always be 0
     Randomized: 4
 - name: Rupoor Mode
@@ -127,16 +127,16 @@
   choices:
     Goddess Sword: 1
     Goddess Longsword: 2
-    Goddess Whitesword: 4
-    Master Sword: 8
-    True Master Sword: 4
+    Goddess Whitesword: 6
+    Master Sword: 16
+    True Master Sword: 8
 - name: Open LMF
   command: open-lmf
   type: singlechoice
   choices:
     Nodes: 1
-    Open: 4
-    Main Node: 2
+    Open: 2
+    Main Node: 1
 - name: Map Mode
   command: map-mode
   type: singlechoice
@@ -144,7 +144,7 @@
     Removed: 1
     Vanilla: 2
     Own Dungeon - Restricted: 4
-    Own Dungeon - Unrestricted: 4
+    Own Dungeon - Unrestricted: 3
     Anywhere: 2
 - name: Small Key Mode
   command: small-key-mode
@@ -153,7 +153,7 @@
     Vanilla: 1
     Own Dungeon - Restricted: 2
     Lanayru Caves Key Only: 4
-    Anywhere: 2
+    Anywhere: 3
 - name: Boss Key Mode
   command: boss-key-mode
   type: singlechoice
@@ -166,7 +166,7 @@
   type: singlechoice
   choices:
     None: 1
-    Basic: 2
+    Basic: 3
     Advanced: 4
     Direct: 1
 
@@ -174,83 +174,83 @@
 - name: Skip Imp 2
   command: imp2-skip
   type: boolean
-  checked: 2
+  checked: 4
   unchecked: 1
 - name: Empty unrequired Dungeons
   command: empty-unrequired-dungeons
   type: boolean
-  checked: 1
+  checked: 2
   unchecked: 1
 - name: Skip Sky Keep
   command: skip-skykeep
   type: boolean
-  checked: 2
+  checked: 3
   unchecked: 1
 - name: Hero Mode
   command: hero-mode
   type: boolean
-  checked: 2
+  checked: 5
   unchecked: 1
 - name: Randomize Silent Realms
   command: randomize-trials
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 3
 - name: Start with Adventure Pouch
   command: start-with-pouch
   type: boolean
-  checked: 1
+  checked: 2
   unchecked: 1
 - name: Skip Horde
   command: skip-horde
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 3
 - name: Skip Ghirahim 3
   command: skip-g3
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 4
 - name: Skip Demise
   command: skip-demise
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 9
 - name: Past Impa Stone of Trials Hint
   command: impa-sot-hint
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 0
 - name: Force Sword Dungeon Reward
   command: sword-dungeon-reward
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 3
 - name: Open Earth Temple
   command: open-et
   type: boolean
-  checked: 2
+  checked: 4
   unchecked: 1
 
 
 - name: Separate Cube SotS
   command: cube-sots
   type: boolean
-  checked: 1
+  checked: 0
   unchecked: 1
 - name: Precise Item Hints
   command: precise-item
   type: boolean
   checked: 1
-  unchecked: 1
+  unchecked: 4
 - name: Hint Distribution
   command: hint-distribution
   type: singlechoice
   choices:
-    Weak: 1
-    Balanced: 4
+    Weak: 3
+    Balanced: 6
     Junk: 1
-    Co-op S1: 2
-    S2 - 2D: 2
-    S2 - 3D: 2
-    S2 - 3D EUD Off: 2
+    Co-op S1: 0
+    S2 - 2D: 8
+    S2 - 3D: 8
+    S2 - 3D EUD Off: 8

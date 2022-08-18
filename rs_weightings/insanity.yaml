@@ -1,13 +1,13 @@
 - name: Banned Types
   command: banned-types
   min_banned_types: 0
-  max_banned_types: 10
+  max_banned_types: 4
   choices:
     dungeon: 1
     mini dungeon: 1
-    free gift: 2
-    freestanding: 2
-    miscellaneous: 2
+    free gift: 1
+    freestanding: 1
+    miscellaneous: 0
     silent realm: 1
     digging: 2
     bombable: 2
@@ -24,8 +24,8 @@
     beedle: 1
     cheap: 1
     medium: 1
-    expensive: 1
-    goddess: 1
+    expensive: 2
+    goddess: 0
     faron goddess: 1
     eldin goddess: 1
     lanayru goddess: 1
@@ -57,11 +57,11 @@
   command: demise-count
   type: int
   choices:
-    1: 1
-    2: 2
-    3: 4
-    4: 8
-    5: 1
+    1: 8
+    2: 9
+    3: 2
+    4: 1
+    5: 0
     6: 0
     7: 0
     8: 0
@@ -80,11 +80,11 @@
   type: singlechoice
   choices:
     Swordless: 64
-    Practice Sword: 32
+    Practice Sword: 8
     Goddess Sword: 16
     Goddess Longsword: 8
     Goddess White Sword: 4
-    Master Sword: 2
+    Master Sword: 1
     True Master Sword: 1
 - name: Randomize Entrances
   command: randomize-entrances
@@ -92,8 +92,8 @@
   choices:
     None: 1
     Required Dungeons Separately: 2
-    All Dungeons: 4
-    All Dungeons + Sky Keep: 8
+    All Dungeons: 6
+    All Dungeons + Sky Keep: 6
 - name: Max Batreaux Reward
   command: max-batreaux-reward
   type: singlechoice
@@ -112,61 +112,61 @@
   choices:
     Vanilla: 1
     Always Junk: 0 # Should always be 0
-    Randomized: 4
+    Randomized: 19
 - name: Rupoor Mode
   command: rupoor-mode
   type: singlechoice
   choices:
     "Off": 1
     Added: 2
-    Rupoor Mayhem: 4
+    Rupoor Mayhem: 8
     Rupoor Insanity: 8
 - name: Gate of Time Sword Requirement
   command: got-sword-requirement
   type: singlechoice
   choices:
-    Goddess Sword: 1
-    Goddess Longsword: 2
-    Goddess Whitesword: 4
-    Master Sword: 8
-    True Master Sword: 16
+    Goddess Sword: 0
+    Goddess Longsword: 0
+    Goddess Whitesword: 1
+    Master Sword: 4
+    True Master Sword: 8
 - name: Open LMF
   command: open-lmf
   type: singlechoice
   choices:
-    Nodes: 8
+    Nodes: 15
     Open: 1
-    Main Node: 2
+    Main Node: 4
 - name: Map Mode
   command: map-mode
   type: singlechoice
   choices:
     Removed: 1
     Vanilla: 1
-    Own Dungeon - Restricted: 4
-    Own Dungeon - Unrestricted: 4
+    Own Dungeon - Restricted: 6
+    Own Dungeon - Unrestricted: 8
     Anywhere: 16
 - name: Small Key Mode
   command: small-key-mode
   type: singlechoice
   choices:
     Vanilla: 1
-    Own Dungeon - Restricted: 4
-    Lanayru Caves Key Only: 2
+    Own Dungeon - Restricted: 6
+    Lanayru Caves Key Only: 4
     Anywhere: 16
 - name: Boss Key Mode
   command: boss-key-mode
   type: singlechoice
   choices:
     Vanilla: 1
-    Own Dungeon: 2
-    Anywhere: 8
+    Own Dungeon: 6
+    Anywhere: 16
 - name: Song Hints
   command: song-hints
   type: singlechoice
   choices:
-    None: 16
-    Basic: 4
+    None: 8
+    Basic: 8
     Advanced: 2
     Direct: 1
 
@@ -205,12 +205,12 @@
   command: skip-horde
   type: boolean
   checked: 1
-  unchecked: 4
+  unchecked: 6
 - name: Skip Ghirahim 3
   command: skip-g3
   type: boolean
   checked: 1
-  unchecked: 4
+  unchecked: 8
 - name: Skip Demise
   command: skip-demise
   type: boolean
@@ -225,7 +225,7 @@
   command: sword-dungeon-reward
   type: boolean
   checked: 1
-  unchecked: 3
+  unchecked: 7
 - name: Open Earth Temple
   command: open-et
   type: boolean
@@ -237,20 +237,20 @@
   command: cube-sots
   type: boolean
   checked: 1
-  unchecked: 2
+  unchecked: 9
 - name: Precise Item Hints
   command: precise-item
   type: boolean
   checked: 1
-  unchecked: 3
+  unchecked: 9
 - name: Hint Distribution
   command: hint-distribution
   type: singlechoice
   choices:
-    Weak: 4
-    Balanced: 2
-    Junk: 2
-    Co-op S1: 1
-    S2 - 2D: 1
-    S2 - 3D: 1
-    S2 - 3D EUD Off: 1
+    Weak: 8
+    Balanced: 6
+    Junk: 3
+    Co-op S1: 0
+    S2 - 2D: 4
+    S2 - 3D: 4
+    S2 - 3D EUD Off: 4
