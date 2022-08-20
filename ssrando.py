@@ -82,6 +82,7 @@ class Randomizer(BaseRandomizer):
         self.rng.seed(self.seed)
 
         if self.options["randomize-settings"]:
+            self.original_permalink = self.options.get_permalink()
             self.options.randomize_settings(self)
 
         # hack: if shops are vanilla, disable them as banned types because of bug net and progressive pouches
@@ -420,7 +421,10 @@ class Randomizer(BaseRandomizer):
     def get_log_header_json(self):
         header_dict = OrderedDict()
         header_dict["version"] = VERSION
-        header_dict["permalink"] = self.options.get_permalink()
+        if self.options["randomize-settings"] and self.no_logs:
+            header_dict["permalink"] = self.original_permalink
+        else:
+            header_dict["permalink"] = self.options.get_permalink()
         header_dict["seed"] = self.seed
         header_dict["hash"] = self.randomizer_hash
         non_disabled_options = [
@@ -431,12 +435,24 @@ class Randomizer(BaseRandomizer):
                 or OPTIONS[name]["type"] == "int"
             )
         ]
-        header_dict["options"] = OrderedDict(
-            filter(
-                lambda tupl: OPTIONS[tupl[0]].get("permalink", True),
-                non_disabled_options,
+        if (
+            self.options["randomize-settings"] and self.no_logs
+        ):  # Don't write settings if RS and no spoiler log are on
+            header_dict["options"] = OrderedDict(
+                [
+                    op
+                    for op in non_disabled_options
+                    if op[0] == "randomize-settings"
+                    or op[0] == "random-settings-weighting"
+                ]
             )
-        )
+        else:
+            header_dict["options"] = OrderedDict(
+                filter(
+                    lambda tupl: OPTIONS[tupl[0]].get("permalink", True),
+                    non_disabled_options,
+                )
+            )
         header_dict["cosmetic-options"] = OrderedDict(
             filter(
                 lambda tupl: OPTIONS[tupl[0]].get("cosmetic", False),
@@ -450,13 +466,21 @@ class Randomizer(BaseRandomizer):
 
         header += "Skyward Sword Randomizer Version %s\n" % VERSION
 
-        header += "Permalink: %s\n" % self.options.get_permalink()
+        if self.options["randomize-settings"] and self.no_logs:
+            header += "Original Permalink: %s\n" % self.original_permalink
+        elif self.options["randomize-settings"]:
+            header += "Original Permalink: %s\n" % self.original_permalink
+            header += (
+                "Permalink with Randomized Settings: %s\n"
+                % self.options.get_permalink()
+            )
+        else:
+            header += "Permalink: %s\n" % self.options.get_permalink()
 
         header += "Seed: %s\n" % self.seed
 
         header += "Hash : %s\n" % self.randomizer_hash
 
-        header += "Options selected:\n"
         non_disabled_options = [
             (name, val)
             for (name, val) in self.options.options.items()
@@ -475,12 +499,27 @@ class Randomizer(BaseRandomizer):
                     option_strings.append("  %s: %s" % (option_name, option_value))
             return "\n".join(option_strings)
 
-        header += format_opts(
-            filter(
-                lambda tupl: OPTIONS[tupl[0]].get("permalink", True),
-                non_disabled_options,
+        header += "Options selected:\n"
+
+        if (
+            self.options["randomize-settings"] and self.no_logs
+        ):  # Don't write settings if RS and no spoiler log are on
+            header += format_opts(
+                [
+                    op
+                    for op in non_disabled_options
+                    if op[0] == "randomize-settings"
+                    or op[0] == "random-settings-weighting"
+                ]
             )
-        )
+        else:
+            header += format_opts(
+                filter(
+                    lambda tupl: OPTIONS[tupl[0]].get("permalink", True),
+                    non_disabled_options,
+                )
+            )
+
         cosmetic_options = list(
             filter(
                 lambda tupl: OPTIONS[tupl[0]].get("cosmetic", False),
