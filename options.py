@@ -209,7 +209,9 @@ class Options:
             with (RANDO_ROOT_PATH / "rs_weightings" / "random.yaml").open("r") as f:
                 RS_WEIGHTING = yaml.safe_load(f)
         elif self["random-settings-weighting"] == "Random Max 1 Demise":
-            with (RANDO_ROOT_PATH / "rs_weightings" / "random_max_1_demise.yaml").open("r") as f:
+            with (RANDO_ROOT_PATH / "rs_weightings" / "random_max_1_demise.yaml").open(
+                "r"
+            ) as f:
                 RS_WEIGHTING = yaml.safe_load(f)
         elif self["random-settings-weighting"] == "Fast":
             with (RANDO_ROOT_PATH / "rs_weightings" / "fast.yaml").open("r") as f:
