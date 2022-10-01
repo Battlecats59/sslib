@@ -572,6 +572,7 @@
   bits: 2
   choices:
     - Random
+    - Random Max 1 Demise
     - Fast
     - Balanced
     - Insanity
