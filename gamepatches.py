@@ -1,7 +1,7 @@
 import copy
 from pathlib import Path
 import random
-from collections import OrderedDict, defaultdict
+from collections import Counter, OrderedDict, defaultdict
 
 import yaml
 import json
@@ -22,8 +22,10 @@ from paths import RANDO_ROOT_PATH
 from tboxSubtypes import tboxSubtypes
 from musicrando import music_rando
 
-from logic.logic import Logic
-from logic.constants import SILENT_REALM_CHECKS, RUPEE_CHECKS, QUICK_BEETLE_CHECKS
+from logic.bool_expression import check_static_option_req
+from logic.constants import *
+from logic.placement_file import PlacementFile
+from yaml_files import yaml_load
 
 from asm.patcher import apply_dol_patch, apply_rel_patch
 
@@ -80,6 +82,19 @@ DEFAULT_SCEN = OrderedDict(
     saveprompt=0,
 )
 
+DEFAULT_PLY = OrderedDict(
+    storyflag=0,
+    play_cutscene=-1,
+    byte4=-1,
+    posx=0,
+    posy=0,
+    posz=0,
+    anglex=0,
+    angley=0,
+    anglez=0,
+    entrance_id=6,
+)
+
 DEFAULT_AREA = OrderedDict(
     posx=0,
     posy=0,
@@ -93,6 +108,21 @@ DEFAULT_AREA = OrderedDict(
     dummy=b"\xFF\xFF\xFF",
 )
 
+DEFAULT_PATH = OrderedDict(
+    unk1=-1,
+    unk2=-1,
+    pnt_start_idx=0,
+    pnt_total_count=0,
+    unk3=b"\xFF\xFF\xFF\xFF\x00\xFF",
+)
+
+DEFAULT_PNT = OrderedDict(
+    posx=0.0,
+    posy=0.0,
+    posz=0.0,
+    unk=b"\xFF\xFF\xFF\xFF",
+)
+
 # cutscenes to use to set storyflags, sceneflags and itemflags
 START_CUTSCENES = [
     # stage, room, eventindex
@@ -102,82 +132,76 @@ START_CUTSCENES = [
     ("F405", 0, 0),
 ]
 
-START_ITEM_STORYFLAGS = {
-    "Emerald Tablet": 46,
-    "Ruby Tablet": 47,
-    "Amber Tablet": 48,
-}
-
 # The stage name of each dungeon
 DUNGEON_STAGES = {
-    "Skyview": "D100",
-    "Ancient Cistern": "D101",
-    "Earth Temple": "D200",
-    "Fire Sanctuary": "D201",
-    "Lanayru Mining Facility": "D300",
-    "Sandship": "D301",
-    "Sky Keep": "D003_7",
+    SV: "D100",
+    AC: "D101",
+    ET: "D200",
+    FS: "D201",
+    LMF: "D300",
+    SSH: "D301",
+    SK: "D003_7",
 }
 
 # The stage for each map where there are dungeon entrances
 DUNGEON_ENTRANCE_STAGES = {
     # stage, room, scen
-    "Dungeon Entrance in Deep Woods": ("F101", 0, 1),
-    "Dungeon Entrance in Lake Floria": ("F102_1", 0, 1),
-    "Dungeon Entrance in Eldin Volcano": ("F200", 4, 0),
-    "Dungeon Entrance in Volcano Summit": ("F201_3", 0, 1),
-    "Dungeon Entrance in Lanayru Desert": ("F300", 0, 5),
-    "Dungeon Entrance in Sand Sea": ("F301_1", 0, 1),
-    "Dungeon Entrance on Skyloft": ("F000", 0, 48),
+    SV_ENTRANCE: ("F101", 0, 1),
+    AC_ENTRANCE: ("F102_1", 0, 1),
+    ET_ENTRANCE: ("F200", 4, 0),
+    FS_ENTRANCE: ("F201_3", 0, 1),
+    LMF_ENTRANCE: ("F300", 0, 5),
+    SSH_ENTRANCE: ("F301_1", 0, 1),
+    SK_ENTRANCE: ("F000", 0, 48),
 }
 
 DUNGEON_EXITS = {
     # stage, layer, room, entrance
-    "Dungeon Entrance in Deep Woods": ("F101", 0, 0, 1),
-    "Dungeon Entrance in Lake Floria": ("F102_1", 0, 0, 1),
-    "Dungeon Entrance in Eldin Volcano": ("F200", 0, 4, 1),
-    "Dungeon Entrance in Volcano Summit": ("F201_3", 0, 0, 1),
-    "Dungeon Entrance in Lanayru Desert": ("F300", 0, 0, 5),
-    "Dungeon Entrance in Sand Sea": ("F301_1", 0, 0, 4),
-    "Dungeon Entrance on Skyloft": ("F000", 0, 0, 53),
+    SV_ENTRANCE: ("F101", 0, 0, 1),
+    AC_ENTRANCE: ("F102_1", 0, 0, 1),
+    ET_ENTRANCE: ("F200", 0, 4, 1),
+    FS_ENTRANCE: ("F201_3", 0, 0, 1),
+    LMF_ENTRANCE: ("F300", 0, 0, 5),
+    SSH_ENTRANCE: ("F301_1", 0, 0, 4),
+    SK_ENTRANCE: ("F000", 0, 0, 53),
 }
 
 DUNGEON_FINISH_EXITS = {
     # stage, layer, room, entrance
-    "Dungeon Entrance in Deep Woods": ("F101", 0, 0, 1),
-    "Dungeon Entrance in Lake Floria": ("F102_1", 0, 0, 6),
-    "Dungeon Entrance in Eldin Volcano": ("F200", 0, 4, 1),
-    "Dungeon Entrance in Volcano Summit": ("F201_3", 0, 0, 1),
-    "Dungeon Entrance in Lanayru Desert": ("F300_4", 2, 0, 2),
-    "Dungeon Entrance in Sand Sea": ("F301", 0, 0, 3),
-    "Dungeon Entrance on Skyloft": ("F000", 0, 0, 52),
+    SV_ENTRANCE: ("F101", 0, 0, 1),
+    AC_ENTRANCE: ("F102_1", 0, 0, 6),
+    ET_ENTRANCE: ("F200", 0, 4, 1),
+    FS_ENTRANCE: ("F201_3", 0, 0, 1),
+    LMF_ENTRANCE: ("F300_4", 2, 0, 2),
+    SSH_ENTRANCE: ("F301", 0, 0, 3),
+    SK_ENTRANCE: ("F000", 0, 0, 52),
 }
 
 DUNGEON_ENTRANCES = {
     # stage, layer, room, entrance
-    "Skyview": ("D100", 0, 0, 0),
-    "Earth Temple": ("D200", 0, 1, 0),
-    "Lanayru Mining Facility": ("D300", 0, 0, 0),
-    "Ancient Cistern": ("D101", 0, 0, 0),
-    "Sandship": ("D301", 1, 0, 0),
-    "Fire Sanctuary": ("D201", 0, 0, 0),
-    "Sky Keep": ("D003_7", 0, 0, 4),
+    SV: ("D100", 0, 0, 0),
+    ET: ("D200", 0, 1, 0),
+    LMF: ("D300", 0, 0, 0),
+    AC: ("D101", 0, 0, 0),
+    SSH: ("D301", 1, 0, 0),
+    FS: ("D201", 0, 0, 0),
+    SK: ("D003_7", 0, 0, 4),
 }
 
 DUNGEON_FINISH_EXIT_SCEN = {
     # stage, room, index
-    "Skyview": ("B100_1", 0, 1),
-    "Earth Temple": ("B210", 0, 0),
-    "Lanayru Mining Facility": ("F300_4", 0, 3),
-    "Ancient Cistern": ("B101_1", 0, 3),
-    "Sandship": ("B301", 0, 4),
-    "Fire Sanctuary": ("B201_1", 0, 2),
-    "Sky Keep": ("F407", 0, 1),
+    SV: ("B100_1", 0, 1),
+    ET: ("B210", 0, 0),
+    LMF: ("F300_5", 0, 0),
+    AC: ("B101_1", 0, 2),
+    SSH: ("B301", 0, 3),
+    FS: ("B201_1", 0, 1),
+    SK: ("F407", 0, 1),
 }
 
 DUNGEON_EXIT_SCENS = {
     # stage, room, index
-    "Skyview": [
+    SV: [
         ("D100", 0, 0),
         ("D100", 0, 2),
         ("D100", 2, 0),
@@ -185,8 +209,8 @@ DUNGEON_EXIT_SCENS = {
         ("D100", 9, 0),
         ("B100_1", 0, 4),
     ],
-    "Earth Temple": [("D200", 1, 0), ("D200", 1, 1), ("D200", 2, 0), ("D200", 4, 2)],
-    "Lanayru Mining Facility": [
+    ET: [("D200", 1, 0), ("D200", 1, 1), ("D200", 2, 0), ("D200", 4, 2)],
+    LMF: [
         ("D300", 0, 0),
         ("D300", 0, 1),
         ("D300", 5, 4),
@@ -196,7 +220,7 @@ DUNGEON_EXIT_SCENS = {
         ("B300", 0, 1),
         ("F300_5", 0, 3),  # extra bird statue
     ],
-    "Ancient Cistern": [
+    AC: [
         ("D101", 0, 2),
         ("D101", 0, 3),
         ("D101", 3, 1),
@@ -204,7 +228,7 @@ DUNGEON_EXIT_SCENS = {
         ("D101", 5, 0),
         # ('B101_1', 0, 1)
     ],
-    "Sandship": [
+    SSH: [
         ("D301", 0, 0),
         ("D301", 0, 1),
         ("D301", 1, 2),
@@ -215,7 +239,7 @@ DUNGEON_EXIT_SCENS = {
         ("D301", 13, 0),
         ("B301", 0, 1),
     ],
-    "Fire Sanctuary": [
+    FS: [
         ("D201", 0, 1),
         ("D201", 3, 2),
         ("D201", 10, 2),
@@ -224,7 +248,7 @@ DUNGEON_EXIT_SCENS = {
         ("D201_1", 5, 3),
         ("D201_1", 6, 2),
     ],
-    "Sky Keep": [
+    SK: [
         ("D003_0", 0, 3),  # most of them not needed
         ("D003_1", 0, 2),
         ("D003_2", 0, 3),
@@ -244,67 +268,60 @@ DUNGEON_EXIT_SCENS = {
     ],
 }
 
-TRIAL_GATE_TO_TRIAL = {
-    "Trial Gate on Skyloft": "Skyloft Silent Realm",
-    "Trial Gate in Faron Woods": "Faron Silent Realm",
-    "Trial Gate in Eldin Volcano": "Eldin Silent Realm",
-    "Trial Gate in Lanayru Desert": "Lanayru Silent Realm",
-}
-
 TRIAL_STAGES = {
-    "Skyloft Silent Realm": "S000",
-    "Faron Silent Realm": "S100",
-    "Eldin Silent Realm": "S200",
-    "Lanayru Silent Realm": "S300",
+    SKYLOFT_SILENT_REALM: "S000",
+    FARON_SILENT_REALM: "S100",
+    ELDIN_SILENT_REALM: "S200",
+    LANAYRU_SILENT_REALM: "S300",
 }
 
 TRIAL_GATE_STAGES = {
     # stage, room, scen
-    "Trial Gate on Skyloft": ("F000", 0, 45),
-    "Trial Gate in Faron Woods": ("F100", 0, 8),
-    "Trial Gate in Eldin Volcano": ("F200", 2, 4),
-    "Trial Gate in Lanayru Desert": ("F300", 0, 7),
+    SKYLOFT_TRIAL_GATE: ("F000", 0, 45),
+    FARON_TRIAL_GATE: ("F100", 0, 8),
+    ELDIN_TRIAL_GATE: ("F200", 2, 4),
+    LANAYRU_TRIAL_GATE: ("F300", 0, 7),
 }
 
 TRIAL_EXITS = {
     # stage, layer, room, entrance
-    "Trial Gate on Skyloft": ("F000", 0, 0, 83),
-    "Trial Gate in Faron Woods": ("F100", 0, 0, 48),
-    "Trial Gate in Eldin Volcano": ("F200", 0, 2, 5),
-    "Trial Gate in Lanayru Desert": ("F300", 0, 0, 4),
+    SKYLOFT_TRIAL_GATE: ("F000", 0, 0, 83),
+    FARON_TRIAL_GATE: ("F100", 0, 0, 48),
+    ELDIN_TRIAL_GATE: ("F200", 0, 2, 5),
+    LANAYRU_TRIAL_GATE: ("F300", 0, 0, 4),
 }
 
 TRIAL_ENTRANCES = {
     # stage, layer, room, entrance
     # all trials are layer 2
-    "Skyloft Silent Realm": ("S000", 2, 0, 0),
-    "Faron Silent Realm": ("S100", 2, 0, 0),
-    "Eldin Silent Realm": ("S200", 2, 2, 0),
-    "Lanayru Silent Realm": ("S300", 2, 0, 0),
+    SKYLOFT_SILENT_REALM: ("S000", 2, 0, 0),
+    FARON_SILENT_REALM: ("S100", 2, 0, 0),
+    ELDIN_SILENT_REALM: ("S200", 2, 2, 0),
+    LANAYRU_SILENT_REALM: ("S300", 2, 0, 0),
 }
 
 TRIAL_EXIT_SCENS = {
     # stage, room, index
-    "Skyloft Silent Realm": ("S000", 0, 1),
-    "Faron Silent Realm": ("S100", 0, 1),
-    "Eldin Silent Realm": ("S200", 2, 1),
-    "Lanayru Silent Realm": ("S300", 0, 1),
+    SKYLOFT_SILENT_REALM: ("S000", 0, 1),
+    FARON_SILENT_REALM: ("S100", 0, 1),
+    ELDIN_SILENT_REALM: ("S200", 2, 1),
+    LANAYRU_SILENT_REALM: ("S300", 0, 1),
 }
 
 TRIAL_EXIT_GATE_IDS = {
     # silent realm name, silent realm WarpObj ID
-    "Skyloft Silent Realm": 0xFC26,
-    "Faron Silent Realm": 0xFC94,
-    "Eldin Silent Realm": 0xFC37,
-    "Lanayru Silent Realm": 0xFC18,
+    SKYLOFT_SILENT_REALM: 0xFC26,
+    FARON_SILENT_REALM: 0xFC94,
+    ELDIN_SILENT_REALM: 0xFC37,
+    LANAYRU_SILENT_REALM: 0xFC18,
 }
 
 TRIAL_COMPLETE_STORYFLAGS = {
     # trial gate, storyflag
-    "Trial Gate on Skyloft": 0x39A,
-    "Trial Gate in Faron Woods": 0x397,
-    "Trial Gate in Eldin Volcano": 0x398,
-    "Trial Gate in Lanayru Desert": 0x399,
+    SKYLOFT_TRIAL_GATE: 0x39A,
+    FARON_TRIAL_GATE: 0x397,
+    ELDIN_TRIAL_GATE: 0x398,
+    LANAYRU_TRIAL_GATE: 0x399,
 }
 
 BEEDLE_TEXT_PATCHES = {  # (undiscounted, discounted, normal price, discounted price)
@@ -332,8 +349,228 @@ BEEDLE_TEXT_PATCHES = {  # (undiscounted, discounted, normal price, discounted p
 
 BEEDLE_BUY_SWTICH = "[1]I'll buy it![2-]No, thanks."
 
-PROGRESSIVE_SWORD_STORYFLAGS = [906, 907, 908, 909, 910, 911]
-PROGRESSIVE_SWORD_ITEMIDS = [10, 11, 12, 9, 13, 14]
+DEFAULT_HEIGHT_OFFSET = -25.0
+DEFAULT_BUY_DECIDE_SCALE = 1.5
+DEFAULT_PUT_SCALE = 1.7
+
+# Smaller values move items higher up.
+HEIGHT_OFFSETS = {
+    # Don't work for some reason
+    # 35: -30.0, # Gratitude Crystal Pack
+    # 48: -30.0, # Single Gratitude Crystal
+    # 165: -20.0, # Eldin Ore
+    1: -35.0,  # Vanilla Small Key (unused)
+    9: -35.0,  # Goddess White Sword (unused)
+    10: -35.0,  # Practice Sword (Progressive Sword)
+    11: -35.0,  # Goddess Sword (unused)
+    12: -35.0,  # Goddess Longsword (unused)
+    13: -35.0,  # Master Sword (unused)
+    14: -35.0,  # True Master Sword (unused)
+    16: -28.0,  # Goddess Harp
+    19: -35.0,  # Bow (Progressive Bow)
+    20: -38.0,  # Clawshots
+    21: -32.0,  # Bird Statuette (Spiral Charge)
+    25: -37.0,  # Ancient Cistern Boss Key
+    26: -36.0,  # Fire Sanctuary Boss Key
+    27: -29.0,  # Sandship Boss Key
+    28: -35.0,  # Key Piece
+    29: -28.0,  # Skyview Boss Key
+    30: -28.0,  # Earth Temple Boss Key
+    31: -32.0,  # Lanayru Mining Facility Boss Key
+    49: -42.0,  # Gust Bellows
+    52: -27.0,  # Slingshot (Progressive Slingshot)
+    53: -27.0,  # Beetle (Progressive Beetle)
+    56: -29.0,  # Digging Mitts (Progressive Mitts)
+    68: -29.0,  # Water Dragon's Scale
+    75: -27.0,  # Hook Beetle (unused)
+    76: -27.0,  # Quick Beetle (unused)
+    77: -27.0,  # Tough Beetle (unused)
+    90: -35.0,  # Iron Bow (unused)
+    91: -35.0,  # Sacred Bow (unused)
+    92: -38.0,  # Bomb Bag
+    93: -30.0,  # Heart Container
+    94: -27.0,  # Heart Piece
+    98: -39.0,  # Sea Chart
+    99: -29.0,  # Mogma Mitts (unused)
+    100: -30.0,  # Heart Medal
+    101: -30.0,  # Rupee Medal
+    102: -30.0,  # Treasure Medal
+    103: -30.0,  # Potion Medal
+    104: -30.0,  # Cursed Medal
+    105: -27.0,  # Scattershot (unused)
+    108: -27.0,  # Medium Wallet (Progressive Wallet)
+    109: -27.0,  # Big Wallet (unused)
+    110: -27.0,  # Giant Wallet (unused)
+    111: -27.0,  # Tycoon Wallet (unused)
+    112: -28.0,  # Adventure Pouch (Progressive Pouch)
+    113: -28.0,  # Pouch Expansion (unused)
+    125: -40.0,  # Hylian Shield
+    137: -30.0,  # Whip
+    138: -10.0,  # Fireshield Earrings
+    159: -32.0,  # Horned Colossus Beetle
+    160: -35.0,  # Baby Rattle
+    177: -30.0,  # Emerald Tablet
+    178: -27.0,  # Ruby Tablet
+    179: -40.0,  # Amber Tablet
+    180: -29.0,  # Stone of Trials
+    186: -28.0,  # Ballad of the Goddess
+    187: -28.0,  # Farore's Courage
+    188: -28.0,  # Nayru's Wisdom
+    189: -28.0,  # Din's Power
+    190: -28.0,  # Faron Song of the Hero Part
+    191: -28.0,  # Eldin Song of the Hero Part
+    192: -28.0,  # Lanayru Song of the Hero Part
+    193: -28.0,  # Song of the Hero (unused)
+    198: -30.0,  # Life Tree Fruit
+    200: -35.0,  # Skyview Small Key
+    201: -35.0,  # Lanayru Mining Facility Small Key
+    202: -35.0,  # Ancient Cistern Small Key
+    203: -35.0,  # Fire Sanctuary Small Key
+    204: -35.0,  # Sandship Small Key
+    205: -35.0,  # Sky Keep Small Key
+    206: -35.0,  # Lanayru Caves Small Key
+    207: -20.0,  # Skyview Map
+    208: -20.0,  # Earth Temple Map
+    209: -20.0,  # Lanayru Mining Facility Map
+    210: -20.0,  # Ancient Cistern Map
+    211: -20.0,  # Fire Sanctuary Map
+    212: -20.0,  # Sandship Map
+    213: -20.0,  # Sky Keep Map
+}
+
+SHOP_BUY_DECIDE_SCALE = {
+    1: 1.2,  # Vanilla Small Key (Unused)
+    9: 1.0,  # Goddess White Sword (unused)
+    10: 1.0,  # Practice Sword (Progressive Sword)
+    11: 1.0,  # Goddess Sword (unused)
+    12: 1.0,  # Goddess Longsword (unused)
+    13: 1.0,  # Master Sword (unused)
+    14: 1.0,  # True Master Sword (unused)
+    16: 1.2,  # Goddess Harp
+    19: 0.8,  # Bow (Progressive Bow)
+    20: 1.2,  # Clawshots
+    21: 1.0,  # Bird Statuette (Spiral Charge)
+    25: 0.8,  # Ancient Cistern Boss Key
+    26: 0.8,  # Fire Sanctuary Boss Key
+    27: 0.8,  # Sandship Boss Key
+    28: 1.2,  # Key Piece
+    29: 0.8,  # Skyview Boss Key
+    30: 0.8,  # Earth Temple Boss Key
+    31: 0.8,  # Lanayru Mining Facility Boss Key
+    49: 1.0,  # Gust Bellows
+    52: 1.2,  # Slingshot (Progressive Slingshot)
+    53: 1.0,  # Beetle (Progressive Beetle)
+    56: 1.2,  # Digging Mitts (Progressive Mitts)
+    68: 1.2,  # Water Dragon's Scale
+    75: 1.0,  # Hook Beetle (unused)
+    76: 1.0,  # Quick Beetle (unused)
+    77: 1.0,  # Tough Beetle (unused)
+    90: 0.8,  # Iron Bow (unused)
+    91: 0.8,  # Sacred Bow (unused)
+    92: 1.0,  # Bomb Bag
+    93: 1.2,  # Heart Container
+    94: 1.2,  # Heart Piece
+    99: 1.2,  # Mogma Mitts (unused)
+    105: 1.2,  # Scattershot (unused)
+    112: 1.2,  # Adventure Pouch (Progressive Pouch)
+    113: 1.2,  # Pouch Expansion (unused)
+    125: 1.2,  # Hylian Shield
+    137: 1.2,  # Whip
+    138: 1.2,  # Fireshield Earrings
+    158: 1.2,  # Cawlin's Letter
+    159: 1.2,  # Horned Colossus Beetle
+    160: 1.2,  # Baby Rattle
+    177: 1.0,  # Emerald Tablet
+    178: 1.0,  # Ruby Tablet
+    179: 1.0,  # Amber Tablet
+    180: 1.2,  # Stone of Trials
+    186: 1.2,  # Ballad of the Goddess
+    187: 1.2,  # Farore's Courage
+    188: 1.2,  # Nayru's Wisdom
+    189: 1.2,  # Din's Power
+    190: 1.2,  # Faron Song of the Hero Part
+    191: 1.2,  # Eldin Song of the Hero Part
+    192: 1.2,  # Lanayru Song of the Hero Part
+    193: 1.2,  # Song of the Hero (unused)
+    198: 1.2,  # Life Tree Fruit
+    200: 1.2,  # Skyview Small Key
+    201: 1.2,  # Lanayru Mining Facility Small Key
+    202: 1.2,  # Ancient Cistern Small Key
+    203: 1.2,  # Fire Sanctuary Small Key
+    204: 1.2,  # Sandship Small Key
+    205: 1.2,  # Sky Keep Small Key
+    206: 1.2,  # Lanayru Caves Small Key
+    207: 1.2,  # Skyview Map
+    208: 1.2,  # Earth Temple Map
+    209: 1.2,  # Lanayru Mining Facility Map
+    210: 1.2,  # Ancient Cistern Map
+    211: 1.2,  # Fire Sanctuary Map
+    212: 1.2,  # Sandship Map
+    213: 1.2,  # Sky Keep Map
+}
+
+SHOP_PUT_SCALE = {
+    1: 1.5,  # Vanilla Small Key (Unused)
+    16: 1.5,  # Goddess Harp
+    19: 1.5,  # Bow (Progressive Bow)
+    20: 1.5,  # Clawshots
+    21: 1.2,  # Bird Statuette (Spiral Charge)
+    25: 1.2,  # Ancient Cistern Boss Key
+    26: 1.2,  # Fire Sanctuary Boss Key
+    27: 1.2,  # Sandship Boss Key
+    28: 1.5,  # Key Piece
+    29: 1.2,  # Skyview Boss Key
+    30: 1.2,  # Earth Temple Boss Key
+    31: 1.2,  # Lanayru Mining Facility Boss Key
+    49: 1.5,  # Gust Bellows
+    52: 1.5,  # Slingshot (Progressive Slingshot)
+    53: 1.5,  # Beetle (Progressive Beetle)
+    56: 1.5,  # Digging Mitts (Progressive Mitts)
+    68: 1.5,  # Water Dragon's Scale
+    75: 1.5,  # Hook Beetle (unused)
+    76: 1.5,  # Quick Beetle (unused)
+    77: 1.5,  # Tough Beetle (unused)
+    90: 1.5,  # Iron Bow (unused)
+    91: 1.5,  # Sacred Bow (unused)
+    92: 1.5,  # Bomb Bag
+    93: 1.5,  # Heart Container
+    94: 1.5,  # Heart Piece
+    99: 1.5,  # Mogma Mitts (unused)
+    105: 1.5,  # Scattershot (unused)
+    112: 1.4,  # Adventure Pouch (Progressive Pouch)
+    113: 1.4,  # Pouch Expansion (unused)
+    137: 1.5,  # Whip
+    138: 1.5,  # Fireshield Earrings
+    158: 1.6,  # Cawlin's Letter
+    159: 1.6,  # Horned Colossus Beetle
+    160: 1.6,  # Baby Rattle
+    177: 1.5,  # Emerald Tablet
+    178: 1.5,  # Ruby Tablet
+    179: 1.5,  # Amber Tablet
+    180: 1.5,  # Stone of Trials
+    186: 1.5,  # Ballad of the Goddess
+    187: 1.5,  # Farore's Courage
+    188: 1.5,  # Nayru's Wisdom
+    189: 1.5,  # Din's Power
+    190: 1.5,  # Faron Song of the Hero Part
+    191: 1.5,  # Eldin Song of the Hero Part
+    192: 1.5,  # Lanayru Song of the Hero Part
+    193: 1.5,  # Song of the Hero (unused)
+    200: 1.5,  # Skyview Small Key
+    201: 1.5,  # Lanayru Mining Facility Small Key
+    202: 1.5,  # Ancient Cistern Small Key
+    203: 1.5,  # Fire Sanctuary Small Key
+    204: 1.5,  # Sandship Small Key
+    205: 1.5,  # Sky Keep Small Key
+    206: 1.5,  # Lanayru Caves Small Key
+    207: 1.2,  # Skyview Map
+    208: 1.2,  # Earth Temple Map
+    209: 1.2,  # Lanayru Mining Facility Map
+    210: 1.2,  # Ancient Cistern Map
+    211: 1.2,  # Fire Sanctuary Map
+    212: 1.2,  # Sandship Map
+    213: 1.2,  # Sky Keep Map
+}
 
 TRIAL_OBJECT_IDS = {
     "S000": {
@@ -715,7 +952,7 @@ def make_progressive_item(
     if len(item_text_indexes) != len(storyflags) or len(item_text_indexes) != len(
         item_ids
     ):
-        raise Exception("item_text_indexes should be the same length as storyflags!")
+        raise Exception("item_text_indexes should be the same length as storyflags.")
     flow_idx = len(msbf["FLW3"]["flow"])
     msbf["FLW3"]["flow"][base_item_start]["next"] = flow_idx
     index = len(item_text_indexes) - 1  # start from the highest upgrade
@@ -828,16 +1065,29 @@ def try_patch_obj(obj, key, value):
             obj["params1"] = mask_shift_set(obj["params1"], 0xFF, 8, value)
         else:
             print(f'ERROR: unsupported key "{key}" to patch for object {obj}')
+    elif obj["name"] == "PushBlk":
+        if key == "pathIdx":
+            obj["params1"] = mask_shift_set(obj["params1"], 0xFF, 4, value)
+        elif key == "goalscenefid":
+            obj["params1"] = mask_shift_set(obj["params1"], 0xFF, 12, value)
+        elif key == "useLargerRadius":
+            obj["params1"] = mask_shift_set(obj["params1"], 0x03, 30, value)
+        elif key == "isSwitchGoal":
+            obj["params1"] = mask_shift_set(obj["params1"], 0x03, 28, value)
+        else:
+            print(f'ERROR: unsupported key "{key}" to patch for object {obj}')
     else:
         print(f"ERROR: unsupported object to patch {obj}")
 
 
-def patch_tbox_item(tbox: OrderedDict, itemid: int):
+def patch_tbox_item(tbox: OrderedDict, itemid: int, dowsing: int):
     origitemid = tbox["anglez"] & 0x1FF
     boxtype = tboxSubtypes[origitemid]
     tbox["anglez"] = mask_shift_set(tbox["anglez"], 0x1FF, 0, itemid)
     # code has been patched, to interpret this part of params1 as boxtype
     tbox["params1"] = mask_shift_set(tbox["params1"], 0x3, 4, boxtype)
+    # asm patch checks for first nybble of params2 to enable dowsing on the given slot
+    tbox["params2"] = mask_shift_set(tbox["params2"], 0xF, 28, dowsing)
 
 
 def patch_item_item(itemobj: OrderedDict, itemid: int):
@@ -914,7 +1164,7 @@ def rando_patch_warpobj(
     patch_trial_flags(obj, trial_storyflag)
 
 
-def rando_patch_tbox(bzs: OrderedDict, itemid: int, id: str):
+def rando_patch_tbox(bzs: OrderedDict, itemid: int, id: str, dowsing: int):
     id = int(id)
     tboxs = list(
         filter(lambda x: x["name"] == "TBox" and (x["anglez"] >> 9) == id, bzs["OBJS"])
@@ -922,7 +1172,7 @@ def rando_patch_tbox(bzs: OrderedDict, itemid: int, id: str):
     if len(tboxs) == 0:
         print(tboxs)
     obj = tboxs[0]  # anglez >> 9 is chest id
-    patch_tbox_item(obj, itemid)
+    patch_tbox_item(obj, itemid, dowsing)
 
 
 def rando_patch_item(bzs: OrderedDict, itemid: int, id: str):
@@ -986,9 +1236,8 @@ RANDO_PATCH_FUNCS = {
 }
 
 
-def get_patches_from_location_item_list(all_checks, filled_checks):
-    with (RANDO_ROOT_PATH / "items.yaml").open() as f:
-        items = yaml.safe_load(f)
+def get_patches_from_location_item_list(all_checks, filled_checks, chest_dowsing):
+    items = yaml_load(RANDO_ROOT_PATH / "items.yaml")
     by_item_name = dict((x["name"], x) for x in items)
 
     # (stage, room) -> (object name, layer, id?, itemid)
@@ -1009,6 +1258,7 @@ def get_patches_from_location_item_list(all_checks, filled_checks):
 
     for checkname, itemname in filled_checks.items():
         # single gratitude crystals aren't randomized
+        itemname = strip_item_number(itemname)
         if itemname == "Gratitude Crystal":
             continue
         check = all_checks[checkname]
@@ -1031,7 +1281,14 @@ def get_patches_from_location_item_list(all_checks, filled_checks):
                             stageoarcs[(stage, layer)].add(o)
                     else:
                         stageoarcs[(stage, layer)].add(oarc)
-                stagepatchv2[(stage, room)].append((objname, layer, objid, item["id"]))
+                else:
+                    # add dummy to force patching this stage
+                    # otherwise it could lead to an increased stage size
+                    # which will lead to a crash
+                    stageoarcs[(stage, layer)].add("dummy")
+                stagepatchv2[(stage, room)].append(
+                    (objname, layer, objid, item["id"], chest_dowsing[checkname])
+                )
             elif event_match:
                 eventfile = event_match.group("eventfile")
                 eventid = event_match.group("eventid")
@@ -1046,6 +1303,9 @@ def get_patches_from_location_item_list(all_checks, filled_checks):
                             stageoarcs[(stage, layer)].add(o)
                     else:
                         stageoarcs[(stage, layer)].add(oarc)
+                else:
+                    # see above
+                    stageoarcs[(stage, layer)].add("dummy")
             elif shop_smpl_match:
                 index = int(shop_smpl_match.group("index"))
                 # TODO: super fix this, add all models/arcs to items.yaml
@@ -1059,7 +1319,7 @@ def get_patches_from_location_item_list(all_checks, filled_checks):
                     else:
                         stageoarcs[("F002r", 1)].add(oarc)
                 if modelname is None or arcname is None:
-                    raise Exception(f"no modelnames for {item}")
+                    raise Exception(f"No modelnames for {item}.")
                 shoppatches[index] = (item["id"], arcname, modelname)
             else:
                 print(f"ERROR: {path} didn't match any regex!")
@@ -1102,14 +1362,33 @@ def get_entry_from_bzs(
 
 
 class GamePatcher:
-    def __init__(self, rando, placement_file):
-        self.rando = rando
+    def __init__(
+        self,
+        areas,
+        options,
+        progress_callback,
+        actual_extract_path,
+        rando_root_path,
+        exe_root_path,
+        modified_extract_path,
+        oarc_cache_path,
+        arc_replacement_path,
+        placement_file: PlacementFile,
+    ):
+        self.areas = areas
+        self.options = options
+        self.progress_callback = progress_callback
         self.placement_file = placement_file
+        self.rando_root_path = rando_root_path
+        self.exe_root_path = exe_root_path
+        self.actual_extract_path = actual_extract_path
+        self.modified_extract_path = modified_extract_path
         self.patcher = AllPatcher(
-            actual_extract_path=rando.actual_extract_path,
-            modified_extract_path=rando.modified_extract_path,
-            oarc_cache_path=rando.oarc_cache_path,
-            arc_replacement_path=self.rando.exe_root_path / "arc-replacements",
+            actual_extract_path=actual_extract_path,
+            modified_extract_path=modified_extract_path,
+            oarc_cache_path=oarc_cache_path,
+            arc_replacement_path=arc_replacement_path,
+            assets_path=RANDO_ROOT_PATH / "assets",
             copy_unmodified=False,
         )
         self.text_labels = {}
@@ -1123,6 +1402,7 @@ class GamePatcher:
         self.do_build_arc_cache()
         self.add_startitem_patches()
         self.add_required_dungeon_patches()
+        self.add_fi_text_patches()
         if (self.placement_file.options["song-hints"]) != "None":
             self.add_trial_hint_patches()
         if self.placement_file.options["impa-sot-hint"]:
@@ -1139,21 +1419,22 @@ class GamePatcher:
         self.patcher.set_bzs_patch(self.bzs_patch_func)
         self.patcher.set_event_patch(self.flow_patch)
         self.patcher.set_event_text_patch(self.text_patch)
-        self.patcher.progress_callback = self.rando.progress_callback
+        self.patcher.progress_callback = self.progress_callback
         self.patcher.objpackoarcadd = self.patches["global"].get("objpackoarcadd", [])
         self.patcher.do_patch()
 
         self.do_dol_patch()
         self.do_rel_patch()
         self.do_patch_title_screen_logo()
+        self.do_patch_custom_dowsing_images()
 
-        music_rando(self)
+        music_rando(self.placement_file, self.modified_extract_path)
 
     def filter_option_requirement(self, entry):
         return not (
             isinstance(entry, dict)
             and "onlyif" in entry
-            and not Logic.check_static_option_req(
+            and not check_static_option_req(
                 entry["onlyif"], self.placement_file.options
             )
         )
@@ -1170,10 +1451,8 @@ class GamePatcher:
         self.eventpatches[eventfile].append(eventpatch)
 
     def load_base_patches(self):
-        with (RANDO_ROOT_PATH / "patches.yaml").open() as f:
-            self.patches = yaml.safe_load(f)
-        with (RANDO_ROOT_PATH / "eventpatches.yaml").open() as f:
-            self.eventpatches = yaml.safe_load(f)
+        self.patches = yaml_load(RANDO_ROOT_PATH / "patches.yaml")
+        self.eventpatches = yaml_load(RANDO_ROOT_PATH / "eventpatches.yaml")
 
         filtered_storyflags = []
         for storyflag in self.patches["global"]["startstoryflags"]:
@@ -1186,16 +1465,24 @@ class GamePatcher:
             filtered_storyflags.append(storyflag)
         self.startstoryflags = filtered_storyflags
 
-        self.startitemflags = self.patches["global"]["startitems"]
+        self.startitemflags = {flag: 1 for flag in self.patches["global"]["startitems"]}
 
         # patches from randomizing items
-        temp_item_locations = copy.deepcopy(self.placement_file.item_locations)
-        if self.placement_file.options["rupeesanity"] != "All":
-            for rupee_check in RUPEE_CHECKS:
-                if self.rando.options["rupeesanity"] == "Vanilla":
-                    temp_item_locations.pop(rupee_check)
-                elif rupee_check in QUICK_BEETLE_CHECKS:
-                    temp_item_locations.pop(rupee_check)
+        filtered_item_locations = self.placement_file.item_locations.copy()
+        rupeesanity_option = self.placement_file.options["rupeesanity"]
+        if rupeesanity_option == "Vanilla":
+            to_remove = map(self.areas.short_to_full, RUPEE_CHECKS)
+        elif rupeesanity_option == "No Quick Beetle":
+            to_remove = map(self.areas.short_to_full, QUICK_BEETLE_CHECKS)
+        elif rupeesanity_option == "All":
+            to_remove = []
+        else:
+            raise ValueError(
+                f"Wrong value {rupeesanity_option} for option rupeesanity."
+            )
+
+        for rupee_check in to_remove:
+            del filtered_item_locations[rupee_check]
 
         (
             self.rando_stagepatches,
@@ -1203,7 +1490,9 @@ class GamePatcher:
             self.rando_eventpatches,
             self.shoppatches,
         ) = get_patches_from_location_item_list(
-            self.rando.item_locations, temp_item_locations
+            self.areas.checks,
+            filtered_item_locations,
+            self.placement_file.chest_dowsing,
         )
 
         # assembly patches
@@ -1211,20 +1500,34 @@ class GamePatcher:
         self.add_asm_patch("custom_funcs")
         self.add_asm_patch("ss_necessary")
         self.add_asm_patch("keysanity")
+        self.add_asm_patch("post_boko_base_platforms")
         if self.placement_file.options["shop-mode"] != "Vanilla":
             self.add_asm_patch("shopsanity")
         self.add_asm_patch("gossip_stone_hints")
-        if self.placement_file.options["fix-bit-crashes"]:
+        if self.placement_file.options["bit-patches"] == "Disable BiT":
+            self.add_asm_patch("patch_bit")
+        elif self.placement_file.options["bit-patches"] == "Fix BiT Crashes":
             self.add_asm_patch("fix_bit_crashes")
         if self.placement_file.options["tunic-swap"]:
             self.add_asm_patch("tunic_swap")
-
+        if self.placement_file.options["starry-skies"]:
+            self.add_asm_patch("starry_skies")
+        if self.placement_file.options["star-count"] == 0:
+            self.add_asm_patch("starless-skies")
+        if self.placement_file.options["lightning-skyward-strike"]:
+            self.add_asm_patch("lightning_strike")
+        if self.placement_file.options["chest-dowsing"] != "Vanilla":
+            self.add_asm_patch("chest_dowsing")
+        if self.placement_file.options["dungeon-dowsing"]:
+            self.add_asm_patch("dungeon_dowsing")
+        if self.placement_file.options["no-enemy-music"]:
+            self.add_asm_patch("no_enemy_music")
         # GoT patch depends on required sword
         # cmpwi r0, (insert sword)
         GOT_SWORD_MODES = {
             "Goddess Sword": 1,
             "Goddess Longsword": 2,
-            "Goddess Whitesword": 3,
+            "Goddess White Sword": 3,
             "Master Sword": 4,
             "True Master Sword": 5,
         }
@@ -1234,6 +1537,40 @@ class GamePatcher:
                 0x00,
                 0x00,
                 GOT_SWORD_MODES[self.placement_file.options["got-sword-requirement"]],
+            ]
+        }
+
+        # Hero Mode Changes
+        if self.placement_file.options["fast-air-meter"] == False:
+            self.add_asm_patch("air_meter_normalmode")
+        if self.placement_file.options["upgraded-skyward-strike"]:
+            self.add_asm_patch("skyward_strike_heromode")
+        else:
+            self.add_asm_patch("skyward_strike_normalmode")
+        if self.placement_file.options["enable-heart-drops"]:
+            self.add_asm_patch("heart_pickups_normalmode")
+        else:
+            self.add_asm_patch("heart_pickups_heromode")
+
+        # Damage Multiplier patch requires input, replacing one line
+        # muli r27, r27, (multiplier)
+        self.all_asm_patches["main.dol"][0x801E3464] = {
+            "Data": [
+                0x1F,
+                0x7B,
+                0x00,
+                self.placement_file.options["damage-multiplier"],
+            ]
+        }
+
+        # Star count patch requires input, replacing one line.
+        # cmpwi r15, (count)
+        self.all_asm_patches["main.dol"][0x801AB870] = {
+            "Data": [
+                0x2C,
+                0x0F,
+                self.placement_file.options["star-count"] >> 8,
+                self.placement_file.options["star-count"] & 0xFF,
             ]
         }
 
@@ -1258,7 +1595,7 @@ class GamePatcher:
             self.all_asm_patches[exec_file].update(patches)
 
     def add_entrance_rando_patches(self):
-        for entrance, dungeon in self.placement_file.entrance_connections.items():
+        for entrance, dungeon in self.placement_file.dungeon_connections.items():
             entrance_stage, entrance_room, entrance_scen = DUNGEON_ENTRANCE_STAGES[
                 entrance
             ]
@@ -1283,7 +1620,7 @@ class GamePatcher:
 
             # handle the extra loading zone to the dungeon in Sand Sea from Ancient Harbor
             # yes I know there was probably a better way to do this but it's a one off special case
-            if entrance == "Dungeon Entrance in Sand Sea":
+            if entrance == SSH_ENTRANCE:
                 self.add_patch_to_stage(
                     "F301",
                     {
@@ -1324,10 +1661,7 @@ class GamePatcher:
             # it should not and they don't need to be touched if the LMF entrance is vanilla
             # the first time exit is taken care of by the DUNGEON_FINISH_EXIT_SCEN stuff
             # patch the secondary exit if it's not vanilla
-            if (
-                dungeon == "Lanayru Mining Facility"
-                and not entrance == "Dungeon Entrance in Lanayru Desert"
-            ):
+            if dungeon == LMF and not entrance == LMF_ENTRANCE:
                 self.add_patch_to_stage(
                     "F300_5",
                     {
@@ -1429,14 +1763,16 @@ class GamePatcher:
             )
 
     def shopsanity_patches(self):
-        with (Path(__file__).parent / "beedle_texts.yaml").open("r") as f:
-            beedle_texts = yaml.safe_load(f)
+        beedle_texts = yaml_load(Path(__file__).parent / "beedle_texts.yaml")
         # print(beedle_texts)
         for location in BEEDLE_TEXT_PATCHES:
             normal, discounted, normal_price, discount_price = BEEDLE_TEXT_PATCHES[
                 location
             ]
-            sold_item = self.placement_file.item_locations[location]
+            sold_item = self.placement_file.item_locations[
+                self.areas.short_to_full(location)
+            ]
+            sold_item = strip_item_number(sold_item)
             normal_text = (
                 break_lines(
                     f"That there is a <y<{sold_item}>>. "
@@ -1488,45 +1824,119 @@ class GamePatcher:
                 )
 
     def do_build_arc_cache(self):
-        self.rando.progress_callback("building arc cache...")
+        self.progress_callback("building arc cache...")
 
-        with (RANDO_ROOT_PATH / "extracts.yaml").open() as f:
-            extracts = yaml.safe_load(f)
+        extracts = yaml_load(RANDO_ROOT_PATH / "extracts.yaml")
         self.patcher.create_oarc_cache(extracts)
 
     def add_startitem_patches(self):
         # Add sword story/itemflags if required
-        start_sword_count = self.placement_file.starting_items.count(
-            "Progressive Sword"
+
+        start_sword_count = len(
+            set(PROGRESSIVE_SWORDS) & set(self.placement_file.starting_items)
         )
-        for i in range(start_sword_count):
-            self.startstoryflags.append(PROGRESSIVE_SWORD_STORYFLAGS[i])
-        if start_sword_count > 0:
-            self.startitemflags.append(PROGRESSIVE_SWORD_ITEMIDS[start_sword_count - 1])
 
-        # if 'Sailcloth' in self.placement_file.starting_items:
-        #     self.startstoryflags.append(32)
-        #     self.startitemflags.append(15)
+        if start_sword_count > 3:
+            self.startstoryflags.append(583)  # 4 extra Dowsing slots
+            if self.placement_file.options["dowsing-after-whitesword"]:
+                self.startstoryflags.append(102)  # Treasure Dowsing
+                self.startstoryflags.append(104)  # Crystal Dowsing
+                self.startstoryflags.append(105)  # Rupee Dowsing
+                self.startstoryflags.append(110)  # Goddess Cube Dowsing
 
-        if "Progressive Pouch" in self.placement_file.starting_items:
-            self.startstoryflags.append(30)  # storyflag for pouch
-            self.startstoryflags.append(931)  # rando storyflag for progressive pouch 1
-            self.startitemflags.append(112)  # itemflag for pouch
+        # Give the completed song of the hero if all 3 pieces are added as starting items.
+        if all(
+            soth_part in self.placement_file.starting_items
+            for soth_part in SONG_OF_THE_HERO_PARTS
+        ):
+            self.startitemflags[ITEM_FLAGS[SONG_OF_THE_HERO]] = 1
 
-        # Add storyflags for tablets
-        for item in self.placement_file.starting_items:
-            if item in START_ITEM_STORYFLAGS:
-                self.startstoryflags.append(START_ITEM_STORYFLAGS[item])
+        # Give the completed triforce storyflag if all 3 triforce pieces are added as starting items.
+        if all(
+            triforce_piece in self.placement_file.starting_items
+            for triforce_piece in TRIFORCES
+        ):
+            self.startstoryflags.append(ITEM_STORY_FLAGS[COMPLETE_TRIFORCE])
+
+        if all(
+            key_piece in self.placement_file.starting_items for key_piece in KEY_PIECES
+        ):
+            self.startstoryflags.append(ITEM_STORY_FLAGS[FULL_ET_KEY])
+
+        # Add starting story and item flags.
+        start_item_counts = Counter(
+            map(strip_item_number, self.placement_file.starting_items)
+        )
+        # health is calculated in quarter hearts
+        starting_health = 6 * 4
+        starting_health += start_item_counts.pop(HEART_CONTAINER, 0) * 4
+        starting_health += start_item_counts.pop(HEART_PIECE, 0)
+
+        self.starting_full_hearts = (starting_health // 4) * 4
+        self.startitemflags[ITEM_COUNT_FLAGS[HEART_PIECE]] = starting_health % 4
+
+        ALL_DUNGEON_LIKE = ALL_DUNGEONS + [
+            LANAYRU_CAVES
+        ]  # [SV, ET, LMF, AC, SSH, FS, SK, LANAYRU_CAVES]
+        assert len(ALL_DUNGEON_LIKE) == 8
+        self.startdungeonflags = []
+
+        for i, dungeon in enumerate(ALL_DUNGEON_LIKE):
+            dungeonbyte = 0
+            if start_item_counts.pop(f"{dungeon} Map", 0) >= 1:
+                dungeonbyte |= 0x02
+            if start_item_counts.pop(f"{dungeon} Boss Key", 0) >= 1:
+                dungeonbyte |= 0x80
+            count = start_item_counts.pop(f"{dungeon} Small Key", 0)
+            dungeonbyte |= count << 2
+            self.startdungeonflags.append(dungeonbyte)
+
+        for item, count in start_item_counts.items():
+            # item flags
+            if (entry := ITEM_FLAGS.get(item)) is not None:
+                # tuple means add all flags
+                if isinstance(entry, tuple):
+                    for flag in entry:
+                        self.startitemflags[flag] = 1
+                # list means progressive item, only add flags up to the start count
+                elif isinstance(entry, list):
+                    for flag in entry[:count]:
+                        self.startitemflags[flag] = 1
+                elif isinstance(entry, int):
+                    self.startitemflags[entry] = 1
+                else:
+                    raise ValueError(f"Expected list, tuple or int, got : {entry}.")
+            # story flags
+            if (entry := ITEM_STORY_FLAGS.get(item)) is not None:
+                if isinstance(entry, tuple):
+                    self.startstoryflags.extend(entry)
+                elif isinstance(entry, list):
+                    self.startstoryflags.extend(entry[:count])
+                elif isinstance(entry, int):
+                    self.startstoryflags.append(entry)
+                else:
+                    raise ValueError(f"Expected list, tuple or int, got : {entry}.")
+            if item == PROGRESSIVE_POUCH:
+                self.startstoryflags.append(30)  # Vanilla storyflag for pouch.
+            if (ammo_flag_count := START_AMMO_COUNTS.get(item)) is not None:
+                # to fill up ammo for items that use it
+                self.startitemflags[ammo_flag_count[0]] = ammo_flag_count[1]
+            if (counter := ITEM_COUNT_FLAGS.get(item)) is not None:
+                if item == PROGRESSIVE_POUCH:
+                    actual_count = count - 1
+                else:
+                    actual_count = count
+                self.startitemflags[counter] = actual_count
 
     def add_required_dungeon_patches(self):
         # Add required dungeon patches to eventpatches
         DUNGEON_TO_EVENTFILE = {
-            "Skyview": "201-ForestD1",
-            "Earth Temple": "301-MountainD1",
-            "Lanayru Mining Facility": "400-Desert",
-            "Ancient Cistern": "202-ForestD2",
-            "Sandship": "401-DesertD2",
-            "Fire Sanctuary": "304-MountainD2",
+            SV: "201-ForestD1",
+            ET: "301-MountainD1",
+            LMF: "400-Desert",
+            AC: "202-ForestD2",
+            SSH: "401-DesertD2",
+            FS: "304-MountainD2",
         }
 
         REQUIRED_DUNGEON_STORYFLAGS = [902, 903, 926, 927, 928, 929]
@@ -1552,41 +1962,95 @@ class GamePatcher:
         ]:
             self.startstoryflags.append(required_dungeon_storyflag)
 
+    def add_fi_text_patches(self):
+        colourful_dungeon_text = [
+            DUNGEON_COLORS[dungeon] + dungeon + ">>"
+            for dungeon in self.placement_file.required_dungeons
+        ]
+
+        required_dungeon_count = len(self.placement_file.required_dungeons)
         # patch required dungeon text in
         if required_dungeon_count == 0:
             required_dungeons_text = "No Dungeons"
         elif required_dungeon_count == 6:
             required_dungeons_text = "All Dungeons"
-        elif required_dungeon_count < 4:
-            required_dungeons_text = "Required Dungeons:\n" + (
-                "\n".join(self.placement_file.required_dungeons)
-            )
+        elif required_dungeon_count < 5:
+            required_dungeons_text = "\n".join(colourful_dungeon_text)
         else:
-            required_dungeons_text = "Required: " + ", ".join(
-                self.placement_file.required_dungeons
-            )
+            required_dungeons_text = break_lines(", ".join(colourful_dungeon_text), 44)
 
-            # try to fit the text in as few lines as possible, breaking up at spaces if necessary
-            cur_line = ""
-            combined = ""
-
-            for part in required_dungeons_text.split(" "):
-                if len(cur_line + part) > 27:  # limit of one line
-                    combined += cur_line + "\n"
-                    cur_line = part + " "
-                else:
-                    cur_line += part + " "
-            combined += cur_line
-            required_dungeons_text = combined.strip()
-
-        self.eventpatches["107-Kanban"].append(
+        self.eventpatches["006-8KenseiNormal"].append(
             {
-                "name": "Knight Academy Billboard text",
-                "type": "textpatch",
-                "index": 18,
+                "name": "Fi Required Dungeon Text",
+                "type": "textadd",
+                "unk1": 2,
                 "text": required_dungeons_text,
             }
         )
+
+        fi_objective_text = next(
+            filter(
+                lambda x: x["name"] == "Fi Objective Text",
+                self.eventpatches["006-8KenseiNormal"],
+            )
+        )
+        fi_objective_text["text"] = fi_objective_text["text"].replace(
+            "{required_sword}", self.placement_file.options["got-sword-requirement"]
+        )
+
+        # dungeon status text for Fi
+        for dungeon_index, dungeon in enumerate(ALL_DUNGEONS):
+            self.eventpatches["006-8KenseiNormal"].append(
+                {
+                    "name": f"{dungeon} Status Values Command Call",
+                    "type": "flowadd",
+                    "flow": {
+                        "type": "type3",
+                        "next": f"Display {dungeon} Status Text",
+                        "param1": DUNGEONFLAG_INDICES[dungeon],
+                        "param2": DUNGEON_COMPLETE_STORYFLAGS[dungeon]
+                        if dungeon in self.placement_file.required_dungeons
+                        else -1,
+                        "param3": 71,
+                    },
+                }
+            )
+
+            self.eventpatches["006-8KenseiNormal"].append(
+                {
+                    "name": f"Display {dungeon} Status Text",
+                    "type": "flowadd",
+                    "flow": {
+                        "type": "type1",
+                        "next": f"{ALL_DUNGEONS[dungeon_index + 1]} Status Values Command Call"
+                        if dungeon_index < 6
+                        else -1,
+                        "param3": 68,
+                        "param4": f"{dungeon} Status Text",
+                    },
+                }
+            )
+
+            if dungeon in REGULAR_DUNGEONS:
+                self.eventpatches["006-8KenseiNormal"].append(
+                    {
+                        "name": f"{dungeon} Status Text",
+                        "type": "textadd",
+                        "unk1": 2,
+                        "text": f"{DUNGEON_COLORS[dungeon] + dungeon}>>: <string arg2> \nSmall Keys: <numeric arg0> \nBoss Key: <string arg0> \nDungeon Map: <string arg1>"
+                        if dungeon != ET
+                        else f"{DUNGEON_COLORS[dungeon] + dungeon}>>: <string arg2> \nKey Pieces: <numeric arg0> \nBoss Key: <string arg0> \nDungeon Map: <string arg1>",
+                    }
+                )
+            else:
+                self.eventpatches["006-8KenseiNormal"].append(
+                    {
+                        "name": "Sky Keep Status Text",
+                        "type": "textadd",
+                        "unk1": 2,
+                        "text": f"{DUNGEON_COLORS[SK]}Sky Keep>>\nSmall Keys: <numeric arg0>\n\nDungeon Map: <string arg1>",
+                    }
+                )
 
     def add_trial_hint_patches(self):
         def find_event(filename, name):
@@ -1633,7 +2097,7 @@ class GamePatcher:
             inventory_text,
             hintname,
         ) in trial_checks.items():
-            useful_text = self.placement_file.trial_hints[hintname]
+            [useful_text] = self.placement_file.hints[hintname]
             item_get_patch = find_event("003-ItemGet", obtain_text_name)
             item_get_patch["text"] += " " + useful_text
             item_get_patch["text"] = break_lines(item_get_patch["text"], 44)
@@ -1647,11 +2111,14 @@ class GamePatcher:
             )
 
     def add_impa_hint(self):
-        sot_region = "Stone of Trials not placed monkaS"
-        for location in self.placement_file.item_locations.keys():
-            item = self.placement_file.item_locations[location]
-            if item == "Stone of Trials":
-                sot_region = Logic.split_location_name_by_zone(location)[0]
+        # Skip over Impa SoT hint if SoT is a starting item.
+        if ITEM_FLAGS[STONE_OF_TRIALS] in self.startitemflags:
+            return
+
+        loc = {v: k for k, v in self.placement_file.item_locations.items()}[
+            STONE_OF_TRIALS
+        ]
+        region = self.areas.checks[loc]["hint_region"]
         self.eventpatches["502-CenterFieldBack"].append(
             {
                 "name": "Past Impa SoT Hint",
@@ -1659,13 +2126,13 @@ class GamePatcher:
                 "index": 6,
                 "text": break_lines(
                     f"Do not fear for <b<Zelda>>. I will watch over her here. Go now to "
-                    f"<b<{sot_region}>>. The <r<item you need to fulfill your destiny>> is there."
+                    f"<b<{region}>>. The <r<item you need to fulfill your destiny>> is there."
                 ),
             }
         )
 
     def add_stone_hint_patches(self):
-        for hintname, hintdef in self.rando.stonehint_definitions.items():
+        for hintname, hintdef in self.areas.gossip_stones.items():
             self.add_patch_to_event(
                 hintdef["textfile"],
                 {
@@ -1673,7 +2140,7 @@ class GamePatcher:
                     "type": "textpatch",
                     "index": hintdef["textindex"],
                     "text": break_and_make_multiple_textboxes(
-                        self.placement_file.gossip_stone_hints[hintname]
+                        self.placement_file.hints[hintname]
                     ),
                 },
             )
@@ -1745,23 +2212,13 @@ class GamePatcher:
         )
 
     def add_keysanity(self):
-        DUNGEON_COLORS = {
-            "Skyview": "<g<",
-            "Earth Temple": "<r+<",
-            "Lanayru Mining Facility": "<y<",
-            "Ancient Cistern": "<b<",
-            "Fire Sanctuary": "<r<",
-            "Sandship": "<y+<",
-            "Sky Keep": "<s<",
-            "Lanayru Caves": "<ye<",
-        }
         KEYS_DUNGEONS = [
             # ('Skyview', 200), # already has a textbox
-            ("Lanayru Mining Facility", 201),
-            ("Ancient Cistern", 202),
-            ("Fire Sanctuary", 203),
-            ("Sandship", 204),
-            ("Sky Keep", 205),
+            (LMF, 201),
+            (AC, 202),
+            (FS, 203),
+            (SSH, 204),
+            (SK, 205),
             ("Lanayru Caves", 206),
         ]
         self.eventpatches["003-ItemGet"].append(
@@ -1781,7 +2238,7 @@ class GamePatcher:
                     "unk1": 5,
                     "unk2": 1,
                     "text": f"You got a {dungeon_and_color} Small Key!"
-                    if dungeon != "Lanayru Mining Facility"
+                    if dungeon != LMF
                     else f"You got a {dungeon_and_color} Small\nKey!",
                 }
             )
@@ -1808,13 +2265,13 @@ class GamePatcher:
                 }
             )
         MAPS_DUNGEONS = [
-            ("Skyview", 207),
-            ("Earth Temple", 208),
-            ("Lanayru Mining Facility", 209),
-            ("Ancient Cistern", 210),
-            ("Fire Sanctuary", 211),
-            ("Sandship", 212),
-            ("Sky Keep", 213),
+            (SV, 207),
+            (ET, 208),
+            (LMF, 209),
+            (AC, 210),
+            (FS, 211),
+            (SSH, 212),
+            (SK, 213),
         ]
         for dungeon, itemid in MAPS_DUNGEONS:
             dungeon_and_color = DUNGEON_COLORS[dungeon] + dungeon + ">>"
@@ -1864,7 +2321,7 @@ class GamePatcher:
             "name": "BLasBos",
         }
 
-        for idx in range(1, self.rando.options["demise-count"]):
+        for idx in range(1, self.options["demise-count"]):
             demise = orig_demise.copy()
             demise["posy"] = 1000 * idx
             self.add_patch_to_stage(
@@ -1914,10 +2371,11 @@ class GamePatcher:
                 else:
                     params.extend([ITEM_PARAM_MAP[item_type]] * len(objlist))
 
-            self.rando.rng.shuffle(locs)
+            rng = random.Random(self.placement_file.trial_object_seed)
+            rng.shuffle(locs)
             # print(locs)
 
-            for ((id, room), (params, actor_name)) in zip(
+            for (id, room), (params, actor_name) in zip(
                 locs,
                 params,
             ):
@@ -1954,6 +2412,23 @@ class GamePatcher:
                 bzs["LYSE"] = layer_override
                 modified = True
         next_id = highest_objid(bzs) + 1
+        for pathadd in filter(
+            lambda x: x["type"] == "pathadd" and x.get("room", None) == room,
+            stagepatches,
+        ):
+            new_path = DEFAULT_PATH.copy()
+            next_pnt = len(bzs["PNT "])
+            new_path["pnt_start_idx"] = next_pnt
+            new_path["pnt_total_count"] = len(pathadd["pnts"])
+            bzs["PATH"].append(new_path)
+            pnts_to_add = pathadd["pnts"]
+            for pnt in pnts_to_add:
+                new_pnt = DEFAULT_PNT.copy()
+                for key, val in pnt.items():
+                    if key in new_pnt:
+                        new_pnt[key] = val
+                bzs["PNT "].append(new_pnt)
+            modified = True
         for objadd in filter(
             lambda x: x["type"] == "objadd" and x.get("room", None) == room,
             stagepatches,
@@ -1969,6 +2444,8 @@ class GamePatcher:
                 new_obj = DEFAULT_OBJ.copy()
             elif objtype == "SCEN":
                 new_obj = DEFAULT_SCEN.copy()
+            elif objtype == "PLY ":
+                new_obj = DEFAULT_PLY.copy()
             elif objtype == "AREA":
                 new_obj = DEFAULT_AREA.copy()
             else:
@@ -2079,7 +2556,7 @@ class GamePatcher:
             objlist.append(name_to_add)
 
         # patch randomized items on stages
-        for objname, layer, objid, itemid in self.rando_stagepatches.get(
+        for objname, layer, objid, itemid, dowsing in self.rando_stagepatches.get(
             (stage, room), []
         ):
             modified = True
@@ -2089,6 +2566,10 @@ class GamePatcher:
                     itemid,
                     objid,
                     self.placement_file.trial_connections,
+                )
+            elif objname == "Tbox" or objname == "TBox":
+                RANDO_PATCH_FUNCS[objname](
+                    bzs["LAY "][f"l{layer}"], itemid, objid, dowsing
                 )
             else:
                 RANDO_PATCH_FUNCS[objname](bzs["LAY "][f"l{layer}"], itemid, objid)
@@ -2234,8 +2715,8 @@ class GamePatcher:
                 msbf,
                 136,
                 [77, 608, 75, 78, 74, 73],
-                PROGRESSIVE_SWORD_ITEMIDS,
-                PROGRESSIVE_SWORD_STORYFLAGS,
+                ITEM_FLAGS[PROGRESSIVE_SWORD],
+                ITEM_STORY_FLAGS[PROGRESSIVE_SWORD],
             )
             # make progressive beetle - msbf, base item, item text, item id, storyflags
             make_progressive_item(
@@ -2321,7 +2802,7 @@ class GamePatcher:
             return None
 
     def do_dol_patch(self):
-        self.rando.progress_callback("patching main.dol...")
+        self.progress_callback("patching main.dol...")
         # patch main.dol
         dol_bytes = BytesIO(
             (
@@ -2338,8 +2819,10 @@ class GamePatcher:
             start_flags_write.write(struct.pack(">H", flag))
         start_flags_write.write(bytes.fromhex("FFFF"))
         # itemflags
-        for flag in self.startitemflags:
-            start_flags_write.write(struct.pack(">H", flag))
+        for flag, count in self.startitemflags.items():
+            assert flag < 0x1FF
+            assert count < 0x7F
+            start_flags_write.write(struct.pack(">H", (count << 9) | flag))
         start_flags_write.write(bytes.fromhex("FFFF"))
         # sceneflags
         for flagregion, flags in (
@@ -2348,7 +2831,7 @@ class GamePatcher:
             flagregionid = FLAGINDEX_NAMES.index(flagregion)
             for flag in flags:
                 if not isinstance(flag, int):  # it's a dict with onlyif and flag
-                    if not Logic.check_static_option_req(
+                    if not check_static_option_req(
                         flag["onlyif"], self.placement_file.options
                     ):
                         # flag should not be set according to options
@@ -2356,10 +2839,22 @@ class GamePatcher:
                     flag = flag["flag"]
                 start_flags_write.write(struct.pack(">BB", flagregionid, flag))
         start_flags_write.write(bytes.fromhex("FFFF"))
+        # dungeonflags
+        start_flags_write.write(bytes(self.startdungeonflags))
+        # Starting rupee count.
+        start_flags_write.write(struct.pack(">H", 0))
+        # Start health.
+        start_flags_write.write(struct.pack(">B", self.starting_full_hearts))
+        # start interface choice
+        interface_choice_num = ["Standard", "Light", "Pro"].index(
+            self.placement_file.options["interface"]
+        )
+        start_flags_write.write(struct.pack(">B", interface_choice_num))
+
         startflag_byte_count = len(start_flags_write.getbuffer())
         if startflag_byte_count > 512:
             raise Exception(
-                f"not enough space to fit in all of the startflags, need {startflag_byte_count}, but only 512 bytes available"
+                f"Not enough space to fit in all of the startflags, need {startflag_byte_count}, but only 512 bytes available."
             )
         # print(f"total startflag byte count: {startflag_byte_count}")
         dol.write_data_bytes(0x804EE1B8, start_flags_write.getbuffer())
@@ -2370,7 +2865,7 @@ class GamePatcher:
         )
 
     def do_rel_patch(self):
-        self.rando.progress_callback("patching rels...")
+        self.progress_callback("patching rels...")
         rel_arc = U8File.parse_u8(
             BytesIO(
                 (
@@ -2437,6 +2932,7 @@ class GamePatcher:
         }
         SHOP_LIST_OFFSET = 0x6D8C
         ENTRY_SIZE = 0x54
+
         for shopindex, (itemid, arcname, modelname) in self.shoppatches.items():
             (
                 data_bytes,
@@ -2445,29 +2941,58 @@ class GamePatcher:
                 SHOP_LIST_OFFSET
             )
             current_shop_entry_offset = shop_list_offset + ENTRY_SIZE * shopindex
-            present_scale = shop_present_scale_patches.get(shopindex, None)
-            if not present_scale is None:
-                write_float(data_bytes, current_shop_entry_offset + 0x0, present_scale)
+
+            # Buy Decide Scale
+            write_float(
+                data_bytes,
+                current_shop_entry_offset + 0x0,
+                SHOP_BUY_DECIDE_SCALE.get(itemid, DEFAULT_BUY_DECIDE_SCALE),
+            )
+
+            # Put Scale
+            write_float(
+                data_bytes,
+                current_shop_entry_offset + 0x4,
+                SHOP_PUT_SCALE.get(itemid, DEFAULT_PUT_SCALE),
+            )
+
+            # Target Height Offset
             target_height = shop_target_height_patches.get(shopindex, None)
             if not target_height is None:
                 write_float(data_bytes, current_shop_entry_offset + 0x8, target_height)
-            # item id
+
+            # Item ID
             write_u16(data_bytes, current_shop_entry_offset + 0xC, itemid)
 
+            # Price
             shop_price = shop_price_patches.get(shopindex, None)
             if not shop_price is None:
                 write_u16(data_bytes, current_shop_entry_offset + 0xE, shop_price)
 
+            # Entrypoint
             shop_entrypoint = shop_entrypoint_patches.get(shopindex, None)
             if not shop_entrypoint is None:
                 write_u16(data_bytes, current_shop_entry_offset + 0x10, shop_entrypoint)
 
+            # Next Item
             shop_item_next = shop_item_next_patches.get(shopindex, None)
             if not shop_item_next is None:
                 write_u16(data_bytes, current_shop_entry_offset + 0x12, shop_item_next)
 
+            # Arcname
             write_str(data_bytes, current_shop_entry_offset + 0x16, arcname, 30)
+
+            # Modelname
             write_str(data_bytes, current_shop_entry_offset + 0x34, modelname, 30)
+
+            # Height
+            write_float(
+                data_bytes,
+                current_shop_entry_offset + 0x4C,
+                HEIGHT_OFFSETS.get(itemid, DEFAULT_HEIGHT_OFFSET),
+            )
+
+            # Storyflag
             sold_out_storyflag = sold_out_storyflag_patches.get(shopindex, None)
             if not sold_out_storyflag is None:
                 # normally not part of the struct, but the last 2 bytes of the modelname aren't used, so use them for storyflags
@@ -2477,22 +3002,36 @@ class GamePatcher:
 
     def do_patch_title_screen_logo(self):
         # patch title screen logo
-        actual_data = (
-            self.rando.actual_extract_path
+        title_2D_path = (
+            self.modified_extract_path
             / "DATA"
             / "files"
             / "US"
             / "Layout"
             / "Title2D.arc"
+        )
+        data = title_2D_path.read_bytes()
+        arc = U8File.parse_u8(BytesIO(data))
+        logodata = (self.rando_root_path / "assets" / "logo.tpl").read_bytes()
+        arc.set_file_data("timg/tr_wiiKing2Logo_00.tpl", logodata)
+        title_2D_path.write_bytes(arc.to_buffer())
+
+    def do_patch_custom_dowsing_images(self):
+        # patch propeller dowsing image; used for chest dowsing
+        do_button_path = (
+            self.modified_extract_path
+            / "DATA"
+            / "files"
+            / "US"
+            / "Layout"
+            / "DoButton.arc"
+        )
+        data = do_button_path.read_bytes()
+        arc = U8File.parse_u8(BytesIO(data))
+        chestdata = (self.rando_root_path / "assets" / "chest_image.tpl").read_bytes()
+        arc.set_file_data("timg/tr_dauzTarget_10.tpl", chestdata)
+        sandshipdata = (
+            self.rando_root_path / "assets" / "sandship_image.tpl"
         ).read_bytes()
-        actual_arc = U8File.parse_u8(BytesIO(actual_data))
-        logodata = (self.rando.rando_root_path / "assets" / "logo.tpl").read_bytes()
-        actual_arc.set_file_data("timg/tr_wiiKing2Logo_00.tpl", logodata)
-        (
-            self.rando.modified_extract_path
-            / "DATA"
-            / "files"
-            / "US"
-            / "Layout"
-            / "Title2D.arc"
-        ).write_bytes(actual_arc.to_buffer())
+        arc.set_file_data("timg/tr_dauzTarget_18.tpl", sandshipdata)
+        do_button_path.write_bytes(arc.to_buffer())

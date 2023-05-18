@@ -7,8 +7,65 @@ rlwinm r0,r0,28,30,31 ; r0 = (r0 >> 4) & 3
 stb r0, 0x1209(r28) ; store subtype
 b 0x80269554
 
+.org 0x80115cf8 ; non-final text box
+bl textbox_a_pressed_or_b_held ; change button function
+
+.org 0x80115f98 ; final text box
+bl textbox_a_pressed_or_b_held ; change button function
+
+; Make all skippable event be skippable without waiting 4 frames
+.org 0x800a0968 ; if 2 button is being held
+li r3, 1 ; return true instead of waiting 4 frames
+b 0x800a09a0
+
+; Show all text in a textbox at once
 .org 0x80115A04 ; in some function that is text advancing related
 li r4, 1 ; enables instant text
+
+; Fast textboxes advancing
+.org 0x8010f5f4 ; checks what some textbox state stuff
+b 0x8010f654 ; branch to (unused??) block that sets textboxes to be clearable
+
+; Fast textbox appearing - makes textbox blur go weird
+.org 0x8011593c
+nop
+
+; Remove textbox blur
+.org 0x800b3370
+blr
+
+; Remove Fi text janky appearing
+; (equivalent to removing textbox blur for Fi text)
+.org 0x80120c60
+blr
+
+; remove text pauses
+; copies instruction for just ignoring a command
+.org 0x800b2774
+lhz r3, 0x147a(r26)
+addi r0, r3, 1
+sth r0, 0x147a(r26)
+
+; remove sword item from sword pedestal and give new story flag 951
+.org 0x801d45ec
+bl set_goddess_sword_pulled_scene_flag
+
+; Sword pedestal textbox removal
+.org 0x801d4b20
+li r5, -1
+
+; Change starting location to remove intro cutscenes
+.org 0x801bb960 ; Change starting stage
+subi r3, r13, 0x5b44 ; previously 0x601c (F405 -> F001r)
+
+.org 0x801bb964 ; Change starting roomID
+li r4, 1 ; Room 0 -> 1
+
+.org 0x801bb968 ; Change starting layer
+li r5, 3 ; Layer 0 -> 3
+
+.org 0x801bb96c ; Change starting entrance
+li r6, 5 ; Entrance 0 -> 5
 
 ; patch to not update sword model when getting an upgrade
 .org 0x8005e2f0
@@ -64,6 +121,10 @@ blr
 .org 0x8024d438
 bl fix_freestanding_item_y_offset
 
+; allow triforces to fall down when bonked
+.org 0x8024edbc
+li r3, 0
+
 ; don't treat faron statues differently after levias
 .org 0x80142078
 b 0x801420d8
@@ -95,6 +156,10 @@ stw r3, 0x8A0(r4) ;text counter 1
 lwz r0, 0x24(r1) ; instruction that was overwritten
 b 0x802539e0
 
+; change top priority dowsing icon to sandship
+.org 0x800983ec ; checks zelda dowsing
+b 0x80098428 ; checks sandship dowsing
+
 ; change storyflag that disables sandship dowsing
 ; to bombed sandship
 .org 0x80097b18
@@ -121,7 +186,7 @@ nop
 
 ; after the function that starts the new file, also process the startflags
 .org 0x801bb9bc
-b processStartflags
+b process_startflags
 
 ; always allocate keyboard arcs to the end of the heap, to make sure
 ; faron BiT doesn't crash
@@ -177,6 +242,36 @@ stw r28, 0x2f8(r6) ; currentTextFileNumber
 ; always use non trial mode when using loadzones
 .org 0x80242060
 li r7, 0 ; force non trial
+
+; treat all Kikwi's as "found" in non main faron stages
+.org 0x8004ec24
+; make sure this branch is always taken, should always be the case anyways
+b 0x8004ec30
+li r3, 1 ; code below jumps here when not in faron main
+.org 0x8004ec44
+lis r4, SPAWN_SLAVE+2@ha
+lhz r4, SPAWN_SLAVE+2@l(r4)
+cmplwi r4, 0x3030 ; '00', we assume all stages like XX00 are faron main
+bne 0x8004ec28 ; if not faron main, treat this kikwi as found
+
+; this is to remove code to be overwritten in gamepatches.py (around line 1260) - Damage multiplier
+.org 0x801e3468
+nop
+nop
+nop
+
+;remove heromode check for air meter
+.org 0x801c5d8c
+nop
+nop
+nop
+
+; branch to function for rando custom text event flows (if no other matches)
+.org 0x801aff2c
+bgt 0x801b0788
+.org 0x801b0788
+bl rando_text_command_handler
+b 0x801b0764 ; return to original function
 
 .close
 
@@ -297,6 +392,16 @@ li r4, 0x399
 
 .org 0xD64
 li r4, 0x39A
+
+; this usually delays starting the trial finish event until the
+; tear display is ready, which can softlock so skip the check,
+; which seems to only have a visual impact *at worst*
+;
+; instead check if link finished his walk, otherwise it can still softlock
+;
+; preferably, the tear display should be fixed, but this works for now
+.org 0x1A9c
+lbz r0, 0xc90(r30)
 
 .close
 
@@ -452,7 +557,7 @@ bl set_first_time_cs_already_watched ; in a branch that is not taken for the tim
 .open "d_a_obj_sw_sword_beamNP.rel"
 ; function that checks for your current sword, so that you can't activate the crest
 .org 0x25B0
-bge 0x2650 ; instead of only checking for whitesword for the last reward, check for at least that
+bge 0x2650 ; instead of only checking for White Sword for the last reward, check for at least that
 
 .org 0xD5C ; should handle the isle of songs CS starting, overwrite it with a jump to the custom function, that gives the items
 mr r3, r31
@@ -522,4 +627,78 @@ li r4, 0x399
 
 .org 0xAB4
 li r4, 0x39A
+.close
+
+.open "d_a_obj_bellNP.rel"
+.org 0xCE0 ; function called when transitioning to the state after dropping rupee
+b try_end_pumpkin_archery
+.close
+
+.open "d_a_obj_light_lineNP.rel"
+.org 0xDAC
+bl check_activated_storyflag
+.close
+
+; Force Sword in pedestal
+.open "d_a_obj_seat_swordNP.rel"
+.org 0x10F4
+li r4, 951 ; story flag for raising sword
+.close
+
+.open "d_a_obj_bridge_buildingNP.rel"
+; .org 0x80d6a858
+; change frames for bridge to extend
+.org 0x6E8
+li r4, 0x1b
+
+; .org 0x80d6b7e0
+; max extension speed
+.org 0x1674
+.float 70.0
+
+; .org 0x80d6ad30
+; change frames for bridge to extend 2
+.org 0xBC0
+li r4, 0x1b
+
+; .org 0x80d6ac0c
+; don't wait on event when there is no event
+.org 0xA9C
+beq 0xAF0 ; 0x80d6ac60
+.close
+
+.open "d_t_player_restartNP.rel"
+.org 0x458
+; see the custom function for an explanation
+bl only_set_flag_conditionally
+.org 0x49C
+rlwinm. r0, r0, 0, 23, 23 ; check & 0x100 now
+.close
+
+.open "d_a_obj_toD3_stone_figureNP.rel"
+; .org 0x80f35a18
+.org 0x8E8
+b set_sot_placed_flag
+.close
+
+; make sure groose stays at his groosenator after finishing faron SotH
+.open "d_a_npc_bbrvlNP.rel"
+; .org 0x80992b24
+.org 0x4214
+li r3, 0 ; act as if storyflag 16 is not set
+; .org 0x80992870
+.org 0x3f60
+li r3, 0 ; act as if storyflag 16 is not set
+; .org 0x80992610
+.org 0x3d00
+li r3, 0 ; act as if storyflag 16 is not set
+; .org 0x8099fe74
+.org 0x11564
+li r3, 0 ; act as if storyflag 16 is not set
+; .org 0x8099ff1c
+.org 0x1160c
+li r3, 0 ; act as if storyflag 16 is not set
+; .org 0x809a0528
+.org 0x11c18
+li r3, 0 ; act as if storyflag 16 is not set
 .close

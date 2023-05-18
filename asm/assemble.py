@@ -20,7 +20,7 @@ if sys.platform == "win32":
 else:
     if not "DEVKITPPC" in os.environ:
         raise Exception(
-            r"Could not find devkitPPC. Path to devkitPPC should be in the DEVKITPPC env var"
+            r"Could not find devkitPPC. Path to devkitPPC should be in the DEVKITPPC env var."
         )
     devkitbasepath = os.environ.get("DEVKITPPC") + "/bin"
 
@@ -33,7 +33,7 @@ def get_bin(name):
 
 if not os.path.isfile(get_bin("powerpc-eabi-as")):
     raise Exception(
-        r"Failed to assemble code: Could not find devkitPPC. devkitPPC should be installed to: C:\devkitPro\devkitPPC"
+        r"Failed to assemble code: Could not find devkitPPC. devkitPPC should be installed to: C:\devkitPro\devkitPPC."
     )
 
 # Allow yaml to dump OrderedDicts for the diffs.
@@ -183,7 +183,7 @@ def handle_sda_instr(line: str) -> str:
     address = original_symbols["main.dol"][lbl]
     if address < SDA_13_MIN or address > SDA_13_MAX:
         raise Exception(
-            f"Relocation failed, SDA for symbol {elf_symbol.name} out of range!"
+            f"Relocation failed, SDA for symbol {elf_symbol.name} out of range."
         )
     if instr == "la":
         return f"addi {reg}, r13, {address-SDA_13_BASE}"
@@ -194,6 +194,10 @@ def handle_sda_instr(line: str) -> str:
 try:
     with open("linker.ld") as f:
         linker_script = f.read()
+
+    # add main dol symbols
+    for dol_sym, addr in original_symbols["main.dol"].items():
+        linker_script += f"{dol_sym} = 0x{addr:X};\n"
 
     with open("asm_macros.asm") as f:
         asm_macros = f.read()
@@ -237,7 +241,7 @@ try:
                 relative_file_path = open_file_match.group(1)
                 if most_recent_file_path or most_recent_org_offset is not None:
                     raise Exception(
-                        "File %s was not closed before opening new file %s"
+                        "File %s was not closed before opening new file %s."
                         % (most_recent_file_path, relative_file_path)
                     )
                 if relative_file_path not in code_chunks[patch_name]:
@@ -248,7 +252,7 @@ try:
                 continue
             elif org_match:
                 if not most_recent_file_path:
-                    raise Exception("Found .org directive when no file was open")
+                    raise Exception("Found .org directive when no file was open.")
 
                 org_offset = int(org_match.group(1), 16)
                 if org_offset >= free_space_start_offsets[most_recent_file_path]:
@@ -262,7 +266,7 @@ try:
                 continue
             elif org_symbol_match:
                 if not most_recent_file_path:
-                    raise Exception("Found .org directive when no file was open")
+                    raise Exception("Found .org directive when no file was open.")
 
                 org_symbol = org_symbol_match.group(1)
 
@@ -299,12 +303,12 @@ try:
                 if line[0] == ";":
                     # Comment
                     continue
-                raise Exception("Found code when no file was open")
+                raise Exception("Found code when no file was open.")
             if most_recent_org_offset is None:
                 if line[0] == ";":
                     # Comment
                     continue
-                raise Exception("Found code before any .org directive")
+                raise Exception("Found code before any .org directive.")
 
             if "@sda21" in line:
                 line = handle_sda_instr(line)
@@ -314,11 +318,11 @@ try:
             )
 
         if not code_chunks[patch_name]:
-            raise Exception("No code found")
+            raise Exception("No code found.")
 
         if most_recent_file_path or most_recent_org_offset is not None:
             raise Exception(
-                "File %s was not closed before the end of the file"
+                "File %s was not closed before the end of the file."
                 % most_recent_file_path
             )
 
@@ -362,17 +366,19 @@ try:
                     )
 
             for org_offset_or_symbol, temp_asm in code_chunks_for_file_sorted:
+                is_custom_function = False
                 if isinstance(org_offset_or_symbol, int):
                     org_offset = org_offset_or_symbol
                 else:
                     org_symbol = org_offset_or_symbol
                     free_space_match = re.search(r"@FreeSpace_\d+", org_symbol)
                     if free_space_match:
+                        is_custom_function = True
                         org_offset = next_free_space_offsets[file_path]
                     else:
                         if org_symbol not in custom_symbols_for_file:
                             raise Exception(
-                                ".org specified an invalid custom symbol: %s"
+                                ".org specified an invalid custom symbol: %s."
                                 % org_symbol
                             )
                         org_offset = custom_symbols_for_file[org_symbol]
@@ -406,7 +412,7 @@ try:
                 print()
                 result = call(command)
                 if result != 0:
-                    raise Exception("Assembler call failed")
+                    raise Exception("Assembler call failed.")
 
                 bin_name = os.path.join(
                     temp_dir, "tmp_" + patch_name + "_%08X.bin" % org_offset
@@ -424,17 +430,28 @@ try:
                     "-o",
                     bin_name,
                 ]
+                # add custom functions from rust
+                if is_custom_function and file_path == "main.dol":
+                    result = call(
+                        ["cargo", "build", "--release"], cwd="./custom-functions"
+                    )
+                    if result != 0:
+                        raise Exception("Building rust functions failed.")
+                    command.append(
+                        "./custom-functions/target/powerpc-unknown-eabi/release/libcustom_functions.a"
+                    )
                 if file_path.endswith(".rel"):
                     # Output an ELF with relocations for RELs.
                     command += ["--relocatable"]
                 else:
                     # For main, just output the raw binary code, not an ELF.
                     command += ["--oformat", "binary"]
+                    pass
                 print(" ".join(command))
                 print()
                 result = call(command)
                 if result != 0:
-                    raise Exception("Linker call failed")
+                    raise Exception("Linker call failed.")
 
                 # Keep track of custom symbols so they can be passed in the linker script to future assembler calls.
                 with open(map_name) as f:
@@ -448,8 +465,10 @@ try:
                             if not line:
                                 break
                             match = re.search(
-                                r" +0x(?:00000000)?([0-9a-f]{8}) +(\S+)", line
+                                r" +0x(?:00000000)?([0-9a-f]{8}) +([a-zA-Z]\S+)", line
                             )
+                            if not match:
+                                continue
                             symbol_address = int(match.group(1), 16)
                             symbol_name = match.group(2)
                             custom_symbols_for_file[symbol_name] = symbol_address
@@ -469,7 +488,7 @@ try:
 
                 if org_offset in diffs[file_path]:
                     raise Exception(
-                        "Duplicate .org directive within a single asm patch: %X"
+                        "Duplicate .org directive within a single asm patch: %X."
                         % org_offset
                     )
 
@@ -487,7 +506,14 @@ try:
 
         diff_path = os.path.join(".", "patch_diffs", patch_name + "_diff.txt")
         with open(diff_path, "w") as f:
-            f.write(yaml.dump(diffs, Dumper=yaml.CDumper, default_flow_style=False))
+            f.write(
+                yaml.dump(
+                    diffs,
+                    Dumper=yaml.CDumper,
+                    default_flow_style=False,
+                    line_break="\n",
+                )
+            )
 
     # Write the custom symbols to a text file.
     # Delete any entries in custom_symbols that have no custom symbols to avoid clutter.
@@ -501,7 +527,10 @@ try:
     with open("./custom_symbols.txt", "w") as f:
         f.write(
             yaml.dump(
-                output_custom_symbols, Dumper=yaml.CDumper, default_flow_style=False
+                output_custom_symbols,
+                Dumper=yaml.CDumper,
+                default_flow_style=False,
+                line_break="\n",
             )
         )
 except Exception as e:

@@ -101,6 +101,9 @@ ipython_config.py
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
+# pdm
+.pdm.toml
+
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
@@ -175,5 +178,13 @@ placement_file_*.json
 # files generated for build
 version-with-git.txt
 
-#settings save file
+# settings save file
 settings.txt
+
+# presets save file
+presets.txt
+
+custom-music/
+
+# temp asm
+*.s

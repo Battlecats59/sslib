@@ -43,77 +43,6 @@ lwz r12, 0x28(r12)
 mtctr r12
 bctr
 
-; replaces the normal boss key get logic with one, that works everywhere
-; datatable for boss key itemid to flagindex
-bosskey_to_flagindex:
-.byte 12; AC
-.byte 15; FS
-.byte 18; SS
-.byte 13; eldin key piece, just use an unused index since this should never happen
-.byte 11; SV
-.byte 14; ET
-.byte 17; LMF
-.align 4
-map_to_flagindex:
-.byte 11 ; SV
-.byte 14 ; ET
-.byte 17 ; LMF
-.byte 12 ; AC
-.byte 15 ; FS
-.byte 18 ; SS
-.byte 20 ; SK
-.align 4
-.global handleBossKeyMapDungeonflag
-handleBossKeyMapDungeonflag:
-stwu r1, -0x10(r1)
-mflr r0
-stw r0, 20(r1)
-stw r31, 12(r1) ; r31 is flagindex of the dungeon, r30 is the mask if it's a map or a boss key
-stw r30, 8(r1)
-addi r4, r3, -25 ; fist boss key
-cmplwi r4, 6
-bgt handle_map ; is not a boss key
-li r30, 0x80
-lis r5, bosskey_to_flagindex@ha
-addi r5, r5, bosskey_to_flagindex@l
-lbzx r31, r4, r5
-b set_dungeonflag
-handle_map:
-addi r4, r3, -207 ; first map
-cmplwi r4, 6
-bgt bkget_func_end ; neither map nor boss key
-li r30, 0x02
-lis r5, map_to_flagindex@ha
-addi r5, r5, map_to_flagindex@l
-lbzx r31, r4, r5
-set_dungeonflag:
-lwz r3, DUNGEONFLAG_MANAGER@sda21(r13)
-lha r0, 2(r3)
-cmpw r0, r31 ; check if dungeon item is for current area
-bne handle_other_area
-lwz r4, 8(r3)
-lhz r0, 0(r4) ; load static dungeonflag that also has the boss key and map flag
-or r0, r0, r30
-sth r0, 0(r4) ; set flag and write back
-li r0, 1
-stb r0, 0(r3) ; set commit flag
-b bkget_func_end
-handle_other_area:
-lwz r3, FILE_MANAGER@sda21(r13)
-bl FileManager__getDungeonFlags
-rlwinm r4, r31, 4, 0, 27 ; flagindex * 16
-lhzx r0, r3, r4 ; load byte from the saved dungeonflags that also has the boss key and map flag
-or r0, r0, r30
-sthx r0, r3, r4 ; set flag and write back
-bkget_func_end:
-lwz r30, 8(r1)
-lwz r31, 12(r1)
-lwz r0, 20(r1)
-mtlr r0
-addi r1, r1, 0x10
-blr
-
-
 smallkey_to_flagindex:
 .byte 11 ; SV
 .byte 17 ; LMF
@@ -204,62 +133,6 @@ mtlr r0
 addi r1, r1, 16
 blr
 
-; function that processes start story-, scene- and itemsflags
-.global processStartflags
-processStartflags:
-stwu r1, -16(r1)
-mflr r0
-stw r0, 20(r1)
-stw r31, 12(r1)
-stw r30, 8(r1)
-lwz r3, FILE_MANAGER@sda21(r13)
-addis r3, r3, 1
-li r0, 1
-stb r0, -22450(r3)
-lis r31, 0x804e
-ori r31, r31, 0xe1b8
-; storyflags
-b storyflag_loop_cond
-storyflag_loop_body:
-lwz r3, STORYFLAG_MANAGER@sda21(r13)
-bl FlagManager__setFlagTo1
-storyflag_loop_cond:
-lhz r4, 0(r31)
-addi r31, r31, 2
-cmplwi r4, 0xFFFF
-bne storyflag_loop_body
-; itemflags
-b itemflag_loop_cond
-itemflag_loop_body:
-lwz r3, ITEMFLAG_MANAGER@sda21(r13)
-bl FlagManager__setFlagTo1
-itemflag_loop_cond:
-lhz r4, 0(r31)
-addi r31, r31, 2
-cmplwi r4, 0xFFFF
-bne itemflag_loop_body
-; sceneflags
-b sceneflag_loop_cond
-sceneflag_loop_body:
-rlwinm r3,r4,0,0xff
-srwi r4,r4,8
-bl setSceneflagForArea
-sceneflag_loop_cond:
-lhz r4, 0(r31)
-addi r31, r31, 2
-cmplwi r4, 0xFFFF
-bne sceneflag_loop_body
-lwz r3, FILE_MANAGER@sda21(r13)
-addis r3, r3, 1
-li r0, 0
-stb r0, -22450(r3)
-lwz r31, 12(r1)
-lwz r30, 8(r1)
-lwz r0, 20(r1)
-mtlr r0
-addi r1, r1, 16
-blr
-
 ; function, that only actually loads the keyboard arcs if the following conditions are met:
 ; 1. you are in BiT (checked with Link's actor params)
 ; 2. All files are not empty
@@ -303,6 +176,20 @@ beqlr
 li r3, 154 ; storyflag for SSH timeshift stone being active
 li r4, 0 ; storyflag will be unset
 b setStoryflagToValue
+
+.global patch_bit
+patch_bit:
+li r0, 0
+stb r0, -0x3ca3(r13) ; RELOADER_TYPE
+blr
+
+; space to declare all the functions defined in the
+; custom-functions rust project
+.global process_startflags
+.global handle_bk_map_dungeonflag
+.global rando_text_command_handler
+.global textbox_a_pressed_or_b_held
+.global set_goddess_sword_pulled_scene_flag
 
 .close
 
@@ -479,6 +366,106 @@ lbl_end:
 cmpwi r5, 1
 blr
 
+.global correct_rupee_color
+correct_rupee_color:
+; itemId r28
+; heapMaybe r29
+; brres ptr at r1 + 0xC
+; model ptr r31
+; model instance r27
+; setup "function args"
+lwz r3, 0xC(r1) ; brres
+mr r4, r31 ; model
+mr r5, r27 ; modelInstance
+mr r6, r29 ; heap
+mr r7, r28 ; itemid
+; see https://godbolt.org/z/ovq7Yczhx
+mflr 0
+stwu 1,-64(1)
+li 10,6
+li 9,0
+stw 30,56(1)
+mtctr 10
+lis 30,RUPEE_ITEM_TO_TEX_FRAME@ha
+stw 0,68(1)
+stw 27,44(1)
+la 30,RUPEE_ITEM_TO_TEX_FRAME@l(30)
+stw 29,52(1)
+stw 31,60(1)
+stw 3,24(1)
+stw 4,28(1)
+stw 28,48(1)
+mr 28,5
+.correct_rupee_colorL5:
+slwi 31,9,3
+addi 9,9,1
+lhzx 10,30,31
+cmpw 7,10,7
+beq- 7,.correct_rupee_colorL11
+bdnz .correct_rupee_colorL5
+lwz 0,68(1)
+lwz 27,44(1)
+mtlr 0
+lwz 28,48(1)
+lwz 29,52(1)
+lwz 30,56(1)
+lwz 31,60(1)
+addi 1,1,64
+; replaced instruction
+addi r11,r1,0x130
+blr
+.correct_rupee_colorL11:
+li 3,44
+stw 6,32(1)
+li 27,0
+bl allocOnCurrentHeap
+; leak this memory, but it seems to be allocated on this
+; actors heap, so it gets freed when the actor is freed as well
+stw 27,4(3)
+mr 29,3
+stw 27,8(3)
+addi 3,3,12
+add 31,30,31
+bl func_0x802ee0e0
+lis 9,0x8054
+ori 9,9,9624
+stw 27,40(29)
+stw 9,0(29)
+subi r4,r13,0x69d0; "Rupee"
+addi 3,1,24
+bl getAnmTexPatFromBrres
+lwz 6,32(1)
+addi 5,1,8
+stw 3,8(1)
+addi 4,1,28
+li 7,0
+li 8,1
+mr 3,29
+bl AnmTexPatControl__bind
+lwz 9,0x10(28)
+mr 3,28
+mr 4,29
+lwz 9,36(9)
+mtctr 9
+bctrl
+lfs 1,4(31)
+mr 3,29
+li 4,0
+bl AnmTexPatControl__setFrame
+; calling the destructor makes it not work
+; this feels very wrong, but seems to work?
+lwz 0,68(1)
+lwz 27,44(1)
+mtlr 0
+lwz 28,48(1)
+lwz 29,52(1)
+lwz 30,56(1)
+lwz 31,60(1)
+addi 1,1,64
+; replaced instruction
+addi r11,r1,0x130
+blr
+
 .close
 
 .open "d_a_npc_douguyanightNP.rel"
@@ -532,4 +519,113 @@ lwz r0, 20(r1)
 mtlr r0
 addi r1, r1, 0x10
 blr
+.close
+
+.open "d_a_obj_bellNP.rel"
+; custom function that ends the pumpkin archery minigame early
+; used when the bell is hit
+.org @NextFreeSpace
+.global try_end_pumpkin_archery
+try_end_pumpkin_archery:
+; check that we're in the right minigame mode
+lis r3, SPECIAL_MINIGAME_STATE@ha
+lwz r3, SPECIAL_MINIGAME_STATE@l(r3)
+cmplwi r3, 6 ; archery
+bnelr
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 20(r1)
+li r3, 272 ; NpcPcs, fledge for the minigame
+li r4, 0 ; previous actor in search, NULL for search from start
+bl findActorByActorType
+cmplwi r3, 0 ; I can't think of a way this is ever NULL, but just in case
+beq try_end_pumpkin_archery_end
+li r4, 0
+stw r4, 0x1040(r3) ; store 0 in the remaining time (it's 64 bit)
+stw r4, 0x1044(r3)
+try_end_pumpkin_archery_end:
+lwz r0, 20(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+.close
+
+.open "d_a_obj_light_lineNP.rel"
+.org @NextFreeSpace
+.global check_activated_storyflag
+check_activated_storyflag:
+; actor pointer in r31
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 20(r1)
+lwz r3, 0x4(r31)
+rlwinm r4,r3,24,16,31 ; (r3 >> 8) & 0xFFFF
+bl checkStoryflagIsSet
+stb r3, 0x8fd(r31) ; store that it's activated
+mr r3, r31 ; replaced instruction
+lwz r0, 20(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+.close
+
+.open "d_t_rock_boatNP.rel"
+.org @NextFreeSpace
+.global custom_eldin_platform_comparison
+custom_eldin_platform_comparison:
+
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0xc(r1)
+stw r31, 0x14(r1) ; r31 currently holds a copy of param_1 from before branch
+
+li r4, 0x13 ; story flag 19 - talked to Fire Dragon
+bl checkStoryflagIsSet
+lwz r31, 0x14(r1) ; restoring param_1 to r31
+lwz r0, 0x138(r31) ; normal check val (basically the line of code we replaced)
+
+lwz r4, 0x4(r31) ; params1
+cmpwi r4, 0 ; if params1 is not 0 have normal behavior
+bne exit
+
+cmpwi r3, 1
+beq exit ; if flag is set, skip the next line
+li r0, 0 ; forces the false condition
+exit:
+mr r3, r31
+lwz r4, 0xC(r1)
+mtlr r4
+addi r1, r1, 0x10
+blr
+.close
+
+.open "d_t_player_restartNP.rel"
+.org @NextFreeSpace
+; see: https://rust.godbolt.org/
+; in rust because why not
+; pub fn test(params1: u32, flags: u32) -> u32 {
+;     return flags | if ((params1 >> 0x17) & 1) != 0 { 4 } else { 0 };
+; }
+.global only_set_flag_conditionally
+only_set_flag_conditionally:
+; r0 holds params1 (how convenient)
+; r4 holds some flags, where 4 means don't copy to File B again
+rlwinm r5, r0, 11, 29, 29
+or r4, r4, r5
+ori r4, r4, 0x100 ; we need to signal that the flag, to cause link to use the PlRsTag entrance, needs to be set
+blr
+.close
+
+
+.open "d_a_obj_toD3_stone_figureNP.rel"
+.org @NextFreeSpace
+.global set_sot_placed_flag
+set_sot_placed_flag:
+
+li r3, 22 ; SoT Placed
+li r4, 1
+bl setStoryflagToValue
+
+b 0x950
+
 .close

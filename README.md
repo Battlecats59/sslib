@@ -38,9 +38,9 @@ You can either run from a compiled binary (recommended for Windows, required for
 The randomized game will only work if the game language is set to **English**, other languages **will not work**.
 
 Do **not** use the game's hero-mode files, it **will not work**.  
-If you only want it to skip cutscenes, they are made skippable even in normal mode.  
-If you really wish to play on hero mode, select the "hero mode" option in the randomizer.
-When this option is selected, even if they don't appear as such in the menu, all files will be set to hero mode.
+If you only want it to skip cutscenes, they are made skippable even in normal mode.
+If you really wish to play on hero mode, there are options to enable its features.
+When these options selected, even if they don't appear as such in the menu, all files will be set to hero mode.
 
 If you didn't follow these rules, your progress cannot be restored; delete the save from the Wii menu / Dolphin's toolbar and correct the settings to play the game.
 
@@ -56,7 +56,7 @@ If you didn't follow these rules, your progress cannot be restored; delete the s
 
 ## Installing from source
 
-You will need Python (version 3.8 for Windows) and pip (which should come with Python)
+You will need Python (at least version 3.9) and pip (which should come with Python)
 
 1. In a terminal, navigate to the directory where you want to install the randomizer (using `cd`)
 2. Clone the repository with git and enter the directory
@@ -68,15 +68,17 @@ You will need Python (version 3.8 for Windows) and pip (which should come with P
 
         git checkout [BRANCH OR VERSION]
     Replace `[BRANCH OR VERSION]` with the desired branch or version in the command
-4. Install the dependencies:
-
-        pip install -r requirements.txt
+4. Install `pdm`, which is used to install the dependencies
+        pip install pdm
     If your system uses old versions of Python, you may need to replace `pip` with `python3 -mpip`
+    
+5. Install the dependencies:
 
-5. [Run](#Running-the-randomizer) the randomizer:
+        pdm install
 
-        python randoscript.py
-    If your system uses old versions of Python, you may need to replace `python` with `python3`
+6. [Run](#Running-the-randomizer) the randomizer:
+
+        pdm run randoscript.py
 
 ## The command-line interface
 

@@ -1,14 +1,137 @@
 # Changelog
 
 ## Dev
+### Options
+- Added option to make sword reward place swords on heart containers rather than final checks (by YourAverageLink)
+- Added option to randomize progression in Flooded Faron Woods (by CovenEsme)
+  - Added Faron SotH check that is obtained when completing the Tadtones story quest
+- Added chest dowsing functionality as an option (by YourAverageLink)
+  - Uses the main quest dowsing slot (top slot), with a custom dowsing icon to indicate its usage for chests.
+  - Vanilla: No change in dowsing functionality (rupee/treasure dowsing works on chests)
+  - All Chests: Main quest dowsing will point to all chests. This means you cannot dowse for chests with rupee/treasure dowsing.
+  - Progress Items: Main quest dowsing will point to chests that contain progress items
+  - Currently does not work on goddess chests
+- Added option to enable dowsing in dungeons (by YourAverageLink, but shoutouts to Zeldex)
+- Added hint distribution designed for use with the new chest dowsing feature 
+  - Removes hints for easily dowsable chests and adds some for non-dowsable checks
+  - Only shows one hint per Gossip Stone
+- Added option to start with various items (by CovenEsme)
+  - Includes: b-wheel items, pouches, quest items, songs, triforces, wallets, harp, water scale, earrings, mitts, life tree seedling, sea chart, spiral charge, stone of trials and Earth Temple key pieces.
+- Added option to start with extra health (by CovenEsme)
+- Added option to start with a random progress item (by CovenEsme)
+- Added the ability to ban individual locations (by cjs07)
+- Removed the "Banned Types" option
+- Added options to control entry into Lake Floria
+  - Talk to Yerbal: You are required to talk to Yerbal and he will open the floria door
+  - Vanilla: You are logically required to talk to Yerbal and draw on the floria door
+  - Open: The floria door is open from the start of the game. You are not required to talk to Yerbal or draw on the floria door
+- Added cosmetic option to have stars appear in the sky during both day and night (by CovenEsme)
+  - Stars appear on the surface regions, the Sky and Skyloft
+  - Some users (particularly Wii Console users) may experience some minor lag when enabling this option (can be adjusted)
+- Added cosmetic option to control the number of stars that appear in the sky
+  - This works with both the stars in the daytime sky (if the "Starry Skies" cosmetic option is enabled) and the usual stars in the nighttime sky
+  - The default value is 700 and matches how things worked before
+  - Values larger than 700 will decrease the performance of the game
+- Added cosmetic option to have a lightning skyward strike effects. (by Zeldex)
+- Updated existing `fix-bit-crashes` option to a `bit-patches` option (by CovenEsme)
+  - This option is now a drop-down choice instead of a toggle
+  - A new option for `disable-bit` has been added that prevents all instances of the Back in Time (BiT) trick from being performed
+  - A new option for `vanilla` has been added that keeps the vanilla game behaviour where BiT is possible but crashes under certain circumstances
+  - The `fix-bit-crashes` option works the same as it did previously
+- Added cosmetic option to set the in-game interface setting from the start of the game
+  - It is now possible to start with the Standard, Light, or Pro interface without having to change the setting from the inventory screen
 ### Changes
+- New GUI (by cjs07)
+  - Rearranged options and regrouped into simpler, broader categories
+  - Removed the Progress Locations tab
+  - Made many miscellaneous changes
+- Presets (by cjs07)
+  - Presets allow users to save and load their favorite settings quickly from the main page of the randomizer
+  - The randomizer is distributed with a set of default presets that cannot be changed
+    - This list includes all 6 Season 2 Tournament modes and a new beginner friendly mode
+  - Presets persist between versions and are forward compatible with new versions.
+  - User preset data is sharable between users via the `presets.txt` file
+  - Only options included in permalinks are saved, with the exception of the spoiler log toggle
+- Added Water Dragon to the Great Tree (by CovenEsme)
+- Added entrance and exit to and from Flooded Great Tree (by CovenEsme)
+  - Entering Flooded Great Tree for the first time automatically starts the Tadtones story quest
+  - New logical option for completing the Owlan's Crystals check
+    - Added access to Flooded Faron as an alternative to needing bomb bag
+- Added Bokoblin Base as a region visitable in the randomizer (by CovenEsme)
+  - Talking to the Shiekah Stone in the first room in Eldin Volcano takes you to the Bokoblin Base jail
+  - Talking to the Shiekah Stone in the Bokoblin Base jail takes you back to Eldin Volcano
+  - Adds 10 total checks to Bokoblin Base
+    - Moves the first 2 chests in Volcano Summit back to Bokoblin Base now that it can be accessed
+  - Summit cannot be entered without Fireshield Earrings. Fi will appear as in Eldin Volcano
+  - Talking to the Fire Dragon sets Boko Base as completed
+    - Leaving the Fire Dragon's Lair after talking to him puts you back in normal Volcano Summit
+    - The 3 chests in Boko Base Volcano Summit can be obtained in normal Volcano Summit after talking to the Fire Dragon
+    - The lava platforms found in Boko Base will also appear in Eldin Volcano after talking to the Fire Dragon
+- Added 2 new hint stones in Eldin Volcano / Bokoblin Base (by CovenEsme)
+  - Accessible via the lava platforms in Boko Base (or the newly added ones in Eldin), the 2 Eldin caves each contain a Gossip Stone
+- Machi is no longer rescued after beating Skyview
+- Added custom dowsing images for new chest dowsing functionality (by YourAverageLink)
+- Shooting the bell during pumpkin archery ends the minigame immediately
+- Removed first time textboxes (by CovenEsme)
+  - Removes rupee, heart, arrow, bomb, stamina fruit, silent realm tear and light fruit first time textboxes
+- Overhauled call Fi menu (by Muzu, CovenEsme, and Lepelog)
+  - Added menu choice to view required dungeons
+    - Removed required dungeons from notice board in academy
+  - Added menu choice to view dungeon status
+    - Complete/Incomplete/Unrequired
+    - Small key count (key piece count for ET)
+    - Boss key obtained status
+    - Dungeon map obtained status
+  - Added menu choice to view item status, this shows the obtained status of items that don't show up on the inventory screen
+    - These include caves key, spiral charge, and life tree fruit (with space for life tree seedling when that gets added)
+  - Added menu choice to view general requirements for beating a seed (e.g. how to raise and open Gate of Time, etc.)
+  - Added explicit menu choice to view play time (temporarily to fill space)
+- Added Lanayru Desert map of the past as a starting item (by CovenEsme)
+- Removed bipping after getting slingshot, practice sword, the Potion Lady's Gift check, buying a shield and Owlan's Gift check (by CovenEsme)
+- Removed the cutscene after completing the Isle of Songs puzzle
+- Removed the panning cutscenes during the Fledge's Gift check (by CovenEsme)
+- Shortened Yerbal's text to become in-line with the rest of the randomizer
+- Added the ability to hold down the B button to clear textboxes (by CovenEsme)
+- Added quick text (by CovenEsme and Muzugalium - with help from Lepelog and YourAverageLink)
+  - Removes the delay between clearing a textbox and being able to clear the next one
+  - Removes the delay between opening a textbox and being able to clear the textbox
+  - Removes the background blur to text due to a visual bug
+- Added back the Sword Pedestal in the Goddess Statue (by CovenEsme)
+  - Pulling out the Goddess Sword from its pedestal now gives the 2 checks within the Goddess Statue
+  - The 2 small chests previously found within the Goddess Statue have been removed
+- Removed all skippable cutscenes except boss intro cutscenes (by CovenEsme)
+  - When starting a new file, Link will now spawn directly in his room
+- Removed first set of bars in Sky Keep (by CovenEsme)
+  - The first chest in Sky Keep is no longer required to get the other checks within Sky Keep
+- Expanded arc replacements to cover the remaining unpatched arcs (by Muzu)
+  - Previously unpatched arcs (such as DoButton.arc) are now picked up from the arc replacements folder and patched
+  - The arc replacements folder now supports sub folders so people can organise arcs freely
+  - The arc replacements folder is now auto-generated if it doesn't exist
+  - Existing Title2D and DoButton patches to add custom title screen and dowsing icons now pull from modified_extract instead of actual_extract so they don't overwrite replaced arcs
+  - Due to duplicate arc names, the text arcs found in DATA/files/US/Object and the cursor arcs found in DATA/files/Layout and DATA/files/sys/mpls_movie/layout require specific names in the arc replacements folder
+    - Text arcs intended for the en_US folder support the default names (e.g. 0-Common.arc) but also support being prefixed with "en" for consistency (e.g. en0-Common.arc)
+    - Text arcs intended for the es_US folder must be prefixed with "es" (e.g. es0-Common.arc)
+    - Text arcs intended for the fr_US folder must be prefixed with "fr" (e.g. fr0-Common.arc) 
+    - The cursor arc intended for the regular layout folder supports the default name (i.e. cursor.arc)
+    - The cursor arc intended for the mpls_movie/layout folder (motion plus tutorial cursor) must be prefixed with "mpls" (i.e. mplscursor.arc)
 ### Bugfixes
 - Fixed a bug that prevented tricks from being properly reloaded when the randomizer restarted multiple times without changes to the list
+- Fixed a softlock caused by collecting the last 2 tears in a trial too close together
+- Fixed a bug that would make sandship dowsing sometimes not be the top dowsing slot icon; it now has top priority
+- Fixed light pillars not visually appearing when obtaining a tablet until a reload
+- Fixed Early Lake Floria Tricks not actually changing logic
+- Fixed Yerbal's map hint not showing the X marker on the map
+- Fixed bug where setting the `map-mode` or `boss-key-mode` options to "Vanilla" AND starting with some but not all maps or boss keys would throw an error
+  - Any maps or boss keys NOT added as starting items will now be placed in their vanilla locations (if the `map-mode`/`boss-key-mode` options are set to "Vanilla")
+  - Any maps or boss keys added as starting items will be added to the starting inventory
+- Fixed bug where most items in Beedle's Shop where partially hidden in the table
+
 
 ## 1.3.2
 ### Changes
 - Added Boss Key (BK) hints as a new hint type (by Muzugalium)
   - A BK hint will point to the precise location of the boss key of a required dungeon
+- Added Stamina Potion for logical access to the end of Lanayru Mine and Lanayru Desert when Open LMF is set to Open (by CovenEsme)
 ### Bugfixes
 - Fixed a crash when the arc-replacements folder was missing
 
@@ -38,7 +161,7 @@
 - Added option to fight multiple Demises at the end of the game
 - Added option to allow custom music (by Battlecats59)
 - Added even more cutscene skips, plus text patches for clarity (by YourAverageLink)
-- - New Hint System (by cjs07)
+- New Hint System (by cjs07)
   - Removed all counter options for hints
   - Added Hint Distributions
     - Distributions can specufy the follwing *new* parameters
@@ -111,7 +234,7 @@
     - Sealed Grounds - Zelda's Blessing
     - Sand Sea - Skipper's Retreat - Chest in Shack
     - Volcano Summit - Item behind Digging
-    - Faron Woods - Slingshot
+    - Faron Woods - Kikwi Elder's Reward
     - Sky - Beedle's Crystals
     - Sealed Grounds - Gorko's Goddess Wall Reward
   - The Sea Chart can now be hinted when Sandship is a required dungeon
@@ -177,7 +300,7 @@
 ### Changes
 - Verify ISO checksum
 - Item after LMF is given before exiting out of the back
-- Treasure and Rupee dowsing are now obtainable after getting the Goddess Whitesword
+- Treasure and Rupee dowsing are now obtainable after getting the Goddess White Sword
 - Shorten timeshift stone cutscenes
 - Make it possible to not get pumpkin soup when doing lumpy pumpkin quest with spiral charge
 

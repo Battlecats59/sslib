@@ -5,27 +5,29 @@ block_cipher = None
 import os
 import re
 import glob
+import toml
 def build_datas_recursive(paths):
   datas = []
-  
+
   for path in paths:
     for filename in glob.iglob(path, recursive=True):
       dest_dirname = os.path.dirname(filename)
       if dest_dirname == "":
         dest_dirname = "."
-      
+
       data_entry = (filename, dest_dirname)
       datas.append(data_entry)
       print(data_entry)
-  
+
   return datas
 
-with open('version.txt') as f:
-  VERSION = f.read().strip()
+with open('pyproject.toml') as f:
+    proj = toml.load(f)
+VERSION = proj['project']['version']
 
 if os.path.isdir(".git"):
   version_suffix = "_NOGIT"
-  
+
   git_commit_head_file = os.path.join(".git", "HEAD")
   if os.path.isfile(git_commit_head_file):
     with open(git_commit_head_file, "r") as f:
@@ -59,7 +61,9 @@ a = Analysis(['randoscript.py'],
              	'assets/*',
               'asm/*.txt',
               'asm/patch_diffs/*.txt',
-              'hints/distributions/*.json'
+              'hints/distributions/*.json',
+              'gui/default_presets.json',
+              'logic/requirements/*.yaml',
              ]),
              hiddenimports=[],
              hookspath=[],

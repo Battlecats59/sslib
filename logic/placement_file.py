@@ -1,7 +1,6 @@
+from .constants import *
 from options import Options
 from version import VERSION
-from logic.item_types import ALL_ITEM_NAMES
-from logic.constants import POTENTIALLY_REQUIRED_DUNGEONS, ENTRANCE_CONNECTIONS
 from util.file_accessor import read_yaml_file_cached
 
 import json
@@ -19,10 +18,12 @@ class PlacementFile:
         self.starting_items = []
         self.required_dungeons = []
         self.item_locations = {}
-        self.gossip_stone_hints = {}
-        self.trial_hints = {}
-        self.entrance_connections = {}
+        self.chest_dowsing = {}
+        self.hints = {}
+        self.dungeon_connections = {}
         self.trial_connections = {}
+        self.trial_object_seed = -1
+        self.music_rando_seed = -1
 
     def read_from_file(self, f):
         self._read_from_json(json.load(f))
@@ -38,10 +39,12 @@ class PlacementFile:
             "starting-items": self.starting_items,
             "required-dungeons": self.required_dungeons,
             "item-locations": self.item_locations,
-            "gossip-stone-hints": self.gossip_stone_hints,
-            "trial-hints": self.trial_hints,
-            "entrance-connections": self.entrance_connections,
+            "chest-dowsing": self.chest_dowsing,
+            "hints": self.hints,
+            "entrance-connections": self.dungeon_connections,
             "trial-connections": self.trial_connections,
+            "trial-object-seed": self.trial_object_seed,
+            "music-rando-seed": self.music_rando_seed,
         }
         return json.dumps(retval, indent=2)
 
@@ -53,95 +56,73 @@ class PlacementFile:
         self.starting_items = jsn["starting-items"]
         self.required_dungeons = jsn["required-dungeons"]
         self.item_locations = jsn["item-locations"]
-        self.gossip_stone_hints = jsn["gossip-stone-hints"]
-        self.trial_hints = jsn["trial-hints"]
-        self.entrance_connections = jsn["entrance-connections"]
+        self.chest_dowsing = jsn["chest-dowsing"]
+        self.hints = jsn["hints"]
+        self.dungeon_connections = jsn["entrance-connections"]
         self.trial_connections = jsn["trial-connections"]
+        self.trial_object_seed = jsn["trial-object-seed"]
+        self.music_rando_seed = jsn["music-rando-seed"]
 
-    def check_valid(self):
+    def check_valid(self, areas):
         """checks, if the current state is valid, throws an exception otherwise
         This does not check consistency with all the settings"""
         if VERSION != self.version:
             raise InvalidPlacementFile(
-                f"Version did not match, requires {self.version} but found {VERSION}"
+                f"Version did not match, requires {self.version} but found {VERSION}."
             )
 
-        ALLOWED_STARTING_ITEMS = {
-            "Emerald Tablet": 1,
-            "Amber Tablet": 1,
-            "Ruby Tablet": 1,
-            "Progressive Sword": 6,
-            "Progressive Pouch": 1,
-        }
-
-        if any(item not in ALLOWED_STARTING_ITEMS for item in self.starting_items):
-            raise InvalidPlacementFile("invalid starting item!")
-        for start_item, count in ALLOWED_STARTING_ITEMS.items():
-            if self.starting_items.count(start_item) > count:
-                raise InvalidPlacementFile(f"{start_item} too often in starting items!")
+        for item in self.starting_items:
+            if item not in ALLOWED_STARTING_ITEMS:
+                raise InvalidPlacementFile(f"Invalid starting item {item}.")
 
         for req_dungeon in self.required_dungeons:
-            if req_dungeon not in POTENTIALLY_REQUIRED_DUNGEONS:
+            if req_dungeon not in REGULAR_DUNGEONS:
                 raise InvalidPlacementFile(
-                    f"{req_dungeon} is not a valid required dungeon!"
+                    f"{req_dungeon} is not a valid required dungeon."
                 )
 
-        if sorted(self.entrance_connections.keys()) != sorted(
-            ENTRANCE_CONNECTIONS.keys()
+        if sorted(self.dungeon_connections.keys()) != sorted(
+            DUNGEON_OVERWORLD_ENTRANCES.values()
         ):
-            raise InvalidPlacementFile("dungeon entrance_connections are wrong!")
+            raise InvalidPlacementFile("Dungeon dungeon_connections are wrong.")
 
-        if sorted(self.entrance_connections.values()) != sorted(
-            ENTRANCE_CONNECTIONS.values()
+        if sorted(self.dungeon_connections.values()) != sorted(
+            DUNGEON_OVERWORLD_ENTRANCES.keys()
         ):
-            raise InvalidPlacementFile("dungeon entries are wrong!")
+            raise InvalidPlacementFile("Dungeon entries are wrong.")
 
-        item_names = ALL_ITEM_NAMES.copy()
-        item_names.remove("Gratitude Crystal")
+        if sorted(self.trial_connections.keys()) != sorted(SILENT_REALM_GATES.values()):
+            raise InvalidPlacementFile("Trial trial_connections are wrong.")
+
+        if sorted(self.trial_connections.values()) != sorted(SILENT_REALM_GATES.keys()):
+            raise InvalidPlacementFile("Trial entries are wrong.")
 
         for item in self.item_locations.values():
-            if item not in item_names:
-                raise InvalidPlacementFile(f'invalid item "{item}"')
+            if item not in ALL_ITEM_NAMES:
+                raise InvalidPlacementFile(f'Invalid item "{item}".')
 
-        checks_file = read_yaml_file_cached("checks.yaml")
         check_sets_equal(
-            set(
-                k
-                for (k, v) in checks_file.items()
-                if v["original item"] != "Gratitude Crystal"
-            ),
+            set(areas.checks.keys()),
             set(self.item_locations.keys()),
             "Checks",
         )
 
-        hint_file = read_yaml_file_cached("hints.yaml")
         check_sets_equal(
-            set(hint_file.keys()),
-            set(self.gossip_stone_hints.keys()),
+            set(areas.gossip_stones.keys()) | set(SONG_HINTS),
+            set(self.hints.keys()),
             "Gossip Stone Hints",
         )
 
-        for hintlist in self.gossip_stone_hints.values():
+        for hintlist in self.hints.values():
             if not isinstance(hintlist, list):
                 raise InvalidPlacementFile(
-                    "gossip stone hints need to be LISTS of strings!"
+                    "Gossip stone hints need to be LISTS of strings."
                 )
             for hint in hintlist:
                 if not isinstance(hint, str):
                     raise InvalidPlacementFile(
-                        "gossip stone hints need to be lists of STRINGS!"
+                        "Gossip stone hints need to be lists of STRINGS."
                     )
-
-        trial_check_names = set(
-            (
-                "Song of the Hero - Trial Hint",
-                "Farore's Courage - Trial Hint",
-                "Nayru's Wisdom - Trial Hint",
-                "Din's Power - Trial Hint",
-            )
-        )
-
-        check_sets_equal(trial_check_names, set(self.trial_hints.keys()), "Trial Hints")
 
 
 def check_sets_equal(orig: set, actual: set, name: str):

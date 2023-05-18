@@ -11,10 +11,16 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -39,10 +45,16 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>570</y>
-      <width>931</width>
-      <height>31</height>
+      <y>560</y>
+      <width>1031</width>
+      <height>41</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string/>
@@ -60,13 +72,34 @@
       <height>541</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="sizeIncrement">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
     <property name="toolTip">
      <string/>
     </property>
-    <property name="currentIndex">
-     <number>2</number>
+    <property name="toolTipDuration">
+     <number>-6</number>
     </property>
-    <widget class="QWidget" name="tab">
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <property name="usesScrollButtons">
+     <bool>true</bool>
+    </property>
+    <property name="documentMode">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="tab_setup">
      <attribute name="title">
       <string>Setup</string>
      </attribute>
@@ -79,11 +112,11 @@
         <height>115</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_29">
+      <layout class="QVBoxLayout" name="vlay_files">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="hlay_output">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="label_output">
            <property name="text">
             <string>Output Folder</string>
            </property>
@@ -105,7 +138,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_32">
+        <layout class="QVBoxLayout" name="vlay_plando">
          <item>
           <widget class="QCheckBox" name="option_plando">
            <property name="text">
@@ -114,7 +147,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_19">
+          <layout class="QHBoxLayout" name="hlay_plando_file">
            <item>
             <widget class="QLineEdit" name="plando_file"/>
            </item>
@@ -130,7 +163,7 @@
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_12">
+        <spacer name="vspace_files">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -144,13 +177,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QGroupBox" name="groupBox_12">
+     <widget class="QGroupBox" name="box_additional_files">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>130</y>
         <width>181</width>
-        <height>131</height>
+        <height>191</height>
        </rect>
       </property>
       <property name="title">
@@ -162,10 +195,10 @@
          <x>10</x>
          <y>20</y>
          <width>169</width>
-         <height>89</height>
+         <height>161</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_33">
+       <layout class="QVBoxLayout" name="vlay_additional_files">
         <item>
          <widget class="QCheckBox" name="option_no_spoiler_log">
           <property name="text">
@@ -188,7 +221,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_13">
+         <spacer name="vspace_additional_files">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -203,13 +236,13 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_13">
+     <widget class="QGroupBox" name="box_advanced">
       <property name="geometry">
        <rect>
         <x>210</x>
         <y>130</y>
-        <width>131</width>
-        <height>131</height>
+        <width>181</width>
+        <height>191</height>
        </rect>
       </property>
       <property name="title">
@@ -220,11 +253,11 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>111</width>
-         <height>101</height>
+         <width>161</width>
+         <height>161</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_34">
+       <layout class="QVBoxLayout" name="vlay_advanced">
         <item>
          <widget class="QCheckBox" name="option_dry_run">
           <property name="text">
@@ -233,7 +266,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_14">
+         <spacer name="vspace_advanced">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -248,13 +281,13 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_14">
+     <widget class="QGroupBox" name="box_cosmetics">
       <property name="geometry">
        <rect>
-        <x>360</x>
+        <x>410</x>
         <y>130</y>
-        <width>131</width>
-        <height>131</height>
+        <width>181</width>
+        <height>191</height>
        </rect>
       </property>
       <property name="title">
@@ -265,11 +298,11 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>111</width>
-         <height>80</height>
+         <width>161</width>
+         <height>161</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_17">
+       <layout class="QVBoxLayout" name="vlay_cosmetics">
         <item>
          <widget class="QCheckBox" name="option_tunic_swap">
           <property name="text">
@@ -278,7 +311,67 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_15">
+         <widget class="QCheckBox" name="option_lightning_skyward_strike">
+          <property name="text">
+           <string>Lightning Skyward Strike</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_starry_skies">
+          <property name="text">
+           <string>Starry Skies</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hlay_star_count">
+          <item>
+           <widget class="QLabel" name="label_for_option_star_count">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Number of Stars</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="option_star_count">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximum">
+             <number>32767</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_for_option_interface">
+          <property name="text">
+           <string>Starting Interface</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="option_interface"/>
+        </item>
+        <item>
+         <spacer name="vspace_cosmetics">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -293,13 +386,13 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_15">
+     <widget class="QGroupBox" name="box_music_rando">
       <property name="geometry">
        <rect>
-        <x>510</x>
+        <x>610</x>
         <y>130</y>
         <width>181</width>
-        <height>131</height>
+        <height>191</height>
        </rect>
       </property>
       <property name="title">
@@ -311,10 +404,10 @@
          <x>10</x>
          <y>20</y>
          <width>161</width>
-         <height>106</height>
+         <height>161</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_35">
+       <layout class="QVBoxLayout" name="vlay_music_rando">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_36">
           <item>
@@ -344,6 +437,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="option_no_enemy_music">
+          <property name="text">
+           <string>Remove Enemy Music</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer_16">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -359,412 +459,98 @@
        </layout>
       </widget>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Progress Locations</string>
-     </attribute>
-     <widget class="QGroupBox" name="groupBox_4">
+     <widget class="QGroupBox" name="box_presets">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>1001</width>
-        <height>51</height>
+        <x>0</x>
+        <y>340</y>
+        <width>331</width>
+        <height>101</height>
        </rect>
       </property>
       <property name="title">
-       <string>What areas of the world should progress items appear?</string>
+       <string>Presets</string>
       </property>
-      <widget class="QWidget" name="horizontalLayoutWidget_3">
+      <widget class="QWidget" name="verticalLayoutWidget_16">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>981</width>
-         <height>25</height>
+         <width>311</width>
+         <height>78</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QVBoxLayout" name="vlay_presets">
         <item>
-         <widget class="QCheckBox" name="progression_skyloft">
+         <widget class="QLabel" name="label_presets">
           <property name="text">
-           <string>Skyloft</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="progression_sky">
-          <property name="text">
-           <string>The Sky</string>
+           <string>Presets overwrite ALL game settings</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="progression_thunderhead">
-          <property name="text">
-           <string>Thunderhead</string>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="presets_list"/>
         </item>
         <item>
-         <widget class="QCheckBox" name="progression_faron">
-          <property name="text">
-           <string>Faron</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="progression_eldin">
-          <property name="text">
-           <string>Eldin</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="progression_lanayru">
-          <property name="text">
-           <string>Lanayru</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>1001</width>
-        <height>191</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Where should progress items appear?</string>
-      </property>
-      <widget class="QWidget" name="gridLayoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>981</width>
-         <height>164</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="1" column="4">
-         <widget class="QCheckBox" name="progression_freestanding">
-          <property name="text">
-           <string>Freestanding Items</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="5">
-         <widget class="QCheckBox" name="progression_miscellaneous">
-          <property name="text">
-           <string>Miscellaneous</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="progression_spiral_charge">
-          <property name="text">
-           <string>Spiral Charge Chests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QCheckBox" name="progression_bombable">
-          <property name="text">
-           <string>Bombable Walls</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="progression_silent_realm">
-          <property name="text">
-           <string>Silent Realms</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QCheckBox" name="progression_long">
-          <property name="text">
-           <string>Long Quests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="5">
-         <widget class="QCheckBox" name="progression_song">
-          <property name="text">
-           <string>Songs</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QCheckBox" name="progression_minigame">
-          <property name="text">
-           <string>Minigames</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="5">
-         <widget class="QCheckBox" name="progression_scrapper">
-          <property name="text">
-           <string>Scrapper Quests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="progression_dungeon">
-          <property name="text">
-           <string>Dungeons</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <layout class="QHBoxLayout" name="hlay_presets_controls">
           <item>
-           <widget class="QComboBox" name="option_max_batreaux_reward"/>
+           <widget class="QPushButton" name="load_preset">
+            <property name="text">
+             <string>Load</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_for_option_max_batreaux_reward">
+           <widget class="QPushButton" name="save_preset">
             <property name="text">
-             <string>Batreaux</string>
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="delete_preset">
+            <property name="text">
+             <string>Delete</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item row="4" column="4">
-         <widget class="QCheckBox" name="progression_crystal_quest">
-          <property name="text">
-           <string>Crystal Quests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="5">
-         <widget class="QCheckBox" name="progression_peatrice">
-          <property name="text">
-           <string>Peatrice</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="5">
-         <widget class="QCheckBox" name="progression_expensive">
-          <property name="text">
-           <string>Expensive Purchases</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QCheckBox" name="progression_combat">
-          <property name="text">
-           <string>Combat Rewards</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="4">
-         <widget class="QCheckBox" name="progression_crystal">
-          <property name="text">
-           <string>Loose Crystals</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="3">
-         <widget class="QCheckBox" name="progression_cheap">
-          <property name="text">
-           <string>Cheap Purchases</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QCheckBox" name="progression_free_gift">
-          <property name="text">
-           <string>Free Gifts</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QCheckBox" name="progression_mini_dungeon">
-          <property name="text">
-           <string>Mini Dungeons</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QCheckBox" name="progression_fetch">
-          <property name="text">
-           <string>Fetch Quests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QCheckBox" name="progression_digging">
-          <property name="text">
-           <string>Digging Spots</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QCheckBox" name="progression_beedle">
-          <property name="text">
-           <string>Beedle's Shop</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="4">
-         <widget class="QCheckBox" name="progression_medium">
-          <property name="text">
-           <string>Medium Cost Purchases</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QComboBox" name="option_shopsanity"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Shop Mode</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="4" column="0">
-         <widget class="QCheckBox" name="progression_short">
-          <property name="text">
-           <string>Short Quests</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QComboBox" name="option_rupeesanity"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_for_option_rupeesanity">
-            <property name="text">
-             <string>Rupeesanity</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>270</y>
-        <width>1001</width>
-        <height>111</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Goddess Cube Options</string>
-      </property>
-      <widget class="QWidget" name="gridLayoutWidget_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>981</width>
-         <height>83</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="progression_eldin_goddess">
-          <property name="text">
-           <string>Eldin Volcano</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="progression_goddess">
-          <property name="text">
-           <string>Enabled</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="progression_faron_goddess">
-          <property name="text">
-           <string>Faron Woods</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QCheckBox" name="progression_lanayru_goddess">
-          <property name="text">
-           <string>Lanayru Desert</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="progression_summit_goddess">
-          <property name="text">
-           <string>Volcano Summit</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="progression_floria_goddess">
-          <property name="text">
-           <string>Lake Floria</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QCheckBox" name="progression_sand_sea_goddess">
-          <property name="text">
-           <string>Sand Sea</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_4">
+    <widget class="QWidget" name="tab_randomization_settings">
      <property name="toolTip">
       <string/>
      </property>
      <attribute name="title">
-      <string>Additional Settings</string>
+      <string>Randomization Settings</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox_5">
+     <widget class="QGroupBox" name="box_completion">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>201</width>
-        <height>251</height>
+        <x>210</x>
+        <y>0</y>
+        <width>191</width>
+        <height>501</height>
        </rect>
       </property>
       <property name="title">
-       <string>Gate of Time and Horde Door</string>
+       <string>Completion Conditions</string>
       </property>
       <widget class="QWidget" name="verticalLayoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>19</y>
-         <width>181</width>
-         <height>221</height>
+         <width>171</width>
+         <height>471</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="vlay_completion">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="vlay_got_start">
           <item>
            <widget class="QLabel" name="label_for_option_got_starting_state">
             <property name="text">
@@ -778,7 +564,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="vlay_sword_req">
           <item>
            <widget class="QLabel" name="label_for_option_got_sword_requirement">
             <property name="text">
@@ -792,7 +578,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <layout class="QVBoxLayout" name="vlay_got_dungeon_req">
           <item>
            <widget class="QLabel" name="label_for_option_got_dungeon_requirement">
             <property name="text">
@@ -803,170 +589,66 @@
           <item>
            <widget class="QComboBox" name="option_got_dungeon_requirement"/>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_for_option_required_dungeon_count">
-              <property name="text">
-               <string>Required Dungeons</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="option_required_dungeon_count">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>41</width>
-                <height>16777215</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_7">
-      <property name="geometry">
-       <rect>
-        <x>630</x>
-        <y>10</y>
-        <width>191</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Dungeons</string>
-      </property>
-      <widget class="QWidget" name="verticalLayoutWidget_7">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>181</width>
-         <height>221</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_10">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_11">
+         <layout class="QHBoxLayout" name="hlay_req_dungeons">
           <item>
-           <widget class="QLabel" name="label_for_option_map_mode">
+           <widget class="QLabel" name="label_for_option_required_dungeon_count">
             <property name="text">
-             <string>Map Mode</string>
+             <string>Required Dungeons</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="option_map_mode"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_12">
-          <item>
-           <widget class="QLabel" name="label_for_option_small_key_mode">
-            <property name="text">
-             <string>Small Keys</string>
+           <widget class="QSpinBox" name="option_required_dungeon_count">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>41</width>
+              <height>16777215</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QComboBox" name="option_small_key_mode"/>
-          </item>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_13">
-          <item>
-           <widget class="QLabel" name="label_for_option_boss_key_mode">
-            <property name="text">
-             <string>Boss Keys</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="option_boss_key_mode"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="option_empty_unrequired_dungeons">
+         <widget class="QCheckBox" name="option_triforce_required">
           <property name="text">
-           <string>Empty Unrequired Dungeons</string>
+           <string>Triforce Required</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="option_sword_dungeon_reward">
-          <property name="text">
-           <string>Sword Dungeon Rewards</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="vlay_triforce_shuffle">
+          <item>
+           <widget class="QLabel" name="label_for_option_triforce_shuffle">
+            <property name="text">
+             <string>Triforce Shuffle</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_triforce_shuffle">
+            <property name="currentText">
+             <string/>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item>
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_8">
-      <property name="geometry">
-       <rect>
-        <x>830</x>
-        <y>10</y>
-        <width>181</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Endgame Bosses</string>
-      </property>
-      <widget class="QWidget" name="verticalLayoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>161</width>
-         <height>221</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_14">
         <item>
          <widget class="QCheckBox" name="option_imp_2">
           <property name="text">
@@ -996,7 +678,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <layout class="QHBoxLayout" name="hlay_demise_count">
           <item>
            <widget class="QLabel" name="label_for_option_demise_count">
             <property name="text">
@@ -1017,7 +699,7 @@
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_5">
+         <spacer name="vspace_completion">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1032,13 +714,114 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="box_dungeons">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>10</y>
+        <x>820</x>
+        <y>0</y>
         <width>191</width>
-        <height>251</height>
+        <height>501</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Dungeons</string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_7">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>179</width>
+         <height>471</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="vlay_dungeons">
+        <item>
+         <layout class="QVBoxLayout" name="vlay_map_shuffle">
+          <item>
+           <widget class="QLabel" name="label_for_option_map_mode">
+            <property name="text">
+             <string>Map Mode</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_map_mode"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vlay_small_key_shuffle">
+          <item>
+           <widget class="QLabel" name="label_for_option_small_key_mode">
+            <property name="text">
+             <string>Small Keys</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_small_key_mode"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vlay_boss_key_shuffle">
+          <item>
+           <widget class="QLabel" name="label_for_option_boss_key_mode">
+            <property name="text">
+             <string>Boss Keys</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_boss_key_mode"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_empty_unrequired_dungeons">
+          <property name="text">
+           <string>Empty Unrequired Dungeons</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vlay_sword_reward">
+          <item>
+           <widget class="QLabel" name="label_for_sword_dungeon_reward">
+            <property name="text">
+             <string>Sword Dungeon Reward</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_sword_dungeon_reward"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="vspace_dungeons">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="box_open">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>0</y>
+        <width>191</width>
+        <height>501</height>
        </rect>
       </property>
       <property name="title">
@@ -1050,12 +833,12 @@
          <x>10</x>
          <y>20</y>
          <width>171</width>
-         <height>221</height>
+         <height>471</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="vlay_open">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="vlay_open_thunderhead">
           <item>
            <widget class="QLabel" name="label_for_option_open_thunderhead">
             <property name="text">
@@ -1069,7 +852,14 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <widget class="QCheckBox" name="option_open_et">
+          <property name="text">
+           <string>Open Earth Temple</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vlay_open_lmf">
           <item>
            <widget class="QLabel" name="label_for_option_open_lmf">
             <property name="text">
@@ -1083,7 +873,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <layout class="QHBoxLayout" name="hlay_starting_tablets">
           <item>
            <widget class="QLabel" name="label_for_option_starting_tablet_count">
             <property name="text">
@@ -1104,14 +894,17 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="option_open_et">
+         <widget class="QLabel" name="label_for_option_open_lake_floria">
           <property name="text">
-           <string>Open Earth Temple</string>
+           <string>Open Lake Floria</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
+         <widget class="QComboBox" name="option_open_lake_floria"/>
+        </item>
+        <item>
+         <spacer name="vspace_open">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1126,17 +919,17 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_6">
+     <widget class="QGroupBox" name="box_er">
       <property name="geometry">
        <rect>
-        <x>420</x>
-        <y>10</y>
+        <x>610</x>
+        <y>0</y>
         <width>201</width>
-        <height>251</height>
+        <height>501</height>
        </rect>
       </property>
       <property name="title">
-       <string>Overworld</string>
+       <string>Entrance Randomization</string>
       </property>
       <widget class="QWidget" name="verticalLayoutWidget_4">
        <property name="geometry">
@@ -1144,16 +937,16 @@
          <x>10</x>
          <y>19</y>
          <width>186</width>
-         <height>221</height>
+         <height>471</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <layout class="QVBoxLayout" name="vlay_er">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <layout class="QVBoxLayout" name="vlay_dungeon_er">
           <item>
            <widget class="QLabel" name="label_for_option_randomize_entrances">
             <property name="text">
-             <string>Randomize Entrances</string>
+             <string>Randomize Dungeon Entrances</string>
             </property>
            </widget>
           </item>
@@ -1177,21 +970,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_trialshuffle">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Shuffle Trial Objects</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="option_shuffle_trial_objects"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
+         <spacer name="vspace_er">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1209,86 +988,72 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_9">
+     <widget class="QGroupBox" name="box_shuffles">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>270</y>
-        <width>201</width>
-        <height>241</height>
+        <y>0</y>
+        <width>191</width>
+        <height>501</height>
        </rect>
       </property>
       <property name="title">
-       <string>Additional Options</string>
+       <string>Shuffles</string>
       </property>
-      <widget class="QWidget" name="verticalLayoutWidget_5">
+      <widget class="QWidget" name="verticalLayoutWidget_17">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
-         <width>181</width>
-         <height>210</height>
+         <y>21</y>
+         <width>171</width>
+         <height>471</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_15">
+       <layout class="QVBoxLayout" name="vlay_shuffles">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_28">
+         <layout class="QVBoxLayout" name="vlay_batreaux">
           <item>
-           <widget class="QLabel" name="label_for_option_starting_sword">
+           <widget class="QLabel" name="label_for_option_max_batreaux_reward">
             <property name="text">
-             <string>Starting Sword</string>
+             <string>Maximum Batreaux Reward</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="option_starting_sword"/>
+           <widget class="QComboBox" name="option_max_batreaux_reward"/>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="option_start_pouch">
-          <property name="text">
-           <string>Start with Adventure Pouch</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_16">
+         <layout class="QVBoxLayout" name="vlay_beedle">
           <item>
-           <widget class="QLabel" name="label_for_option_rupoor">
+           <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>Rupoor Mode</string>
+             <string>Beedle's Shop</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="option_rupoor_mode"/>
+           <widget class="QComboBox" name="option_shopsanity"/>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="option_gondo_upgrades">
-          <property name="text">
-           <string>Place Scrap Shop Upgrades</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="vlay_rupeesanity">
+          <item>
+           <widget class="QLabel" name="label_for_option_rupeesanity">
+            <property name="text">
+             <string>Rupeesanity</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_rupeesanity"/>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="option_hero_mode">
-          <property name="text">
-           <string>Hero Mode</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="option_fix_bit_crashes">
-          <property name="text">
-           <string>Fix BiT crashes</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_17">
+         <spacer name="vspace_shuffles">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1303,71 +1068,294 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_16">
+    </widget>
+    <widget class="QWidget" name="tab_additional_settings">
+     <attribute name="title">
+      <string>Additional Settings</string>
+     </attribute>
+     <widget class="QGroupBox" name="box_convenience_tweaks">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>270</y>
+        <x>10</x>
+        <y>0</y>
         <width>191</width>
-        <height>241</height>
+        <height>251</height>
        </rect>
       </property>
       <property name="title">
-       <string>Triforce</string>
+       <string>Convenience Tweaks</string>
       </property>
-      <widget class="QWidget" name="verticalLayoutWidget_15">
+      <widget class="QWidget" name="verticalLayoutWidget_19">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>177</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="vlay_convenience_tweaks">
+        <item>
+         <widget class="QCheckBox" name="option_fill_dowsing_on_white_sword">
+          <property name="text">
+           <string>Fill Dowsing on White Sword</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspace_convenience_tweaks">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="box_vanilla_tweaks">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>0</y>
+        <width>191</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Vanilla Tweaks</string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_18">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
          <width>171</width>
-         <height>211</height>
+         <height>221</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_31">
+       <layout class="QVBoxLayout" name="vlay_vanilla_tweaks">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_37"/>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="option_triforce_required">
+         <widget class="QLabel" name="label_for_option_bit_patches">
           <property name="text">
-           <string>Triforce Required</string>
+           <string>BiT Patches</string>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_38">
+         <widget class="QComboBox" name="option_bit_patches"/>
+        </item>
+        <item>
+         <spacer name="vspace_vanilla_tweaks">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="box_item_pool">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>0</y>
+        <width>191</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Item Pool</string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_20">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>172</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="vlay_item_pool">
+        <item>
+         <layout class="QVBoxLayout" name="vlay_rupoor_mode">
           <item>
-           <widget class="QLabel" name="label_for_option_triforce_shuffle">
+           <widget class="QCheckBox" name="option_gondo_upgrades">
             <property name="text">
-             <string>Triforce Shuffle</string>
+             <string>Place Scrap Shop Upgrades</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="option_triforce_shuffle">
-            <property name="currentText">
-             <string/>
+           <widget class="QLabel" name="label_for_option_rupoor_mode">
+            <property name="text">
+             <string>Rupoor Mode</string>
             </property>
-            <property name="currentIndex">
-             <number>-1</number>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_rupoor_mode"/>
+          </item>
+          <item>
+           <spacer name="vspace_item_pool">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="box_silent_realms">
+      <property name="geometry">
+       <rect>
+        <x>610</x>
+        <y>0</y>
+        <width>191</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Silent Realms</string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_22">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>19</y>
+         <width>171</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="vlay_silent_realms">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_trialshuffle">
+          <item>
+           <widget class="QLabel" name="label_for_option_shuffle_trial_objects">
+            <property name="text">
+             <string>Shuffle Trial Objects</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_shuffle_trial_objects"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="vspace_silent_realms">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="box_heromode_changes">
+      <property name="geometry">
+       <rect>
+        <x>810</x>
+        <y>0</y>
+        <width>191</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Hero Mode Changes</string>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_21">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>183</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="vlay_heromode_changes">
+        <item>
+         <widget class="QCheckBox" name="option_upgraded_skyward_strike">
+          <property name="text">
+           <string>Upgraded Skyward Strike</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_fast_air_meter">
+          <property name="text">
+           <string>Faster Air Meter Depletion</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_enable_heart_drops">
+          <property name="text">
+           <string>Spawn Heart Flowers</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hlay_damage_multiplier">
+          <item>
+           <widget class="QLabel" name="label_for_option_damage_multiplier">
+            <property name="text">
+             <string>Damage Taken Multiplier</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="option_damage_multiplier">
+            <property name="maximumSize">
+             <size>
+              <width>41</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>255</number>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_6">
+         <spacer name="vspace_heromode_changes">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>70</height>
+            <height>40</height>
            </size>
           </property>
          </spacer>
@@ -1376,7 +1364,7 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_5">
+    <widget class="QWidget" name="tab_logic_settings">
      <attribute name="title">
       <string>Logic Settings</string>
      </attribute>
@@ -1389,107 +1377,126 @@
         <height>499</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_18">
+      <layout class="QVBoxLayout" name="vlay_logic_settings">
        <item>
-        <widget class="QLabel" name="label_for_option_logic_mode">
-         <property name="text">
-          <string>Logic Mode</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="option_logic_mode"/>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_7">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="hlay_misc_logic_settings">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_19">
+          <widget class="QLabel" name="label_for_option_logic_mode">
+           <property name="text">
+            <string>Logic Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="option_logic_mode"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="edit_tricks">
+           <property name="text">
+            <string>Tricks</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="hspace_misc_logic_settings">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="vlay_exclude_locations">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_exclude_locations">
+           <property name="text">
+            <string>Exclude Locations</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLineEdit" name="included_free_search">
              <property name="text">
-              <string>Exclude Locations</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_17">
-             <item>
-              <widget class="QListView" name="enabled_locations"/>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_20">
-               <item>
-                <widget class="QPushButton" name="enable_location">
-                 <property name="text">
-                  <string>&lt;---</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="disable_location">
-                 <property name="text">
-                  <string>---&gt;</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QListWidget" name="disabled_locations"/>
-             </item>
-            </layout>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="excluded_free_search"/>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_25">
+          <layout class="QHBoxLayout" name="hlay_exclude_locations_body">
            <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Enable Tricks</string>
-             </property>
-            </widget>
+            <widget class="QListView" name="included_locations"/>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <layout class="QVBoxLayout" name="vlay_exclude_locations_controls">
              <item>
-              <widget class="QListView" name="enabled_tricks"/>
+              <widget class="QPushButton" name="include_location">
+               <property name="text">
+                <string>Include
+&lt;--</string>
+               </property>
+              </widget>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_21">
-               <item>
-                <widget class="QPushButton" name="enable_trick">
-                 <property name="text">
-                  <string>&lt;---</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="disable_trick">
-                 <property name="text">
-                  <string>---&gt;</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
-              <widget class="QListView" name="disabled_tricks"/>
+              <widget class="QPushButton" name="exclude_location">
+               <property name="text">
+                <string>Exclude
+--&gt;</string>
+               </property>
+              </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QListView" name="excluded_locations"/>
            </item>
           </layout>
          </item>
@@ -1498,11 +1505,11 @@
       </layout>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_7">
+    <widget class="QWidget" name="tab_hints">
      <attribute name="title">
       <string>Hints</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox_10">
+     <widget class="QGroupBox" name="box_stone_hints">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1523,9 +1530,9 @@
          <height>207</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_22">
+       <layout class="QVBoxLayout" name="vlay_stone_hints">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_24">
+         <layout class="QVBoxLayout" name="vlay_hint_distro">
           <item>
            <widget class="QLabel" name="label_for_option_hint_distribution">
             <property name="text">
@@ -1553,7 +1560,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_11">
+         <spacer name="vspace_stone_hints">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1568,7 +1575,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_11">
+     <widget class="QGroupBox" name="box_other_hints">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -1585,13 +1592,13 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>171</width>
+         <width>174</width>
          <height>201</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_26">
+       <layout class="QVBoxLayout" name="vlay_other_hints">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_27">
+         <layout class="QVBoxLayout" name="vlay_song_hints">
           <item>
            <widget class="QLabel" name="label_6">
             <property name="text">
@@ -1612,7 +1619,35 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_10">
+         <layout class="QVBoxLayout" name="vlay_chest_dowsing">
+          <item>
+           <widget class="QLabel" name="label_for_option_chest_dowsing">
+            <property name="text">
+             <string>Chest Dowsing</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="option_chest_dowsing">
+            <property name="currentText">
+             <string/>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="option_dungeon_dowsing">
+          <property name="text">
+           <string>Allow Dowsing in Dungeons</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspace_other_hints">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1628,69 +1663,266 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_6">
+    <widget class="QWidget" name="tab_starting_items">
      <attribute name="title">
-      <string>Starting Inventory</string>
+      <string>Starting Items</string>
      </attribute>
-     <widget class="QWidget" name="horizontalLayoutWidget_5">
+     <widget class="QWidget" name="verticalLayoutWidget_23">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>1011</width>
-        <height>451</height>
+        <width>1001</width>
+        <height>501</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QVBoxLayout" name="vlay_starting_items">
        <item>
-        <widget class="QListView" name="randomized_items"/>
+        <layout class="QHBoxLayout" name="hlay_starting_items_body">
+         <item>
+          <layout class="QVBoxLayout" name="vlay_randomized_items_section">
+           <item>
+            <widget class="QLabel" name="label_randomized_items">
+             <property name="text">
+              <string>Randomized Items</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListView" name="randomized_items">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="vlay_starting_items_controls">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <spacer name="vspace_starting_items_controls_upper">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="randomize_item">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Remove
+&lt;--</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="start_with_item">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Add
+--&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="vspace_starting_items_controls_lower">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="vlay_starting_items_section">
+           <item>
+            <widget class="QLabel" name="label_starting_items">
+             <property name="text">
+              <string>Starting Items</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListView" name="starting_items">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_23">
+        <widget class="Line" name="line_starting_items_divider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="hlay_starting_items_misc_options">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
-          <spacer name="verticalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <layout class="QHBoxLayout" name="hlay_starting_sword">
+           <item>
+            <widget class="QLabel" name="label_for_option_starting_sword">
+             <property name="text">
+              <string>Starting Sword</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="option_starting_sword"/>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="randomize_item">
+          <widget class="QCheckBox" name="option_random_starting_item">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>&lt;--</string>
+            <string>Start with Random Progress Item</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="start_with_item">
+          <layout class="QHBoxLayout" name="hlay_heart_containters">
+           <item>
+            <widget class="QLabel" name="label_for_option_starting_heart_containers">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Heart Containers</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="option_starting_heart_containers">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>41</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="hlay_heart_pieces">
+           <item>
+            <widget class="QLabel" name="label_for_option_starting_heart_pieces">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Heart Pieces</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="option_starting_heart_pieces">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>41</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_current_starting_health">
            <property name="text">
-            <string>--&gt;</string>
+            <string>Current Starting Health:</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_8">
+          <widget class="QLabel" name="current_starting_health_counter">
+           <property name="text">
+            <string>6 hearts</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="hspace_starting_items_misc">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>20</width>
-             <height>40</height>
+             <width>40</width>
+             <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QListView" name="starting_items"/>
        </item>
       </layout>
      </widget>
@@ -1705,13 +1937,13 @@
       <height>110</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_30">
+    <layout class="QVBoxLayout" name="vlay_bottom_controls">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="hlay_permalink">
        <item>
-        <widget class="QLabel" name="permalink_label">
+        <widget class="QLabel" name="label_permalink">
          <property name="text">
-          <string>Permalink (copy paste to share your settings)</string>
+          <string>Settings String</string>
          </property>
         </widget>
        </item>
@@ -1721,9 +1953,9 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_16">
+      <layout class="QHBoxLayout" name="hlay_seed">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_seed">
          <property name="toolTip">
           <string/>
          </property>
@@ -1760,7 +1992,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="hlay_button_row">
        <item>
         <widget class="QPushButton" name="randomize_button">
          <property name="text">

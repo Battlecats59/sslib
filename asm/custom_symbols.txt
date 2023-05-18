@@ -2,12 +2,16 @@ main.dol:
   fix_freestanding_item_y_offset: 0x806782C0
   should_increase_freestanding_model_size: 0x806782EC
   setStoryflagToValue: 0x8067831C
-  handleBossKeyMapDungeonflag: 0x80678350
-  handleSmallKeyGet: 0x80678410
-  setSceneflagForArea: 0x806784B0
-  processStartflags: 0x80678520
-  alloc_keyboard_arcs_conditional: 0x806785CC
-  unset_sandship_timestone_if_necessary: 0x80678618
+  handleSmallKeyGet: 0x80678340
+  setSceneflagForArea: 0x806783E0
+  alloc_keyboard_arcs_conditional: 0x80678450
+  unset_sandship_timestone_if_necessary: 0x8067849C
+  patch_bit: 0x806784CC
+  process_startflags: 0x806784D8
+  handle_bk_map_dungeonflag: 0x80678790
+  rando_text_command_handler: 0x80678840
+  textbox_a_pressed_or_b_held: 0x80678A58
+  set_goddess_sword_pulled_scene_flag: 0x80678A88
 d_a_birdNP.rel:
   loftwing_speed_limit: 0xF298
 d_t_D3_scene_changeNP.rel:
@@ -22,7 +26,18 @@ d_a_obj_sw_sword_beamNP.rel:
   handle_crest_hit_item_give: 0x3780
 d_a_shop_sampleNP.rel:
   check_needs_custom_storyflag_subtype: 0x8450
+  correct_rupee_color: 0x8484
 d_a_npc_douguyanightNP.rel:
   select_new_item_column: 0x2F20
 d_a_obj_swrd_prjNP.rel:
   reveal_goddess_wall_check: 0x99B0
+d_a_obj_bellNP.rel:
+  try_end_pumpkin_archery: 0x1D08
+d_a_obj_light_lineNP.rel:
+  check_activated_storyflag: 0x1D90
+d_t_rock_boatNP.rel:
+  custom_eldin_platform_comparison: 0xDC8
+d_t_player_restartNP.rel:
+  only_set_flag_conditionally: 0x6A4
+d_a_obj_toD3_stone_figureNP.rel:
+  set_sot_placed_flag: 0x1388

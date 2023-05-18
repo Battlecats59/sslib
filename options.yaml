@@ -28,7 +28,7 @@
 - name: Starting Tablet Count
   command: starting-tablet-count
   type: int
-  default: 3
+  default: 1
   min: 0
   max: 3
   bits: 2
@@ -80,57 +80,9 @@
 - name: Empty unrequired Dungeons
   command: empty-unrequired-dungeons
   type: boolean
-  default: false
+  default: true
   help: If activated, only the required dungeons will contain progression items
   ui: option_empty_unrequired_dungeons
-- name: Banned Types
-  command: banned-types
-  type: multichoice
-  default: []
-  choices:
-    - skyloft
-    - sky
-    - thunderhead
-    - faron
-    - eldin
-    - lanayru
-    - dungeon
-    - mini dungeon
-    - free gift
-    - freestanding
-    - miscellaneous
-    - silent realm
-    - digging
-    - bombable
-    - combat
-    - song
-    - spiral charge
-    - minigame
-    - crystal
-    - short
-    - long
-    - fetch
-    - crystal quest
-    - scrapper
-    - peatrice
-    - goddess
-    - beedle
-    - cheap
-    - medium
-    - expensive
-    - faron goddess
-    - eldin goddess
-    - lanayru goddess
-    - floria goddess
-    - summit goddess
-    - sand sea goddess
-  help: 'Choose subtypes that can''t contain progression items, as a comma seperated
-    list, available types are: skyloft, sky, thunderhead, faron, eldin, lanayru, dungeon,
-    mini dungeon, free gift, freestanding, miscellaneous, silent realm, digging, bombable,
-    combat, song, spiral charge, minigame, crystal, short, long, fetch, crystal quest,
-    scrapper, peatrice, goddess, faron goddess, eldin goddess, lanayru goddess, floria
-    goddess, summit goddess, sand sea goddess'
-  ui: option_banned_types
 - name: Triforce Required
   command: triforce-required
   type: boolean
@@ -145,7 +97,7 @@
     - Vanilla
     - Sky Keep
     - Anywhere
-  default: Vanilla
+  default: Anywhere
   help: Choose where Triforces will appear. Vanilla sets them to their locations in Sky Keep. If Anywhere is chosen, Sky Keep counts as an unrequired dungeon
   ui: option_triforce_shuffle
 - name: Seed
@@ -155,12 +107,6 @@
   permalink: false
   help: Specify a seed to use for randomization, leave empty for random seed
   ui: seed
-- name: Hero Mode
-  command: hero-mode
-  type: boolean
-  default: true
-  help: If activated, play the game on Hero Mode
-  ui: option_hero_mode
 - name: Randomize Entrances
   command: randomize-entrances
   type: singlechoice
@@ -179,13 +125,6 @@
   default: false
   help: "Shuffles the trials. If checked, entering a trial gate will send you to a randomized trial."
   ui: option_randomize_trials
-- name: Start with Adventure Pouch
-  command: start-with-pouch
-  type: boolean
-  default: false
-  help: If activated, you will start with the adventure pouch unlocked. The remaining four
-    progressive pouches will still be shuffled.
-  ui: option_start_pouch
 - name: No Spoiler Log
   command: no-spoiler-log
   type: boolean
@@ -196,7 +135,7 @@
 - name: Max Batreaux Reward
   command: max-batreaux-reward
   type: singlechoice
-  default: 80
+  default: 50
   choices:
     - 0
     - 5
@@ -213,15 +152,17 @@
 - name: Shop Mode
   command: shop-mode
   type: singlechoice
-  default: Randomized
+  default: Randomized - Cheap
   choices:
     - Vanilla
-    - Always Junk
-    - Randomized
+    - Randomized - Cheap
+    - Randomized - Medium
+    - Randomized - Expensive
   bits: 2
   help: Controls how shops are randomized. If vanilla, shops will always contain their vanilla
-    items. Always Junk will randomize the shops, but will not place progression items in shops.
-    Randmomized will apply standard randomization to shops.
+    items, but may still be logically required for progression. When randomized, cheap is all
+    purchases that cost 300 rupees or less. Medium is all purchases that cost 1000 or less rupees.
+    Expensive includes all purchases, regardless of cost.
   ui: option_shopsanity
 - name: Rupoor Mode
   command: rupoor-mode
@@ -252,10 +193,22 @@
 - name: Place Scrap Shop Upgrades
   command: gondo-upgrades
   type: boolean
-  default: false
-  help: When enabled, extra progressive items will be shuffled that give the Scrap Shop upgrades for 
+  default: true
+  help: When enabled, extra progressive items will be shuffled that give the Scrap Shop upgrades for
     the Beetle, Bow, Bug Net, and Slingshot.
   ui: option_gondo_upgrades
+# - name: Tadtone Shuffle
+#   command: tadtones
+#   type: singlechoice
+#   default: Junk
+#   bits: 1
+#   choices:
+#     - Junk
+#     - Reward
+#     # - Tadtone Groups
+#     # - Reward + Tadtone Groups
+#   help: Randomizes the Faron SotH reward for collecting all the Tadtones.
+#   ui: option_tadtones
 - name: Gate of Time Starting State
   command: got-start
   type: singlechoice
@@ -273,10 +226,10 @@
   choices:
     - Goddess Sword
     - Goddess Longsword
-    - Goddess Whitesword
+    - Goddess White Sword
     - Master Sword
     - True Master Sword
-  default: Master Sword
+  default: True Master Sword
   help: Sets the sword requirement for opening the Gate of Time
   ui: option_got_sword_requirement
 - name: Gate of Time Dungeon Requirements
@@ -290,16 +243,16 @@
   help: Enables dungeon requirements for opening the Gate of Time. When disabled, dungeons will
     open the horde door instead.
   ui: option_got_dungeon_requirement
-- name: Open LMF
+- name: Open Lanayru Mining Facility
   command: open-lmf
   type: singlechoice
   bits: 2
   choices:
     - Nodes
     # - Hook Beetle
-    - Open
     - Main Node
-  default: Nodes
+    - Open
+  default: Open
   help: Controls the conditions for opening LMF. Nodes requires activating the 3 nodes as in vanilla,
     Main Node will set the fire, water, and lightning nodes to be active but LMF still needs to be raised from the main node.
   ui: option_open_lmf
@@ -335,7 +288,7 @@
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
-  default: Own Dungeon - Unrestricted
+  default: Own Dungeon - Restricted
   help: Controls the placement of maps. Restricted means that maps cannot be placed on the
     Boss Heart Container or ending check of the dungeon
   ui: option_map_mode
@@ -352,10 +305,10 @@
     # - Any Dungeon
     - Anywhere
   default: Own Dungeon - Restricted
-  help: Controls the placement of small keys. Vanilla means they will always be in their vanilla locations.
-    In Skyview, the Digging Spot will not contain a key. Own Dungeon means the keys can only appear
-    within their own dungeons. Restricted decreases the number of locations keys can appear in some
-    dungeons, depending on logic settings. Lanayru Caves Key only shuffles the Lanayru Caves Small Key.
+  help: "Controls the placement of small keys.
+    Vanilla: keys will be in their vanilla locations (The Skyview Digging Spot will not contain a key).
+    Own Dungeon - Restricted: keys will be within their own dungeons (reduces the locations keys can appear,
+    depending on logic settings). Lanayru Caves Key only: shuffles the Lanayru Caves Small Key."
   ui: option_small_key_mode
 - name: Boss Key Mode
   command: boss-key-mode
@@ -379,7 +332,6 @@
     # - Glitchless - Basic
     # - Glitchless - Standard
     - BiTless
-    - Glitched
     - No Logic
   default: BiTless
   help: Sets the logic mode to use when placing items. Glitchless requires no major tricks to complete, but
@@ -390,14 +342,15 @@
   command: enabled-tricks-bitless
   type: multichoice
   choices:
-    - Upgrade Hook Beetle
     - Bomb Throws
     - Long Range Skyward Strike Jumpslash
+    - Advanced Lizalfos Combat
     # Skyloft / Sky
     - Waterfall Cave Jump
-    - Bomb Bag Beedle
+    - Beedle's Shop With Bombs
     - Baby Rattle from Beedle's Shop
     - Sky Keep Entrance Jump
+    - Gravestone Jump
     - Sky - Volcanic Island Dive
     - Sky - Beedle's Island Cage Chest Dive
     - Thunderhead - East Island Dive
@@ -407,9 +360,14 @@
     # - Early Lake Floria - Moblin
     - Early Lake Floria - Swordless Rope Floria
     - Faron - Bokoblin Luring
+    # Eldin
+    - Stuttersprint
     # Lanayru
     - Itemless First Timeshift Stone
-    - Lanayru Mines Brakeslide
+    - Lanayru Mine - Quick Bomb
+    - Lanayru Mine Brakeslide
+    - Lanayru Desert - Spume Brakeslide
+    - Lanayru Desert - Sand Oasis Brakeslide
     - Temple of Time - Slingshot Shot
     - Temple of Time Skip - Brakeslide
     - Secret Passageway Hook Beetle Opening
@@ -448,7 +406,6 @@
     - Sky Keep - FS Room Clawshots Vine Clip
   default: []
   help: Enable specific tricks to be considered in logic
-  ui: enabled_tricks
 - name: Enabled Tricks Glitched
   command: enabled-tricks-glitched
   type: multichoice
@@ -463,7 +420,6 @@
 
   default: []
   help: Enable specific tricks to be considered in logic
-  ui: enabled_tricks
 - name: Song Hints
   command: song-hints
   type: singlechoice
@@ -478,12 +434,21 @@
     Basic tells if the reward item is any progress item. Advanced tells if the trial is WotH, Barren, or potentially required.
     Direct tells the item on the trial directly.
   ui: option_song_hints
-- name: Fix BiT crashes
-  command: fix-bit-crashes
-  type: boolean
-  default: false
-  help: If enabled, does not load some arcs in BiT when all file slots are filled to make all areas accessible in BiT
-  ui: option_fix_bit_crashes
+- name: BiT Changes
+  command: bit-patches
+  type: singlechoice
+  bits: 2
+  choices:
+    - Disable BiT
+    - Vanilla
+    - Fix BiT Crashes
+  default: Vanilla
+  help: "Changes how the Back in Time (BiT) glitch works.
+        Disable BiT: Makes it impossible to activate BiT.
+        Vanilla: Keeps the vanilla game behaviour where BiT is possible but Eldin BiT (and others) will still crash.
+        Fix BiT Crashes: Does not load some arcs to make all areas accessible in BiT.
+        WARNING: All 3 files must be filled BEFORE activating BiT otherwise this will not work."
+  ui: option_bit_patches
 - name: Output placement file
   command: out-placement-file
   type: boolean
@@ -495,7 +460,8 @@
   command: impa-sot-hint
   type: boolean
   default: true
-  help: Enables Impa in the Past to give a hint to the location of the Stone of Trials
+  help: Enables Impa in the Past to give a hint to the location of the Stone of
+        Trials. Does not appear if the Stone of Trials is a starting item.
   ui: option_impa_sot_hint
 - name: Tunic Swap
   command: tunic-swap
@@ -505,11 +471,44 @@
   cosmetic: true
   help: Swaps Link's casual clothes for the hero's tunic and vice versa
   ui: option_tunic_swap
-- name: Force Sword Dungeon Reward
-  command: sword-dungeon-reward
+- name: Lightning Skyward Strike
+  command: lightning-skyward-strike
   type: boolean
   default: false
-  help: If activated, the final check of a required dungeon will be a sword (if possible). If there aren't enough swords to place, or there are more than 4 swords to place, some required dungeons will not force a sword at the end.
+  permalink: false
+  cosmetic: true
+  help: When enabled, all Skyward Strikes use the lightning effect from the Demise fight
+  ui: option_lightning_skyward_strike
+- name: Starry Skies
+  command: starry-skies
+  type: boolean
+  default: false
+  permalink: false
+  cosmetic: true
+  help: Makes stars appear in the sky - even during the daytime.
+  ui: option_starry_skies
+- name: Number of stars in the sky
+  command: star-count
+  type: int
+  min: 0
+  max: 32767
+  default: 700
+  permalink: false
+  cosmetic: true
+  help: "Controls the number of stars in the sky.
+         WARNING: Values bigger than 700 (default) WILL lag when played on the Wii Console.
+         DOUBLE WARNING: Emulator isn't immune from the lag either. Seriously, use at your own risk."
+  ui: option_star_count
+- name: Force Sword Dungeon Reward
+  command: sword-dungeon-reward
+  type: singlechoice
+  bits: 2
+  choices:
+    - None
+    - Heart Container
+    - Final Check
+  default: None
+  help: Set if swords should be forced on the heart container or final check of a required dungeon will be a sword (or not at all), if possible. If there aren't enough swords to place, or there are more than 4 swords to place, some required dungeons will not force a sword at the end.
   ui: option_sword_dungeon_reward
 - name: Open Earth Temple
   command: open-et
@@ -579,11 +578,129 @@
   default: None
   help: Shuffles trial objects amongst themselves (within the same trial). Simple shuffles only tears and light fruits, advanced adds dusk relic spawn locations, and full adds stamina fruits
   ui: option_shuffle_trial_objects
+- name: Fill Dowsing on White Sword
+  command: dowsing-after-whitesword
+  type: boolean
+  default: true
+  help: If enabled will give you rupee, crystal, treasure and goddess cube dowsing after obtaining White Sword.
+  ui: option_fill_dowsing_on_white_sword
+- name: Chest Dowsing
+  command: chest-dowsing
+  type: singlechoice
+  bits: 2
+  choices:
+    - Vanilla
+    - All Chests
+    - Progress Items
+  default: Vanilla
+  help: Choose whether the main quest dowsing option should point to chests. Vanilla doesn't make any dowsing changes. If Progress Items, dowsing will only point to chests that contain progress items. Currently, dowsing doesn't work on Goddess Chests.
+  ui: option_chest_dowsing
+- name: Allow Dowsing in Dungeons
+  command: dungeon-dowsing
+  type: boolean
+  default: false
+  help: If enabled, dowsing will be re-enabled in dungeons and other dungeon-like areas like Great Tree and Waterfall Cave.
+  ui: option_dungeon_dowsing
+- name: Excluded Locations
+  command: excluded-locations
+  type: multichoice
+  default: [
+    # Goddess Cubes
+    Central Skyloft - Bazaar Goddess Chest,
+    Central Skyloft - Shed Goddess Chest,
+    Central Skyloft - West Cliff Goddess Chest,
+    Central Skyloft - Floating Island Goddess Chest,
+    Central Skyloft - Waterfall Goddess Chest,
+    Sky - Lumpy Pumpkin - Outside Goddess Chest,
+    Sky - Lumpy Pumpkin - Goddess Chest on the Roof,
+    Sky - Bamboo Island Goddess Chest,
+    Sky - Goddess Chest on Island next to Bamboo Island,
+    Sky - Goddess Chest in Cave on Island Next to Bamboo Island,
+    Sky - Beedle's Island Goddess Chest,
+    Sky - Beedle's Island Cage Goddess Chest,
+    Sky - Northeast Island Goddess Chest behind Bombable Rocks,
+    Sky - Northeast Island Cage Goddess Chest,
+    Sky - Goddess Chest on Island Closest to Faron Pillar,
+    Sky - Goddess Chest outside Volcanic Island,
+    Sky - Goddess Chest inside Volcanic Island,
+    Sky - Goddess Chest under Fun Fun Island,
+    Sky - Southwest Triple Island Upper Goddess Chest,
+    Sky - Southwest Triple Island Lower Goddess Chest,
+    Sky - Southwest Triple Island Cage Goddess Chest,
+    Thunderhead - Goddess Chest outside Isle of Songs,
+    Thunderhead - Goddess Chest on top of Isle of Songs,
+    Thunderhead - East Island Goddess Chest,
+    Thunderhead - Bug Heaven Goddess Chest,
+    Thunderhead - First Goddess Chest on Mogma Mitts Island,
+    Thunderhead - Second Goddess Chest on Mogma Mitts Island,
+    # Minigames
+    Upper Skyloft - Pumpkin Archery -- 600 Points,
+    Sky - Lumpy Pumpkin - Harp Minigame,
+    Sky - Fun Fun Island Minigame -- 500 Rupees,
+    Thunderhead - Bug Heaven -- 10 Bugs in 3 Minutes,
+    Lanayru Sand Sea - Rickety Coaster -- Heart Stopping Track in 1'05,
+    # Peatrice
+    Central Skyloft - Peater/Peatrice's Crystals,
+  ]
+  help: Set locations to be excluded from the progress pool. While the item found in these locations will still be shuffled, it will never be an item required to beat the game
+- name: Remove Enemy Music
+  command: no-enemy-music
+  type: boolean
+  default: false
+  help: If enabled, the enemy battle music will not play; instead, the regular field music in that area will keep playing.
+  ui: option_no_enemy_music
+  permalink: false
+  cosmetic: true
+- name: Open Lake Floria
+  command: open-lake-floria
+  type: singlechoice
+  bits: 2
+  choices:
+    - Vanilla
+    - Talk to Yerbal
+    - Open
+  default: Vanilla
+  help: "Choose how to access Lake Floria.
+         Vanilla: Logically requires you to talk to Yerbal and draw on the Floria Gates to enter Lake Floria.
+         Talk to Yerbal: Logically requires you to talk to Yerbal to enter Lake Floria.
+         Open: The Floria Gates are opened from the start of the game." # when you obtain the Water Scale."
+  ui: option_open_lake_floria
+- name: Upgraded Skyward Strike
+  command: upgraded-skyward-strike
+  type: boolean
+  default: true
+  permalink: true
+  help: if enabled the skyward strike will be fully upgraded from the beginning, having longer reach and charging faster
+  ui: option_upgraded_skyward_strike
+- name: Faster Air Meter Drain
+  command: fast-air-meter
+  type: boolean
+  default: false
+  permalink: true
+  help: if enabled the air meter depletes twice as fast.
+  ui: option_fast_air_meter
+- name: Heart Drops
+  command: enable-heart-drops
+  type: boolean
+  default: true
+  permalinnk: true
+  help: if enabled heart flowers will spawn and heart drops can occur
+  ui: option_enable_heart_drops
+- name: Damage Multiplier
+  command: damage-multiplier
+  type: int
+  default: 1
+  min: 1
+  max: 255
+  bits: 8
+  permalink: true
+  help: Overall damage multiplier. Normal mode default is x1, Hero mode is x2. When at least 12x, Hot Cave requires Fireshield Earrings.
+  ui: option_damage_multiplier
 # make this always last for maximum cross version permalink support
 - name: Hint Distribution
   command: hint-distribution
   type: singlechoice
-  bits: 3
+  bits: 4
   choices:
     - Weak
     - Balanced
@@ -596,7 +713,146 @@
     - S2 - 2D
     - S2 - 3D
     - S2 - 3D EUD Off
+    - CDMC
   default: Balanced
   help: Sets the distribution of hints. Distributions describe how many hints are placed and in what order, as well
     as specifics about what additional items and locations can and cannot be hinted
   ui: option_hint_distribution
+- name: Starting Items
+  command: starting-items
+  type: multichoice
+  choices:
+    - Baby Rattle
+    - Ballad of the Goddess
+    - Bomb Bag
+    - Cawlin's Letter
+    - Clawshots
+    - Din's Power
+    - Eldin Song of the Hero Part
+    - Faron Song of the Hero Part
+    - Farore's Courage
+    - Fireshield Earrings
+    - Goddess Harp
+    - Gust Bellows
+    - Horned Colossus Beetle
+    - Key Piece
+    - Key Piece
+    - Key Piece
+    - Key Piece
+    - Key Piece
+    - Lanayru Song of the Hero Part
+    - Life Tree Fruit
+    # - Life Tree Seedling
+    - Nayru's Wisdom
+    - Progressive Beetle
+    - Progressive Beetle
+    - Progressive Beetle
+    - Progressive Beetle
+    - Progressive Bow
+    - Progressive Bow
+    - Progressive Bow
+    - Progressive Bug Net
+    - Progressive Bug Net
+    - Progressive Mitts
+    - Progressive Mitts
+    - Progressive Pouch
+    - Progressive Pouch
+    - Progressive Pouch
+    - Progressive Pouch
+    - Progressive Pouch
+    - Progressive Slingshot
+    - Progressive Slingshot
+    - Progressive Wallet
+    - Progressive Wallet
+    - Progressive Wallet
+    - Progressive Wallet
+    - Sea Chart
+    - Spiral Charge
+    - Stone of Trials
+    - Triforce of Courage
+    - Triforce of Power
+    - Triforce of Wisdom
+    - Water Scale
+    - Whip
+    - Skyview Small Key
+    - Skyview Small Key
+    - Lanayru Mining Facility Small Key
+    - Ancient Cistern Small Key
+    - Ancient Cistern Small Key
+    - Sandship Small Key
+    - Sandship Small Key
+    - Fire Sanctuary Small Key
+    - Fire Sanctuary Small Key
+    - Fire Sanctuary Small Key
+    - Sky Keep Small Key
+    - Lanayru Caves Small Key
+    - Skyview Map
+    - Earth Temple Map
+    - Lanayru Mining Facility Map
+    - Ancient Cistern Map
+    - Sandship Map
+    - Fire Sanctuary Map
+    - Sky Keep Map
+    - Skyview Boss Key
+    - Earth Temple Boss Key
+    - Lanayru Mining Facility Boss Key
+    - Ancient Cistern Boss Key
+    - Sandship Boss Key
+    - Fire Sanctuary Boss Key
+  default: [
+    # Sailcloth,
+    Progressive Pouch,
+    Skyview Map,
+    Earth Temple Map,
+    Lanayru Mining Facility Map,
+    Ancient Cistern Map,
+    Sandship Map,
+    Fire Sanctuary Map,
+    Sky Keep Map,
+  ]
+  help: Items that will be in your inventory at the start of the game.
+  ui: starting_items
+- name: Random Starting Item
+  command: random-starting-item
+  type: boolean
+  default: false
+  help: "Gives you a random progression item at the start of the game in
+        addition to any starting items. This includes: Bow, Beetle, Slingshot,
+        Digging Mitts, Pouch, Bomb Bag, Clawshots, Whip, Gust Bellows,
+        Water Scale, Fireshield Earrings, Goddess Harp and Spiral Charge."
+  ui: option_random_starting_item
+- name: Starting Heart Containers
+  command: starting-heart-containers
+  type: int
+  default: 0
+  min: 0
+  max: 6
+  bits: 3
+  help: How many heart containers to start with.
+  ui: option_starting_heart_containers
+- name: Starting Heart Pieces
+  command: starting-heart-pieces
+  type: int
+  default: 0
+  min: 0
+  max: 24
+  bits: 5
+  help: How many heart pieces to start with.
+  ui: option_starting_heart_pieces
+- name: Interface
+  command: interface
+  type: singlechoice
+  bits: 2
+  choices:
+    - Standard
+    - Light
+    - Pro
+  default: Standard
+  permalink: false
+  cosmetic: true
+  help: "Determines how the game interface will look.
+        Has the same effect as using the interface button from the inventory screen in-game.
+        **Standard**: All interface (HUD) elements are shown.
+        **Light**: Some interface elements will be invisible (e.g. the Wii Remote on the right of the screen).
+        **Pro**: Most interface elements will be invisible."
+  ui: option_interface

@@ -1,242 +1,188 @@
+from enum import Enum
+from logic.constants import *
+from logic.inventory import EXTENDED_ITEM
+from logic.logic import DNFInventory
+from logic.logic_input import Areas
 from hints.hint_distribution import HintDistribution
 from hints.hint_types import *
-from .logic import Logic
+from .randomize import LogicUtils, UserOutput
+from options import Options
 from paths import RANDO_ROOT_PATH
-import yaml
-from collections import OrderedDict, defaultdict
-from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 
-from .constants import (
-    POTENTIALLY_REQUIRED_DUNGEONS,
-    ALL_DUNGEON_AREAS,
-    SILENT_REALMS,
-    SILENT_REALM_CHECKS,
-)
-from util import textbox_utils
-
-HINTABLE_ITEMS = (
-    ["Clawshots"]
-    + ["Progressive Beetle"] * 2
-    + ["Progressive Sword"] * 4
-    + ["Emerald Tablet"] * 1
-    + ["Ruby Tablet"] * 1
-    + ["Amber Tablet"] * 1
-    + ["Goddess Harp"] * 1
-    + ["Water Scale"] * 1
-    + ["Fireshield Earrings"] * 1
-)
-
-ALWAYS_REQUIRED_LOCATIONS = [
-    "Thunderhead - Song from Levias",
-    "Sky - Kina's Crystals",
-    "Central Skyloft - Peater/Peatrice's Crystals",
-    "Batreaux - 80 Crystals",
-    "Lanayru Mining Facility - Boss Key Chest",
-    "Fire Sanctuary - Chest after Bombable Wall",
-]
-
-SOMETIMES_LOCATIONS = [
-    "Lanayru Sand Sea - Rickety Coaster - Heart Stopping Track in 1'05",
-    "Knight Academy - Pumpkin Archery - 600 Points",
-    "Sky - Lumpy Pumpkin Harp Minigame",
-    "Sky - Fun Fun Island Minigame - 500 Rupees",
-    "Thunderhead - Bug Heaven - 10 Bugs in 3 Minutes",
-    "Batreaux - 70 Crystals Second Reward",
-    "Batreaux - 70 Crystals",
-    "Batreaux - 50 Crystals",
-    "Knight Academy - Owlan's Crystals",
-    "Skyloft Village - Sparrot's Crystals",
-    "Lanayru Desert - Chest on top of Lanayru Mining Facility",
-    "Central Skyloft - Waterfall Goddess Chest",  # stronghold cube
-    "Sky - Beedle's Island Goddess Chest",  # goddess cube in ToT area
-    "Skyview - Chest behind Three Eyes",
-    "Sandship - Boss Key Chest",
-    "Sandship - Tentalus Heart Container",
-    "Sandship - Bow",
-    "Thunderhead - Isle of Songs - Din's Power",
-    "Sealed Grounds - Zelda's Blessing",
-    "Lanayru Sand Sea - Skipper's Retreat - Chest in Shack",
-    "Volcano Summit - Item behind Digging",
-    "Faron Woods - Slingshot",
-    "Sky - Beedle's Crystals",
-    "Sealed Grounds - Gorko's Goddess Wall Reward",
-]
+STATUS = Enum("STATUS", ["required", "useful", "useless"])
 
 
 class Hints:
-    def __init__(self, logic: Logic):
-        self.stonehint_definitions = logic.rando.stonehint_definitions
+    def __init__(self, options: Options, rng, areas: Areas, logic: LogicUtils):
         self.logic = logic
-        for hintname, hintdef in self.stonehint_definitions.items():
-            if self.logic.rando.options["logic-mode"] == "No Logic":
-                hintdef["Need"] = Logic.parse_logic_expression(hintname, "Nothing")
-            else:
-                hintdef["Need"] = self.logic.macros[hintname]
-        self.hints = OrderedDict()
+        self.areas = areas
+        self.norm = areas.short_to_full
+        self.placement = logic.placement
+        self.options = options
+        self.rng = rng
+
         with open(
             RANDO_ROOT_PATH
-            / f"hints/distributions/{self.logic.rando.options['hint-distribution']}.json"
+            / f"hints/distributions/{self.options['hint-distribution']}.json"
         ) as f:
             self.dist = HintDistribution()
             self.dist.read_from_file(f)
 
-    def do_hints(self):
-        needed_always_hints = self.logic.filter_locations_for_progression(
-            [
-                loc
-                for loc in self.logic.item_locations.keys()
-                if self.logic.item_locations[loc].get("hint") == "always"
-            ]
-        )
-        # in shopsanity, we need to hint some beetle shop items
-        # add them manually, cause they need to be kinda weirdly implemented because of bug net
-        if (
-            self.logic.rando.options["shop-mode"] == "Randomized"
-            and "expensive" not in self.logic.rando.options["banned-types"]
-        ):
-            needed_always_hints.append("Beedle - 1200 Rupee Item")
-            needed_always_hints.append("Beedle - 1600 Rupee Item")
-        if self.logic.rando.options["song-hints"] == "None":
-            needed_always_hints.append("Skyloft Silent Realm - Stone of Trials")
-            needed_always_hints.append("Faron Silent Realm - Water Scale")
-            needed_always_hints.append("Lanayru Silent Realm - Clawshots")
-            needed_always_hints.append("Eldin Silent Realm - Fireshield Earrings")
-        needed_sometimes_hints = self.logic.filter_locations_for_progression(
-            [
-                loc
-                for loc in self.logic.item_locations.keys()
-                if "hint" in self.logic.item_locations[loc]
-                and self.logic.item_locations[loc]["hint"] == "sometimes"
-            ]
-        )
-        self.dist.start(self.logic, needed_always_hints, needed_sometimes_hints)
-        hints = self.dist.get_hints(32)
-        self._place_hints_for_locations(hints)
+    def do_hint_per_status(self, hintmodes, does_hint, hintcls, get_check, hintpack):
+        for hintname, raw_check in hintpack.items():
+            check = get_check(raw_check)
+            item = self.logic.placement.locations[check]
 
-    def _place_hints_for_locations(self, hints: List[GossipStoneHint]):
-        # make sure hint locations aren't locked by the item they hint
-        hint_banned_stones = defaultdict(set)
-        for hint in hints:
-            if not hint.needs_logic:
-                # hints with no logic don't have any banned stones
-                # this also short circuits type errors for hints that don't have locations
-                continue
-            if hint.location in SILENT_REALM_CHECKS.keys():
-                loc_trial_gate = SILENT_REALM_CHECKS[hint.location]
-                trial_gate_dest = self.logic.trial_connections[loc_trial_gate]
-                trial_gate_dest_loc = [
-                    trial
-                    for trial in SILENT_REALM_CHECKS.keys()
-                    if trial_gate_dest in trial
-                ].pop()
-                hinted_trial = trial_gate_dest_loc
-                hinted_item = self.logic.done_item_locations[trial_gate_dest_loc]
-                if hinted_item in self.logic.all_progress_items:
-                    for (
-                        gossipstone_name,
-                        gossipstone_def,
-                    ) in self.stonehint_definitions.items():
-                        if not self.logic.can_reach_restricted(
-                            [hinted_trial], gossipstone_def["Need"]
-                        ):
-                            hint_banned_stones[gossipstone_name].add(hint)
+            if does_hint:
+                self.hinted_checks.append(check)
+
+            status: Enum
+            if item in self.logic.get_sots_items():
+                status = STATUS.required
+            elif item in self.logic.get_useful_items():
+                status = STATUS.useful
             else:
-                hinted_item = self.logic.done_item_locations[hint.location]
-                if hinted_item in self.logic.all_progress_items:
-                    for (
-                        gossipstone_name,
-                        gossipstone_def,
-                    ) in self.stonehint_definitions.items():
-                        if not self.logic.can_reach_restricted(
-                            [hint.location], gossipstone_def["Need"]
-                        ):
-                            hint_banned_stones[gossipstone_name].add(hint)
+                status = STATUS.useless
 
-        stones_to_banned_locs_sorted = sorted(
-            hint_banned_stones.items(), key=lambda x: len(x[1]), reverse=True
+            self.hints[hintname] = hintcls(hintmodes[status], hintname, item)
+
+    def do_non_hintstone_hints(self):
+        self.hinted_checks: List[EIN] = []
+        self.hints: Dict[EIN, SongHint] = {}
+
+        hint_mode = self.options["song-hints"]
+
+        hintmodes: Dict[Enum, Enum]
+        if hint_mode == "None":
+            hintmodes = {k: HINT_MODES.Empty for k in STATUS}
+        elif hint_mode == "Direct":
+            hintmodes = {k: HINT_MODES.Direct for k in STATUS}
+        elif hint_mode == "Basic":
+            hintmodes = {
+                STATUS.required: HINT_MODES.Useful,
+                STATUS.useful: HINT_MODES.Useful,
+                STATUS.useless: HINT_MODES.Useless,
+            }
+        elif hint_mode == "Advanced":
+            hintmodes = {
+                STATUS.required: HINT_MODES.Required,
+                STATUS.useful: HINT_MODES.Useful,
+                STATUS.useless: HINT_MODES.Useless,
+            }
+        else:
+            raise ValueError(f'Unknown value for setting "song-hints": "{hint_mode}".')
+
+        does_hint = hint_mode != "None"
+        get_check = lambda trial_gate: self.norm(
+            SILENT_REALM_CHECKS[self.logic.randomized_trial_entrance[trial_gate]]
         )
 
-        if len(hints) < len(self.stonehint_definitions) * 2:
-            hints.extend([None] * (len(self.stonehint_definitions) * 2 - len(hints)))
-        unplace_hints = hints.copy()
+        self.do_hint_per_status(hintmodes, does_hint, SongHint, get_check, SONG_HINTS)
 
-        hint_to_location = {}
-        # place locations that are restricted in locations
-        for gossipstone_name, banned_locations in stones_to_banned_locs_sorted:
-            valid_locations = [
-                loc for loc in unplace_hints if not loc in banned_locations
-            ]
-            if len(valid_locations) == 0:
-                print(
-                    f"no valid location for {gossipstone_name} in seed {self.logic.rando.seed}"
+        return self.hints, self.hinted_checks
+
+    def do_hints(self, useroutput: UserOutput):
+        self.useroutput = useroutput
+
+        check_hint_status = {
+            loc: check.get("hint") for loc, check in self.areas.checks.items()
+        }
+
+        # ensure prerandomized and banned locations cannot be hinted
+        not_banned = self.logic.fill_restricted()
+        banned_locs = [
+            loc
+            for loc, check in self.areas.checks.items()
+            if not not_banned[check["req_index"]]
+        ]
+        unhintables = (
+            banned_locs + self.logic.known_locations + [START_ITEM, UNPLACED_ITEM]
+        )
+
+        non_hintstone_hints, hinted_checks = self.do_non_hintstone_hints()
+
+        self.dist.start(
+            self.areas,
+            self.options,
+            self.logic,
+            self.rng,
+            unhintables + hinted_checks,
+            check_hint_status,
+        )
+        hintstone_hints = self.dist.get_hints()
+        self.useroutput.progress_callback("placing hints...")
+        hintstone_hints = {
+            hintname: hint for hint, hintname in zip(hintstone_hints, HINTS)
+        }
+        self.hints_per_stone = self.dist.hints_per_stone
+        self.randomize(hintstone_hints)
+
+        placed_hintstone_hints = {
+            stone: GossipStoneHintWrapper(
+                [hintstone_hints[hintname] for hintname in hintnames]
+            )
+            for stone, hintnames in self.logic.placement.stones.items()
+        }
+
+        self.logic.placement.hints = placed_hintstone_hints | non_hintstone_hints
+
+    def randomize(self, hints: Dict[EIN, GossipStoneHint]):
+        for hintname, hint in hints.items():
+            hint_bit = EXTENDED_ITEM[hintname]
+            if isinstance(hint, LocationGossipStoneHint) and hint.item in EXTENDED_ITEM:
+                itembit = EXTENDED_ITEM[hint.item]
+                hint_req = DNFInventory(hint_bit)
+                self.logic.backup_requirements[itembit] &= hint_req
+                self.logic.requirements[itembit] &= hint_req
+
+            self.logic.inventory |= hint_bit
+
+        self.logic.aggregate = self.logic.aggregate_requirements(
+            self.logic.requirements, None
+        )
+        self.logic.fill_inventory_i(monotonic=False)
+
+        for hintname in hints:
+            if not self.place_hint(hintname):
+                raise self.useroutput.GenerationFailed(
+                    f"Could not find a valid location to place {hintname}. This may be because the settings are too restrictive. Try randomizing a new seed."
                 )
-                loc_to_hint = unplace_hints[0]
-                second_loc_to_hint = unplace_hints[1]
-                # raise Exception('no valid location to place hint!')
-            else:
-                loc_to_hint = self.logic.rando.rng.choice(valid_locations)
-                # ensure we dont try to place the same hint twice
-                removed_list = valid_locations.copy()
-                removed_list.remove(loc_to_hint)
-                second_loc_to_hint = self.logic.rando.rng.choice(removed_list)
-            hint_to_location[gossipstone_name] = [loc_to_hint, second_loc_to_hint]
-            unplace_hints.remove(loc_to_hint)
-            unplace_hints.remove(second_loc_to_hint)
-        # place locations that aren't restricted and also fill rest of locations
-        for gossipstone_name in [
-            name for name in self.stonehint_definitions if not name in hint_to_location
-        ]:
-            if len(unplace_hints) == 0:
-                # placeholder
-                hint_to_location[gossipstone_name] = [None]
-                continue
-            loc_to_hint = self.logic.rando.rng.choice(unplace_hints)
-            unplace_hints.remove(loc_to_hint)
-            second_loc_to_hint = self.logic.rando.rng.choice(unplace_hints)
-            unplace_hints.remove(second_loc_to_hint)
-            hint_to_location[gossipstone_name] = [loc_to_hint, second_loc_to_hint]
-        anywhere_hints = [hint for hint in hints if not hint.needs_logic]
-        self.logic.rando.rng.shuffle(anywhere_hints)
 
-        for gossipstone_name in self.stonehint_definitions:
-            if gossipstone_name in self.dist.banned_stones:
-                self.hints[gossipstone_name] = EmptyGossipStoneHint(
-                    None, None, False, self.dist.get_junk_text()
-                )
-            else:
-                locs_to_hint = hint_to_location[gossipstone_name]
-                loc_to_hint = locs_to_hint[0]
-                second_loc_to_hint = locs_to_hint[1]
-                if second_loc_to_hint is None and loc_to_hint is not None:
-                    if len(anywhere_hints) > 0:
-                        self.hints[gossipstone_name] = GossipStoneHintWrapper(
-                            loc_to_hint,
-                            BarrenGossipStoneHint(zone=anywhere_hints.pop()),
-                        )
-                    else:
-                        self.hints[gossipstone_name] = loc_to_hint
-                elif second_loc_to_hint is not None and loc_to_hint is None:
-                    if len(anywhere_hints) > 0:
-                        self.hints[gossipstone_name] = GossipStoneHintWrapper(
-                            BarrenGossipStoneHint(zone=anywhere_hints.pop()),
-                            second_loc_to_hint,
-                        )
-                    else:
-                        self.hints[gossipstone_name] = second_loc_to_hint
-                elif loc_to_hint is None:
-                    # place barren hints at locations with no hints
-                    if len(anywhere_hints) < 0:
-                        hint = anywhere_hints.pop()
-                    else:
-                        hint = None
-                    if hint is not None:
-                        self.hints[gossipstone_name] = hint
-                    else:
-                        self.hints[gossipstone_name] = EmptyGossipStoneHint(
-                            None, None, False, self.dist.get_junk_text()
-                        )
-                else:
-                    self.hints[gossipstone_name] = GossipStoneHintWrapper(
-                        loc_to_hint, second_loc_to_hint
-                    )
+    def place_hint(self, hintname: EXTENDED_ITEM_NAME, depth=0) -> bool:
+        hint_bit = EXTENDED_ITEM[hintname]
+        self.logic.remove_item(hint_bit)
+
+        accessible_stones = list(self.logic.accessible_stones())
+
+        available_stones = [
+            stone
+            for stone in accessible_stones
+            for spot in range(
+                self.dist.hints_per_stone[stone]
+                - len(self.logic.placement.stones[stone])
+            )
+        ]
+
+        if available_stones:
+            stone = self.rng.choice(available_stones)
+            result = self.logic.place_item(stone, hintname, hint_mode=True)
+            assert result  # Undefined if False
+            return True
+
+        # We have to replace an already placed hint
+        if depth > 50:
+            return False
+        if not accessible_stones:
+            raise self.useroutput.GenerationFailed(
+                f"No more locations accessible for {hintname}."
+            )
+
+        spots = [
+            (stone, old_hint)
+            for stone in accessible_stones
+            for old_hint in self.placement.stones[stone]
+        ]
+        stone, old_hint = self.rng.choice(spots)
+        old_removed_hint = self.logic.replace_item(stone, hintname, old_hint)
+        return self.place_hint(old_removed_hint, depth + 1)
