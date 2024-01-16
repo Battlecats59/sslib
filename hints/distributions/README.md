@@ -25,6 +25,9 @@ Hint distributions define everything about how gossip stone hints are placed by 
 All fields are **required** in all distribution files, however, specific hint types can be omitted from the actual distribution, however this is not recommended.
 
 ## Fields
+- fi_hints (number)
+  - The number of gossip stone hints that will be given to Fi (accessible in her menu).
+  - Fi's hints are placed first, then any remaining hints are placed in gossip stones.
 - banned_stones (Array of strings)
   - List of all the gossip stones that cannot have useful hints placed on them
   - Names must match the exact internal naming structure of the randomizer, which can be found in hints.yaml in the root directory
@@ -36,8 +39,8 @@ All fields are **required** in all distribution files, however, specific hint ty
   - Must match the check name exactly, as specified in checks.yaml in the root directory
 - added_items ([{ name: string, amount: number }])
   - Adds the sepcified number of copies of the item to the item hint pool
-- removed_items (Array of strings)
-  - Prevents the specified item from being hinted for any hint type
+- removed_items ([{ name: string, type: string ("item" or "sots") }])
+  - Prevents the specified item from being hinted for the specified hint type
 - dungeon_sots_limit (number)
   - Limits the number of dungeon SotS/Goal hints that can be placed. They will attempt be replaced by a different SotS/Goal hint if a hint past the limit would be placed.
 - dungeon_barren_limit (number)

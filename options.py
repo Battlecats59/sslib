@@ -1,18 +1,11 @@
 from packedbits import PackedBitsReader, PackedBitsWriter
-from paths import RANDO_ROOT_PATH
 from pathlib import Path
-from util.file_accessor import read_yaml_file_cached
+from yaml_files import checks, options
 
-import yaml
-from yaml_files import yaml_load
 from collections import OrderedDict
 
-OPTIONS_LIST = yaml_load(RANDO_ROOT_PATH / "options.yaml")
-
-OPTIONS = OrderedDict((option["command"], option) for option in OPTIONS_LIST)
-OPTIONS["excluded-locations"]["choices"] = [
-    check for check in read_yaml_file_cached("checks.yaml")
-]
+OPTIONS = OrderedDict((option["command"], option) for option in options)
+OPTIONS["excluded-locations"]["choices"] = [check for check in checks]
 
 
 class Options:
@@ -78,6 +71,8 @@ class Options:
             if not path.is_dir():
                 validation_errors.append(f"path {value_str} is not a directory!")
             value = path
+        elif option["type"] == "string":
+            pass
         else:
             raise Exception(f'Unknown type: {option["type"]}.')
         return value, validation_errors
@@ -183,6 +178,11 @@ class Options:
             if not path.is_dir():
                 raise ValueError(f"Path {option_value} is not a directory.")
             option_value = path
+        elif option["type"] == "string":
+            if not isinstance(option_value, str):
+                raise TypeError(
+                    f"Value for option {option_name} has to be a string, got {type(option_value)}."
+                )
         self.options[option_name] = option_value
 
     def set_option_str(self, option_name, option_value):

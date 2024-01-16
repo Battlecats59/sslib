@@ -14,8 +14,8 @@ import struct
 import nlzss11
 from sslib import AllPatcher, U8File
 from sslib.msb import process_control_sequences
-from sslib.utils import write_bytes_create_dirs, encodeBytes
-from sslib.fs_helpers import write_str, write_u16, write_float
+from sslib.utils import write_bytes_create_dirs, encodeBytes, toBytes
+from sslib.fs_helpers import write_str, write_u16, write_float, write_u8
 from sslib.dol import DOL
 from sslib.rel import REL
 from paths import RANDO_ROOT_PATH
@@ -25,6 +25,7 @@ from musicrando import music_rando
 from logic.bool_expression import check_static_option_req
 from logic.constants import *
 from logic.placement_file import PlacementFile
+from util.flag_mapping_tables import get_storyflag_writer, get_itemflag_writer
 from yaml_files import yaml_load
 
 from asm.patcher import apply_dol_patch, apply_rel_patch
@@ -231,6 +232,7 @@ DUNGEON_EXIT_SCENS = {
     SSH: [
         ("D301", 0, 0),
         ("D301", 0, 1),
+        ("D301", 0, 7),
         ("D301", 1, 2),
         ("D301", 2, 0),
         ("D301", 6, 0),
@@ -366,7 +368,7 @@ HEIGHT_OFFSETS = {
     12: -35.0,  # Goddess Longsword (unused)
     13: -35.0,  # Master Sword (unused)
     14: -35.0,  # True Master Sword (unused)
-    16: -28.0,  # Goddess Harp
+    16: -28.0,  # Goddess's Harp
     19: -35.0,  # Bow (Progressive Bow)
     20: -38.0,  # Clawshots
     21: -32.0,  # Bird Statuette (Spiral Charge)
@@ -436,6 +438,7 @@ HEIGHT_OFFSETS = {
     211: -20.0,  # Fire Sanctuary Map
     212: -20.0,  # Sandship Map
     213: -20.0,  # Sky Keep Map
+    214: 0.0,  # Group of Tadtones
 }
 
 SHOP_BUY_DECIDE_SCALE = {
@@ -446,7 +449,7 @@ SHOP_BUY_DECIDE_SCALE = {
     12: 1.0,  # Goddess Longsword (unused)
     13: 1.0,  # Master Sword (unused)
     14: 1.0,  # True Master Sword (unused)
-    16: 1.2,  # Goddess Harp
+    16: 1.2,  # Goddess's Harp
     19: 0.8,  # Bow (Progressive Bow)
     20: 1.2,  # Clawshots
     21: 1.0,  # Bird Statuette (Spiral Charge)
@@ -507,11 +510,12 @@ SHOP_BUY_DECIDE_SCALE = {
     211: 1.2,  # Fire Sanctuary Map
     212: 1.2,  # Sandship Map
     213: 1.2,  # Sky Keep Map
+    214: 0.6,  # Group of Tadtones
 }
 
 SHOP_PUT_SCALE = {
     1: 1.5,  # Vanilla Small Key (Unused)
-    16: 1.5,  # Goddess Harp
+    16: 1.5,  # Goddess's Harp
     19: 1.5,  # Bow (Progressive Bow)
     20: 1.5,  # Clawshots
     21: 1.2,  # Bird Statuette (Spiral Charge)
@@ -570,6 +574,7 @@ SHOP_PUT_SCALE = {
     211: 1.2,  # Fire Sanctuary Map
     212: 1.2,  # Sandship Map
     213: 1.2,  # Sky Keep Map
+    214: 1.0,  # Group of Tadtones
 }
 
 TRIAL_OBJECT_IDS = {
@@ -824,6 +829,8 @@ TRIAL_OBJECT_IDS = {
         ],
     },
 }
+
+CLEF_OBJECT_IDS = {}
 
 
 class FlagEventTypes(IntEnum):
@@ -1123,11 +1130,6 @@ def patch_trial_item(trial: OrderedDict, itemid: int):
     trial["params1"] = mask_shift_set(trial["params1"], 0xFF, 0x18, itemid)
 
 
-def patch_trial_flags(trial: OrderedDict, storyflag: int):
-    # Use last 2 bytes of params2 as the randomized trial storyflag
-    trial["params2"] = mask_shift_set(trial["params2"], 0xFFFF, 0x0, storyflag)
-
-
 def patch_key_bokoblin_item(boko: OrderedDict, itemid: int):
     boko["params2"] = mask_shift_set(boko["params2"], 0xFF, 0x0, itemid)
 
@@ -1150,18 +1152,11 @@ def rando_patch_heartco(bzs: OrderedDict, itemid: int, id: str):
     patch_heart_co(obj, itemid)
 
 
-def rando_patch_warpobj(
-    bzs: OrderedDict, itemid: int, id: str, trial_connections: OrderedDict
-):
+def rando_patch_warpobj(bzs: OrderedDict, itemid: int, id: str):
     obj = next(
         filter(lambda x: x["name"] == "WarpObj", bzs["OBJ "])
     )  # there is only one trial exit at a time
     patch_trial_item(obj, itemid)
-    for trial, trialid in TRIAL_EXIT_GATE_IDS.items():
-        if obj["id"] == trialid:
-            trial_gate = [tg for tg, t in trial_connections.items() if t == trial].pop()
-            trial_storyflag = TRIAL_COMPLETE_STORYFLAGS[trial_gate]
-    patch_trial_flags(obj, trial_storyflag)
 
 
 def rando_patch_tbox(bzs: OrderedDict, itemid: int, id: str, dowsing: int):
@@ -1221,6 +1216,17 @@ def rando_patch_goddess_crest(bzs: OrderedDict, itemid: int, index: str):
         obj["params2"] = mask_shift_set(obj["params2"], 0xFF, 0x18, itemid)
 
 
+def rando_patch_tadtone_group(bzs: OrderedDict, itemid: int, groupId: str):
+    groupId = int(groupId, 0)
+    clefs = filter(
+        lambda x: x["name"] == "Clef" and ((x["params1"] >> 3) & 0x1F) == groupId,
+        bzs["OBJ "],
+    )
+
+    for clef in clefs:
+        clef["anglez"] = mask_shift_set(clef["anglez"], 0xFFFF, 0, itemid)
+
+
 # functions, that patch the object, they take: the bzs of that layer, the item id and optionally an id, then patches the object in place
 RANDO_PATCH_FUNCS = {
     "chest": rando_patch_chest,
@@ -1233,6 +1239,7 @@ RANDO_PATCH_FUNCS = {
     "EBc": rando_patch_bokoblin,
     "Tbox": rando_patch_tbox,
     "SwSB": rando_patch_goddess_crest,
+    "Clef": rando_patch_tadtone_group,
 }
 
 
@@ -1248,6 +1255,8 @@ def get_patches_from_location_item_list(all_checks, filled_checks, chest_dowsing
     eventpatches = defaultdict(list)
     # shopindex: (itemid, arcname, modelname)
     shoppatches = {}
+    # trialstage -> (itemsceneflag, itemid)
+    trialrelics = defaultdict(list)
 
     stage_re = re.compile(
         r"stage/(?P<stage>[^/]+)/r(?P<room>[0-9]+)/l(?P<layer>[0-9]+)/(?P<objname>[a-zA-Z]+)(/(?P<objid>[^/]+))?"
@@ -1286,9 +1295,13 @@ def get_patches_from_location_item_list(all_checks, filled_checks, chest_dowsing
                     # otherwise it could lead to an increased stage size
                     # which will lead to a crash
                     stageoarcs[(stage, layer)].add("dummy")
-                stagepatchv2[(stage, room)].append(
-                    (objname, layer, objid, item["id"], chest_dowsing[checkname])
-                )
+                # fake object name to handle it easier
+                if objname == "Relic":
+                    trialrelics[stage].append((int(objid), item["id"]))
+                else:
+                    stagepatchv2[(stage, room)].append(
+                        (objname, layer, objid, item["id"], chest_dowsing[checkname])
+                    )
             elif event_match:
                 eventfile = event_match.group("eventfile")
                 eventid = event_match.group("eventid")
@@ -1323,7 +1336,7 @@ def get_patches_from_location_item_list(all_checks, filled_checks, chest_dowsing
                 shoppatches[index] = (item["id"], arcname, modelname)
             else:
                 print(f"ERROR: {path} didn't match any regex!")
-    return stagepatchv2, stageoarcs, eventpatches, shoppatches
+    return stagepatchv2, stageoarcs, eventpatches, shoppatches, trialrelics
 
 
 def get_entry_from_bzs(
@@ -1383,12 +1396,19 @@ class GamePatcher:
         self.exe_root_path = exe_root_path
         self.actual_extract_path = actual_extract_path
         self.modified_extract_path = modified_extract_path
+
         self.patcher = AllPatcher(
             actual_extract_path=actual_extract_path,
             modified_extract_path=modified_extract_path,
             oarc_cache_path=oarc_cache_path,
             arc_replacement_path=arc_replacement_path,
             assets_path=RANDO_ROOT_PATH / "assets",
+            current_player_model_pack_name=self.placement_file.options[
+                "selected-player-model-pack"
+            ],
+            current_loftwing_model_pack_name=self.placement_file.options[
+                "selected-loftwing-model-pack"
+            ],
             copy_unmodified=False,
         )
         self.text_labels = {}
@@ -1397,9 +1417,10 @@ class GamePatcher:
         self.load_base_patches()
         self.add_entrance_rando_patches()
         self.add_trial_rando_patches()
-        if self.placement_file.options["shop-mode"] != "Vanilla":
+        if self.placement_file.options["shopsanity"]:
             self.shopsanity_patches()
         self.do_build_arc_cache()
+        self.add_peatrice_storyflags()
         self.add_startitem_patches()
         self.add_required_dungeon_patches()
         self.add_fi_text_patches()
@@ -1413,8 +1434,7 @@ class GamePatcher:
         self.add_rando_hash()
         self.add_keysanity()
         self.add_demises()
-        if not self.placement_file.options["shuffle-trial-objects"] == "None":
-            self.shuffle_trial_objects()
+        self.shuffle_trial_objects()
 
         self.patcher.set_bzs_patch(self.bzs_patch_func)
         self.patcher.set_event_patch(self.flow_patch)
@@ -1428,7 +1448,9 @@ class GamePatcher:
         self.do_patch_title_screen_logo()
         self.do_patch_custom_dowsing_images()
 
-        music_rando(self.placement_file, self.modified_extract_path)
+        music_rando(
+            self.placement_file, self.modified_extract_path, self.actual_extract_path
+        )
 
     def filter_option_requirement(self, entry):
         return not (
@@ -1469,26 +1491,18 @@ class GamePatcher:
 
         # patches from randomizing items
         filtered_item_locations = self.placement_file.item_locations.copy()
-        rupeesanity_option = self.placement_file.options["rupeesanity"]
-        if rupeesanity_option == "Vanilla":
+        if not self.placement_file.options["rupeesanity"]:
             to_remove = map(self.areas.short_to_full, RUPEE_CHECKS)
-        elif rupeesanity_option == "No Quick Beetle":
-            to_remove = map(self.areas.short_to_full, QUICK_BEETLE_CHECKS)
-        elif rupeesanity_option == "All":
-            to_remove = []
-        else:
-            raise ValueError(
-                f"Wrong value {rupeesanity_option} for option rupeesanity."
-            )
 
-        for rupee_check in to_remove:
-            del filtered_item_locations[rupee_check]
+            for rupee_check in to_remove:
+                del filtered_item_locations[rupee_check]
 
         (
             self.rando_stagepatches,
             self.stageoarcs,
             self.rando_eventpatches,
             self.shoppatches,
+            self.trialrelicpatches,
         ) = get_patches_from_location_item_list(
             self.areas.checks,
             filtered_item_locations,
@@ -1499,9 +1513,9 @@ class GamePatcher:
         self.all_asm_patches = defaultdict(OrderedDict)
         self.add_asm_patch("custom_funcs")
         self.add_asm_patch("ss_necessary")
-        self.add_asm_patch("keysanity")
+        self.add_asm_patch("custom_items")
         self.add_asm_patch("post_boko_base_platforms")
-        if self.placement_file.options["shop-mode"] != "Vanilla":
+        if self.placement_file.options["shopsanity"]:
             self.add_asm_patch("shopsanity")
         self.add_asm_patch("gossip_stone_hints")
         if self.placement_file.options["bit-patches"] == "Disable BiT":
@@ -1524,19 +1538,12 @@ class GamePatcher:
             self.add_asm_patch("no_enemy_music")
         # GoT patch depends on required sword
         # cmpwi r0, (insert sword)
-        GOT_SWORD_MODES = {
-            "Goddess Sword": 1,
-            "Goddess Longsword": 2,
-            "Goddess White Sword": 3,
-            "Master Sword": 4,
-            "True Master Sword": 5,
-        }
         self.all_asm_patches["d_a_obj_time_door_beforeNP.rel"][0xD48] = {
             "Data": [
                 0x2C,
                 0x00,
                 0x00,
-                GOT_SWORD_MODES[self.placement_file.options["got-sword-requirement"]],
+                SWORD_COUNT[self.placement_file.options["got-sword-requirement"]] - 1,
             ]
         }
 
@@ -1573,6 +1580,32 @@ class GamePatcher:
                 self.placement_file.options["star-count"] & 0xFF,
             ]
         }
+
+        # File Progress Text flag for required sword
+        # 0x80ecdc48 -> 0x889C
+        required_sword_number = SWORD_COUNT[
+            self.placement_file.options["got-sword-requirement"]
+        ]
+
+        # 0x389 = 905
+        # Rando sword story flags: 906 -> 911 (Swordless -> TMS)
+        # e.g. Goddess Sword = 0x389 + 2 = 0x389 + required_sword_number
+        self.all_asm_patches["d_lyt_file_selectNP.rel"][0x889C] = {
+            "Data": [0x03, 0x89 + required_sword_number]
+        }
+
+        if self.placement_file.options["randomize-boss-key-puzzles"]:
+            self.add_asm_patch("randomize_boss_key_puzzles")
+
+            bk_angle_bytes = struct.pack(">I", self.placement_file.bk_angle_seed)
+
+            # TODO this kinda sucks, but essentially we just put this random number
+            # in the lui & ori instructions
+            patch = self.all_asm_patches["d_a_obj_door_bossNP.rel"][0x8994]["Data"]
+            patch[2] = bk_angle_bytes[0]
+            patch[3] = bk_angle_bytes[1]
+            patch[6] = bk_angle_bytes[2]
+            patch[7] = bk_angle_bytes[3]
 
         # for asm, custom symbols
         with (RANDO_ROOT_PATH / "asm" / "custom_symbols.txt").open("r") as f:
@@ -1829,15 +1862,37 @@ class GamePatcher:
         extracts = yaml_load(RANDO_ROOT_PATH / "extracts.yaml")
         self.patcher.create_oarc_cache(extracts)
 
+    def add_peatrice_storyflags(self):
+        # Peatrice convo count.
+        peatrice_convo_count = self.placement_file.options["peatrice-conversations"]
+
+        # Peatrice switch.
+        if peatrice_convo_count % 2 == 1:
+            self.startstoryflags.append(631)
+
+        # Peatrice even convos.
+        if peatrice_convo_count <= 4:
+            self.startstoryflags.append(628)
+            self.startstoryflags.append(689)
+
+        if peatrice_convo_count <= 2:
+            self.startstoryflags.append(629)
+            self.startstoryflags.append(690)
+
+        if peatrice_convo_count == 0:
+            self.startstoryflags.append(630)
+            self.startstoryflags.append(691)
+
     def add_startitem_patches(self):
         # Add sword story/itemflags if required
-
         start_sword_count = len(
             set(PROGRESSIVE_SWORDS) & set(self.placement_file.starting_items)
         )
 
         if start_sword_count > 3:
+            # Give sword dowsing flags.
             self.startstoryflags.append(583)  # 4 extra Dowsing slots
+
             if self.placement_file.options["dowsing-after-whitesword"]:
                 self.startstoryflags.append(102)  # Treasure Dowsing
                 self.startstoryflags.append(104)  # Crystal Dowsing
@@ -1867,13 +1922,47 @@ class GamePatcher:
         start_item_counts = Counter(
             map(strip_item_number, self.placement_file.starting_items)
         )
-        # health is calculated in quarter hearts
+
+        # Health is calculated in quarter hearts
         starting_health = 6 * 4
         starting_health += start_item_counts.pop(HEART_CONTAINER, 0) * 4
         starting_health += start_item_counts.pop(HEART_PIECE, 0)
 
-        self.starting_full_hearts = (starting_health // 4) * 4
+        self.starting_full_hearts = starting_health // 4
         self.startitemflags[ITEM_COUNT_FLAGS[HEART_PIECE]] = starting_health % 4
+
+        # Gratitude Crystal Packs
+        crystal_packs = 0
+        crystal_packs += start_item_counts.pop(GRATITUDE_CRYSTAL_PACK, 0)
+        self.startitemflags[ITEM_COUNT_FLAGS[GRATITUDE_CRYSTAL_PACK]] = (
+            crystal_packs * 5
+        )
+
+        # Tadtones
+        self.starting_tadtones = 0
+        self.starting_tadtones += start_item_counts.pop(GROUP_OF_TADTONES, 0)
+
+        # Empty Bottles
+        self.starting_bottles = 0
+        self.starting_bottles += start_item_counts.pop(EMPTY_BOTTLE, 0)
+
+        # Hylian Shield
+        self.start_with_hylian_shield = self.placement_file.options[
+            "start-with-hylian-shield"
+        ]
+
+        # Starting bugs and treasures
+        self.max_starting_bugs = self.placement_file.options["max-starting-bugs"]
+        self.max_starting_treasures = self.placement_file.options[
+            "max-starting-treasures"
+        ]
+
+        if self.placement_file.options["full-starting-wallet"]:
+            wallets = start_item_counts.get(PROGRESSIVE_WALLET, 0)
+            extra_wallets = start_item_counts.get(EXTRA_WALLET, 0)
+            self.startitemflags[RUPEE_COUNTER] = (
+                WALLET_SIZES[wallets] + extra_wallets * EXTRA_WALLET_SIZE
+            )
 
         ALL_DUNGEON_LIKE = ALL_DUNGEONS + [
             LANAYRU_CAVES
@@ -1963,7 +2052,7 @@ class GamePatcher:
             self.startstoryflags.append(required_dungeon_storyflag)
 
     def add_fi_text_patches(self):
-        colourful_dungeon_text = [
+        colorful_dungeon_text = [
             DUNGEON_COLORS[dungeon] + dungeon + ">>"
             for dungeon in self.placement_file.required_dungeons
         ]
@@ -1975,9 +2064,27 @@ class GamePatcher:
         elif required_dungeon_count == 6:
             required_dungeons_text = "All Dungeons"
         elif required_dungeon_count < 5:
-            required_dungeons_text = "\n".join(colourful_dungeon_text)
+            required_dungeons_text = "\n".join(colorful_dungeon_text)
         else:
-            required_dungeons_text = break_lines(", ".join(colourful_dungeon_text), 44)
+            required_dungeons_text = break_lines(", ".join(colorful_dungeon_text), 44)
+
+        fi_hint_chunks = []
+        current_chunk = []
+        current_chunk_len = 0
+        for hint in self.placement_file.hints[FI_HINTS_KEY]:
+            cur_hint_len = len(hint)
+            # there is a limit to how long a single text can be, so
+            # break it up
+            if cur_hint_len + current_chunk_len > 700:
+                fi_hint_chunks.append(current_chunk)
+                current_chunk = []
+                current_chunk_len = 0
+            current_chunk.append(hint)
+            current_chunk_len += cur_hint_len
+        if current_chunk:
+            fi_hint_chunks.append(current_chunk)
+
+        # print([len(break_and_make_multiple_textboxes(hints)) for hints in fi_hint_chunks])
 
         self.eventpatches["006-8KenseiNormal"].append(
             {
@@ -1987,6 +2094,53 @@ class GamePatcher:
                 "text": required_dungeons_text,
             }
         )
+        if fi_hint_chunks:
+            for ind, hints in enumerate(fi_hint_chunks):
+                self.eventpatches["006-8KenseiNormal"].append(
+                    {
+                        "name": f"Display Fi Hints Text {ind}",
+                        "type": "flowadd",
+                        "flow": {
+                            "type": "type1",
+                            "next": f"Display Fi Hints Text {ind + 1}"
+                            if ind < (len(fi_hint_chunks) - 1)
+                            else -1,
+                            "param3": 68,
+                            "param4": f"Fi Hints Text {ind}",
+                        },
+                    }
+                )
+                self.eventpatches["006-8KenseiNormal"].append(
+                    {
+                        "name": f"Fi Hints Text {ind}",
+                        "type": "textadd",
+                        "unk1": 2,
+                        "text": break_and_make_multiple_textboxes(hints),
+                    }
+                )
+        else:
+            self.eventpatches["006-8KenseiNormal"].append(
+                {
+                    "name": "Display Fi Hints Text 0",
+                    "type": "flowadd",
+                    "flow": {
+                        "type": "type1",
+                        "next": -1,
+                        "param3": 68,
+                        "param4": f"No Fi Hints Text",
+                    },
+                }
+            )
+            self.eventpatches["006-8KenseiNormal"].append(
+                {
+                    "name": f"No Fi Hints Text",
+                    "type": "textadd",
+                    "unk1": 2,
+                    "text": break_lines(
+                        "Master, I unfortunately have <r<no hints>> for you."
+                    ),
+                }
+            )
 
         fi_objective_text = next(
             filter(
@@ -2066,25 +2220,25 @@ class GamePatcher:
         # Trial Hints
         trial_checks = {
             # (getting it text patch, line, inventory text line, hintname)
-            "Skyloft Silent Realm - Stone of Trials": (
+            "Skyloft Silent Realm - Trial Reward": (
                 "Full SotH text",
                 659,
                 "The song that leads you to the final trial.",
                 "Song of the Hero - Trial Hint",
             ),
-            "Faron Silent Realm - Water Scale": (
+            "Faron Silent Realm - Trial Reward": (
                 "Farore's Courage Text",
                 653,
                 "This song opens the trial located in Faron\nWoods.",
                 "Farore's Courage - Trial Hint",
             ),
-            "Lanayru Silent Realm - Clawshots": (
+            "Lanayru Silent Realm - Trial Reward": (
                 "Nayru's Wisdom Text",
                 654,
                 "This song opens the trial located in\nLanayru Desert.",
                 "Nayru's Wisdom - Trial Hint",
             ),
-            "Eldin Silent Realm - Fireshield Earrings": (
+            "Eldin Silent Realm - Trial Reward": (
                 "Din's Power Text",
                 655,
                 "This song opens the trial located on\nEldin Volcano.",
@@ -2208,6 +2362,15 @@ class GamePatcher:
                 "type": "textpatch",
                 "index": 75,
                 "text": self.placement_file.hash_str,
+            }
+        )
+
+        self.eventpatches["002-System"].append(
+            {
+                "name": "File Progress Text 2",
+                "type": "textpatch",
+                "index": 80,
+                "text": f"Obtain the {self.placement_file.options['got-sword-requirement']} in order to raise\nthe <r<Gate of Time>>.",
             }
         )
 
@@ -2348,19 +2511,22 @@ class GamePatcher:
             "S200": 0x2C,
             "S300": 0x2D,
         }
+
+        shuffle_option = self.options["shuffle-trial-objects"]
+        if shuffle_option == "None":
+            types_to_shuffle = set()
+        elif shuffle_option == "Simple":
+            types_to_shuffle = {"Tears", "Light Fruits"}
+        elif shuffle_option == "Advanced":
+            types_to_shuffle = {"Tears", "Light Fruits", "Relics"}
+        elif shuffle_option == "Full":
+            types_to_shuffle = {"Tears", "Light Fruits", "Relics", "Stamina Fruits"}
+
         for trial in TRIAL_OBJECT_IDS:
             params = []
             locs = []
             for item_type, objlist in TRIAL_OBJECT_IDS[trial].items():
-                if item_type == "Relics" and self.placement_file.options[
-                    "shuffle-trial-objects"
-                ] not in ["Advanced", "Full"]:
-                    continue
-                if (
-                    item_type == "Stamina Fruits"
-                    and not self.placement_file.options["shuffle-trial-objects"]
-                    == "Full"
-                ):
+                if item_type not in types_to_shuffle:
                     continue
                 locs.extend(objlist)
                 if item_type == "Tears":
@@ -2373,24 +2539,55 @@ class GamePatcher:
 
             rng = random.Random(self.placement_file.trial_object_seed)
             rng.shuffle(locs)
-            # print(locs)
-
-            for (id, room), (params, actor_name) in zip(
-                locs,
-                params,
-            ):
-                self.add_patch_to_stage(
-                    trial,
-                    {
-                        "name": "trial object shuffle",
-                        "type": "objpatch",
-                        "id": id,
-                        "layer": 2,
-                        "room": room,
-                        "objtype": "OBJ ",
-                        "object": {"params1": params, "name": actor_name},
-                    },
+            if "Relics" not in types_to_shuffle:
+                objlist = TRIAL_OBJECT_IDS[trial]["Relics"]
+                locs.extend(objlist)
+                params.extend([ITEM_PARAM_MAP["Relics"]] * len(objlist))
+            loc_params = list(
+                zip(
+                    locs,
+                    params,
                 )
+            )
+
+            # shuffle the location -> params mapping to then patch a random
+            # sample of relics with items
+            rng.shuffle(loc_params)
+
+            trial_relic_patches = self.trialrelicpatches[trial].copy()
+            for (id, room), (params, actor_name) in loc_params:
+                # replace the dusk relic objects with randomized items
+                if trial_relic_patches and actor_name == "AncJwls":
+                    (sceneflag, itemid) = trial_relic_patches.pop()
+                    # 9 is the rando item subtype forcing a textbox
+                    params1 = 0xFF9C0200
+                    params1 = mask_shift_set(params1, 0xFF, 10, sceneflag)
+                    params1 = mask_shift_set(params1, 0xFF, 0, itemid)
+                    self.add_patch_to_stage(
+                        trial,
+                        {
+                            "name": "AncJwls into Item",
+                            "type": "objpatch",
+                            "id": id,
+                            "layer": 2,
+                            "room": room,
+                            "objtype": "OBJ ",
+                            "object": {"params1": params1, "name": "Item"},
+                        },
+                    )
+                else:
+                    self.add_patch_to_stage(
+                        trial,
+                        {
+                            "name": "trial object shuffle",
+                            "type": "objpatch",
+                            "id": id,
+                            "layer": 2,
+                            "room": room,
+                            "objtype": "OBJ ",
+                            "object": {"params1": params, "name": actor_name},
+                        },
+                    )
 
     def bzs_patch_func(self, bzs, stage, room):
         stagepatches = self.patches.get(stage, [])
@@ -2560,14 +2757,7 @@ class GamePatcher:
             (stage, room), []
         ):
             modified = True
-            if objname == "WarpObj":
-                RANDO_PATCH_FUNCS[objname](
-                    bzs["LAY "][f"l{layer}"],
-                    itemid,
-                    objid,
-                    self.placement_file.trial_connections,
-                )
-            elif objname == "Tbox" or objname == "TBox":
+            if objname == "Tbox" or objname == "TBox":
                 RANDO_PATCH_FUNCS[objname](
                     bzs["LAY "][f"l{layer}"], itemid, objid, dowsing
                 )
@@ -2815,20 +3005,60 @@ class GamePatcher:
         # do startflags, each entry is a u16, different flag types are terminated by 0xFFFF
         # first storyflags, then itemflags, then sceneflags (first byte area, second byte flag)
         start_flags_write = BytesIO()
+        storyflag_writer = get_storyflag_writer()
         for flag in self.startstoryflags:
-            start_flags_write.write(struct.pack(">H", flag))
-        start_flags_write.write(bytes.fromhex("FFFF"))
+            storyflag_writer.set_flag(flag, 1)
+        interface_choice_num = ["Standard", "Light", "Pro"].index(
+            self.placement_file.options["interface"]
+        )
+        storyflag_writer.set_flag(840, interface_choice_num)
+        storyflag_writer.set_flag(953, self.starting_tadtones)
+
         # itemflags
+        itemflag_writer = get_itemflag_writer()
         for flag, count in self.startitemflags.items():
             assert flag < 0x1FF
-            assert count < 0x7F
-            start_flags_write.write(struct.pack(">H", (count << 9) | flag))
-        start_flags_write.write(bytes.fromhex("FFFF"))
+            itemflag_writer.set_flag(flag, count)
+        if self.max_starting_bugs:
+            for bugcounter in range(10, 22):
+                # counter
+                itemflag_writer.set_flag(431 + bugcounter, 99)
+                # flag
+                if bugcounter == 12:
+                    # ss doing ss things
+                    storyflag_writer.set_flag(122, 1)
+                else:
+                    itemflag_writer.set_flag(131 + bugcounter, 1)
+        if self.max_starting_treasures:
+            for treasurecounter in range(22, 38):
+                # counter
+                itemflag_writer.set_flag(399 + treasurecounter, 99)
+                # flag
+                storyflag_writer.set_flag(0x2F1 - 22 + treasurecounter, 1)
+
+        storyflag_writer.write_to(start_flags_write)
+        itemflag_writer.write_to(start_flags_write)
+        # dungeonflags
+        start_flags_write.write(bytes(self.startdungeonflags))
+
+        start_flags_write.write(struct.pack(">B", self.starting_full_hearts))
+
+        # Starting shield and bottles
+        ## Last 3 bits for starting bottles.
+        additional_start_options_2 = self.starting_bottles
+
+        ## Next 1 bit for starting Hylian Shield.
+        if self.start_with_hylian_shield:
+            additional_start_options_2 = additional_start_options_2 | (1 << 3)
+
+        start_flags_write.write(struct.pack(">B", additional_start_options_2))
+
         # sceneflags
         for flagregion, flags in (
             self.patches["global"].get("startsceneflags", {}).items()
         ):
             flagregionid = FLAGINDEX_NAMES.index(flagregion)
+            filtered_flags = []
             for flag in flags:
                 if not isinstance(flag, int):  # it's a dict with onlyif and flag
                     if not check_static_option_req(
@@ -2836,20 +3066,14 @@ class GamePatcher:
                     ):
                         # flag should not be set according to options
                         continue
-                    flag = flag["flag"]
-                start_flags_write.write(struct.pack(">BB", flagregionid, flag))
-        start_flags_write.write(bytes.fromhex("FFFF"))
-        # dungeonflags
-        start_flags_write.write(bytes(self.startdungeonflags))
-        # Starting rupee count.
-        start_flags_write.write(struct.pack(">H", 0))
-        # Start health.
-        start_flags_write.write(struct.pack(">B", self.starting_full_hearts))
-        # start interface choice
-        interface_choice_num = ["Standard", "Light", "Pro"].index(
-            self.placement_file.options["interface"]
-        )
-        start_flags_write.write(struct.pack(">B", interface_choice_num))
+                    filtered_flags.append(flag["flag"])
+                else:
+                    filtered_flags.append(flag)
+            if len(filtered_flags) > 0:
+                start_flags_write.write(struct.pack(">B", flagregionid | 0x80))
+                for flag in filtered_flags:
+                    start_flags_write.write(struct.pack(">B", flag))
+        start_flags_write.write(bytes.fromhex("FF"))
 
         startflag_byte_count = len(start_flags_write.getbuffer())
         if startflag_byte_count > 512:
@@ -2858,6 +3082,33 @@ class GamePatcher:
             )
         # print(f"total startflag byte count: {startflag_byte_count}")
         dol.write_data_bytes(0x804EE1B8, start_flags_write.getbuffer())
+
+        # write startstage (used for ER) to some unused space
+        start_entrance = self.placement_file.start_entrance
+
+        # HARDCODE STARTING ENTRANCE HERE
+        #
+        # Make sure to set the stage_offset, room, layer, AND entrance values
+        # to match a valid in-game entrance or you WILL crash.
+
+        dol.write_data_bytes(0x802DA0E0, toBytes(start_entrance["stage"], 8))
+        dol.write_data(write_u8, 0x802DA0E8, start_entrance["room"])
+        dol.write_data(write_u8, 0x802DA0E9, start_entrance["layer"])
+        dol.write_data(write_u8, 0x802DA0EA, start_entrance["entrance"])
+        dol.write_data(
+            write_u8, 0x802DA0EB, start_entrance["day-night"] & 1
+        )  # force day when value is >1
+
+        force_mogma_cave_dive = (
+            start_entrance["stage"] == "F210" and start_entrance["entrance"] == 0
+        )
+
+        dol.write_data(
+            write_u8,
+            self.custom_symbols["main.dol"]["FORCE_MOGMA_CAVE_DIVE"],
+            int(force_mogma_cave_dive),
+        )
+
         dol.save_changes()
         write_bytes_create_dirs(
             self.patcher.modified_extract_path / "DATA" / "sys" / "main.dol",
@@ -2886,7 +3137,7 @@ class GamePatcher:
             apply_rel_patch(self, rel, file, codepatches)
             if (
                 file == "d_a_shop_sampleNP.rel"
-                and self.placement_file.options["shop-mode"] != "Vanilla"
+                and self.placement_file.options["shopsanity"]
             ):
                 self.do_shoptable_rel_patch(rel)
             rel.save_changes()

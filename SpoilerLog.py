@@ -38,6 +38,7 @@ def write(
     barren_nonprogress,
     randomized_dungeon_entrance,
     randomized_trial_entrance,
+    randomized_start_entrance,
 ):
     write_header(file, options, hash)
     norm = areas.prettify
@@ -50,13 +51,13 @@ def write(
         file.write("\n  ".join(sorted(placement.starting_items)))
     file.write("\n\n\n")
 
-    # Write required dungeons
+    # Write required dungeons.
     for i, dungeon in enumerate(required_dungeons, start=1):
         file.write(f"Required Dungeon {i}: {dungeon}\n")
 
     file.write("\n\n")
 
-    # Write spirit of the sword (100% required) locations
+    # Write spirit of the sword (100% required) locations.
     file.write("SotS:\n")
 
     sorted_regions = ["Past"] + list(ALL_HINT_REGIONS)
@@ -64,26 +65,29 @@ def write(
 
     sots_locations = {
         goal: sorted(
-            ((placement.items[item], item) for item in items),
-            key=lambda c: sorted_checks.index(c[0]),
+            ((norm(placement.items[item]), item) for item in items),
+            key=lambda c: sorted_checks.index(placement.items[c[1]]),
         )
         for goal, items in sots_items.items()
     }
 
+    max_location_name_length = 2 + max(
+        (len(loc) for goal_locs in sots_locations.values() for loc, _ in goal_locs),
+        default=0,
+    )
+
     for loc, item in sots_locations[DEMISE]:
-        location = norm(loc) + ":"
-        file.write(f"  {location:53} {item}\n")
+        file.write(f"  {loc + ':':{max_location_name_length}} {item}\n")
 
     file.write("\n\n")
 
-    # Write path locations; locations 100% required to complete a given required dungeon
+    # Write path locations; locations 100% required to complete a given required dungeon.
     file.write("Path:\n")
     for dungeon in required_dungeons:
         goal = DUNGEON_GOALS[dungeon]
         file.write(f"{goal}:\n")
         for loc, item in sots_locations[goal]:
-            location = norm(loc) + ":"
-            file.write(f"  {location:53} {item}\n")
+            file.write(f"  {loc + ':':{max_location_name_length}} {item}\n")
 
     file.write("\n\n")
 
@@ -101,7 +105,7 @@ def write(
     # Write progression spheres.
     file.write("Playthrough:\n")
     prettified_spheres = []
-    # First pass for the lengths
+    # First pass for the lengths.
     for sphere in progression_spheres:
         pretty_sphere = []
         for loc in sphere:
@@ -123,8 +127,8 @@ def write(
             ],
         )
 
-    max_location_name_length = 1 + max(
-        len(loc) for sphere in prettified_spheres for _, loc, _ in sphere
+    max_location_name_length = 2 + max(
+        (len(loc) for sphere in prettified_spheres for _, loc, _ in sphere), default=0
     )
 
     for i, progression_sphere in enumerate(prettified_spheres, start=1):
@@ -160,7 +164,9 @@ def write(
         (reg, remove_prefix(reg, norm(loc)), item) for (reg, loc, item) in with_regions
     ]
 
-    max_location_name_length = 1 + max(len(loc) for _, loc, _ in with_regions)
+    max_location_name_length = 1 + max(
+        (len(loc) for _, loc, _ in with_regions), default=0
+    )
 
     for zone_name, locations_in_zone in itertools.groupby(with_regions, lambda x: x[0]):
         file.write(zone_name + ":\n")
@@ -169,33 +175,50 @@ def write(
 
     file.write("\n\n\n")
 
-    # Write dungeon entrances.
+    # Write entrances.
     file.write("Entrances:\n")
+
+    # Write starting entrance.
+    file.write("  Starting Entrance:\n")
+    file.write(f"    {randomized_start_entrance['statue-name']}\n\n")
+
+    # Write dungeon entrances.
+    file.write("  Dungeon Entrances:\n")
     for (
         entrance_name,
         dungeon,
     ) in randomized_dungeon_entrance.items():
-        file.write(f"  {entrance_name+':':48} {dungeon}\n")
+        file.write(f"    {entrance_name+':':48} {dungeon}\n")
 
     file.write("\n\n")
 
-    # Write randomized trials
+    # Write randomized trial gates.
     file.write("Trial Gates:\n")
     for trial_gate, trial in randomized_trial_entrance.items():
         file.write(f"  {trial_gate+':':48} {trial}\n")
 
     file.write("\n\n\n")
 
-    # Write hints
+    # Write hints.
     file.write("Hints:\n")
+
+    max_hintstone_name_length = 2 + max(
+        (
+            len(norm(hintloc))
+            for hintloc, hint_stone in hints.items()
+            if not isinstance(hint_stone, GossipStoneHintWrapper)
+        ),
+        default=0,
+    )
+
     for hintloc, hint_stone in hints.items():
         if isinstance(hint_stone, GossipStoneHintWrapper):
             file.write(f"  {norm(hintloc)+':'}\n")
             for hint in hint_stone.hints:
-                file.write(f"  {'':48} {hint.to_spoiler_log_text(norm)}\n")
+                file.write(f"        {hint.to_spoiler_log_text(norm)}\n")
         else:
             file.write(
-                f"  {norm(hintloc)+':':48} {hint_stone.to_spoiler_log_text(norm)}\n"
+                f"  {norm(hintloc) + ':':{max_hintstone_name_length}} {hint_stone.to_spoiler_log_text(norm)}\n"
             )
 
     file.write("\n\n\n")
@@ -213,6 +236,7 @@ def dump_json(
     barren_nonprogress,
     randomized_dungeon_entrance,
     randomized_trial_entrance,
+    randomized_start_entrance,
 ):
     spoiler_log = dump_header_json(options, hash)
     if options["no-spoiler-log"]:
@@ -228,6 +252,8 @@ def dump_json(
     spoiler_log["hints"] = {k: v.to_spoiler_log_json() for k, v in hints.items()}
     spoiler_log["entrances"] = randomized_dungeon_entrance
     spoiler_log["trial-connections"] = randomized_trial_entrance
+    spoiler_log["randomized-start-entrance"] = randomized_start_entrance
+    return spoiler_log
 
 
 def dump_header_json(options: Options, hash):

@@ -18,11 +18,13 @@ Volcano:
       Goddess Cube at Eldin Entrance: Goddess Sword
       Unlock Statue: Nothing
       Rupee on Ledge before First Room: Nothing
-      Ascent - Unlock Shortcut to Entry: Bomb Bag # I'm pretty sure Hook Beetle won't work here
+      Ascent - Unlock Shortcut to Entry: Bomb Bag # No bomb flowers are close enough for even tough beetle
 
   First Room: # Until the rocks
     exits:
       East: Blow up Rock to East
+      Entry: Nothing
+      Exit to Bokoblin Base: Nothing
     locations:
       Chest behind Bombable Wall in First Room: Nothing
       Rupee behind Bombable Wall in First Room: Nothing
@@ -38,9 +40,8 @@ Volcano:
       First Vent from Mogma Turf: Impossible
       First Room: First Room - Blow up Rock to East
       Past Mogma Turf: Past Mogma Turf - Unlock Shortcut to Pre Turf
-      Exit to Bokoblin Base: Nothing
     locations:
-      First Room - Blow up Rock to East: Bomb Bag # can probably also use hook beetle
+      First Room - Blow up Rock to East: Bomb Bag # There's a beetle void plane
       Unlock Statue: Nothing
       Goddess Cube near Mogma Turf Entrance: Goddess Sword
       Chest after Crawlspace: Nothing
@@ -59,9 +60,7 @@ Volcano:
     locations:
       Unlock Shortcut to Pre Turf: Nothing
       Watch Bridge Cutscene: Nothing
-      Southeast Rupee above Mogma Turf Entrance: Beetle
-      North Rupee above Mogma Turf Entrance: Beetle
-      Goddess Cube near Mogma Turf Entrance: Goddess Sword
+      # can get cube and mogma turf entrance rupees from here, but getting to East from here requires nothing
 
   Ascent:
     exits:
@@ -76,8 +75,8 @@ Volcano:
       Unlock Statue: Nothing
       Unlock Shortcut to Entry: Nothing
       Past Slide - Unlock Shortcut to Ascent: Bomb Bag | Hook Beetle # | (Whip & Whip Bomb Trick)
-      Defeat Slope Bokoblins: Bow | Slingshot | Beetle
-      Open Trial Gate: Goddess Harp & Din's Power
+      Defeat Slope Bokoblins: Bow | Slingshot # Beetle can be used to scare the boko away but that's really not obvious
+      Open Trial Gate: Goddess's Harp & Din's Power
 
   Near Thrill Digger Cave:
     exits:
@@ -101,12 +100,12 @@ Volcano:
       Temple Entrance Statue: Unlock Statue
       Near Thrill Digger Cave: Near Thrill Digger Cave - Blow down Watchtower
       Exit to Earth Temple: Open ET option | Key Piece x5
-      Volcano - Upper Platform Cave: Fire Dragon's Reward
+      Volcano - Upper Platform Cave: Beaten Boko Base
       Hot Cave: Blow down Watchtower to Hot Cave
     locations:
       Unlock Statue: Nothing
       Blow down Watchtower to Hot Cave: Nothing
-      Retrieve Crystal Ball: Clawshots & Skyloft - Skyloft Village - Start Sparrot's Quest
+      Retrieve Crystal Ball: Clawshots & Scrapper & Skyloft - Skyloft Village - Start Sparrot's Quest
       Goddess Cube West of Earth Temple Entrance: Digging Mitts & Goddess Sword
       Gossip Stone next to Earth Temple: Digging Mitts
       Goddess Cube East of Earth Temple Entrance: Goddess Sword
@@ -116,7 +115,7 @@ Volcano:
   
   Upper Platform Cave:
     exits:
-      Near Temple Entrance: Fire Dragon's Reward | Clawshots
+      Near Temple Entrance: Beaten Boko Base | Clawshots
     locations:
       Gossip Stone in Upper Platform Cave: Nothing
 
@@ -140,7 +139,7 @@ Volcano:
     exits:
       Ascent: Unlock Shortcut to Ascent
       Vent Exit near Ascent: Nothing
-      Volcano - Lower Platform Cave: Fire Dragon's Reward
+      Volcano - Lower Platform Cave: Beaten Boko Base
     locations:
       Digging Spot after Draining Lava: Digging Mitts
       Unlock Shortcut to Ascent: Nothing
@@ -148,8 +147,8 @@ Volcano:
   Lower Platform Cave:
     exits:
       Past Slide: Clawshots
-      Past Mogma Turf: Fire Dragon's Reward
-      East: Fire Dragon's Reward
+      Past Mogma Turf: Beaten Boko Base
+      East: Beaten Boko Base
     locations:
       Gossip Stone in Lower Platform Cave: Nothing
 
@@ -165,8 +164,8 @@ Mogma Turf: # when randomizing this, need to find a way to force the skydiving a
       Free Fall Chest: Nothing
       Goddess Cube in Mogma Turf: Goddess Sword
       Chest behind Bombable Wall at Entrance: Nothing
-      Pick up Guld: Sky - Lumpy Pumpkin - Start Kina's Quest
-      Digging Mitts Fight: Can Defeat Bokoblins
+      Pick up Guld: Sky - Lumpy Pumpkin - Start Kina's Quest & Scrapper
+      Defeat Bokoblins: Can Defeat Bokoblins
       Open Vent: Digging Mitts
 
   Sand Slide Platform:
@@ -188,7 +187,17 @@ Eldin Silent Realm:
   exits:
     Exit: Nothing
   locations:
-    Fireshield Earrings: Nothing
+    Trial Reward: Nothing
+    Relic 1: Nothing
+    Relic 2: Nothing
+    Relic 3: Nothing
+    Relic 4: Nothing
+    Relic 5: Nothing
+    Relic 6: Nothing
+    Relic 7: Nothing
+    Relic 8: Nothing
+    Relic 9: Nothing
+    Relic 10: Nothing
 
 # VOLCANO SUMMIT
 Volcano Summit:
@@ -263,7 +272,7 @@ Bokoblin Base:
     locations:
       Chest near Bone Bridge: Can bypass Boko Base Watch Tower | Mogma Mitts | Gust Bellows
       Chest on Cliff: (Can bypass Boko Base Watch Tower | Mogma Mitts) & Gust Bellows
-      Goddess Cube near Mogma Turf Entrance: Goddess Sword
+      Volcano - Goddess Cube near Mogma Turf Entrance: Goddess Sword
   
   Before Drawbridge:
     exits:
@@ -285,7 +294,7 @@ Bokoblin Base:
       Before Drawbridge: Nothing
       Volcano East: Nothing
     locations:
-      Gossip Stone in Lower Platform Cave: Nothing
+      Volcano - Gossip Stone in Lower Platform Cave: Nothing
   
   Outside Earth Temple:
     exits:
@@ -293,15 +302,15 @@ Bokoblin Base:
       Bokoblin Base - Upper Platform Cave: Nothing
     locations:
       Chest East of Earth Temple Entrance: Nothing
-      Goddess Cube East of Earth Temple Entrance: Goddess Sword
+      Volcano - Goddess Cube East of Earth Temple Entrance: Goddess Sword
       Chest West of Earth Temple Entrance: (Slingshot | Bow | Bomb Bag | Goddess Sword) & Can bypass Boko Base Watch Tower & Mogma Mitts
-      Goddess Cube West of Earth Temple Entrance: Goddess Sword & Can bypass Boko Base Watch Tower & Mogma Mitts
+      Volcano - Goddess Cube West of Earth Temple Entrance: Goddess Sword & Can bypass Boko Base Watch Tower & Mogma Mitts
   
   Upper Platform Cave:
     exits:
       Outside Earth Temple: Nothing
     locations:
-      Gossip Stone in Upper Platform Cave: Nothing
+      Volcano - Gossip Stone in Upper Platform Cave: Nothing
   
   Hot Cave:
     exits:
@@ -316,10 +325,11 @@ Bokoblin Base:
       First Chest in Volcano Summit: Fireshield Earrings
       Raised Chest in Volcano Summit: Fireshield Earrings
       Chest in Volcano Summit Alcove: Fireshield Earrings & Practice Sword
-      Goddess Cube inside Volcano Summit: Fireshield Earrings
+      Volcano Summit - Goddess Cube inside Volcano Summit: Fireshield Earrings & Goddess Sword
   
   Fire Dragon's Lair:
     exits:
       Bokoblin Base Summit: Nothing
     locations:
-      Fire Dragon's Reward: Bow | Beetle
+      Beaten Boko Base: Bow | Beetle
+      Fire Dragon's Reward: Beaten Boko Base

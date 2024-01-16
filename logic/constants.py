@@ -11,7 +11,8 @@ EVERYTHING = EIN("Everything")
 NUMBER_OF_HINT_STONES = 18
 
 MAX_HINTS_PER_STONE = 8
-MAX_HINTS = MAX_HINTS_PER_STONE * NUMBER_OF_HINT_STONES
+MAX_FI_HINTS = 64  # Fi hints have no such limits since they're segmented, though an upper bound might be good to have.
+MAX_STONE_HINTS = MAX_HINTS_PER_STONE * NUMBER_OF_HINT_STONES
 
 # Logic options, runtime requirements
 
@@ -28,17 +29,11 @@ GONDO_UPGRADES_ON_OPTION = EIN("Gondo Upgrades On option")
 NO_BIT_CRASHES = EIN("No BiT crashes")
 NONLETHAL_HOT_CAVE = EIN("Nonlethal Hot Cave")
 UPGRADED_SKYWARD_STRIKE = EIN("Upgraded Skyward Strike option")
+FS_LAVA_FLOW_OPTION = EIN("FS Lava Flow option")
 
 GOT_OPENING_REQUIREMENT = EIN("GoT Opening Requirement")
 GOT_RAISING_REQUIREMENT = EIN("GoT Raising Requirement")
 HORDE_DOOR_REQUIREMENT = EIN("Horde Door Requirement")
-
-BEEDLE_STALL_ACCESS = EIN("Beedle Stall Access Token")
-MEDIUM_PURCHASES = EIN("Medium Purchases Token")
-EXPENSIVE_PURCHASES = EIN("Expensive Purchases Token")
-MAY_GET_n_CRYSTALS = lambda n: EIN(f"May Get {n} Crystals Token")
-
-CRYSTAL_THRESHOLDS = [5, 10, 30, 40, 50, 70, 80]
 
 LOGIC_OPTIONS = dict.fromkeys(
     [
@@ -55,14 +50,11 @@ LOGIC_OPTIONS = dict.fromkeys(
         NO_BIT_CRASHES,
         NONLETHAL_HOT_CAVE,
         UPGRADED_SKYWARD_STRIKE,
+        FS_LAVA_FLOW_OPTION,
         GOT_OPENING_REQUIREMENT,
         GOT_RAISING_REQUIREMENT,
         HORDE_DOOR_REQUIREMENT,
-        BEEDLE_STALL_ACCESS,
-        MEDIUM_PURCHASES,
-        EXPENSIVE_PURCHASES,
     ]
-    + [MAY_GET_n_CRYSTALS(n) for n in CRYSTAL_THRESHOLDS]
 )
 
 # Locations
@@ -141,6 +133,17 @@ ALL_SILENT_REALMS = [
     ELDIN_SILENT_REALM,
 ]
 
+FARON_PROVINCE = "Faron Province"
+ELDIN_PROVINCE = "Eldin Province"
+LANAYRU_PROVINCE = "Lanayru Province"
+THE_SKY = "The Sky"
+
+TABLET_TO_PROVINCE = {
+    EMERALD_TABLET: FARON_PROVINCE,
+    RUBY_TABLET: ELDIN_PROVINCE,
+    AMBER_TABLET: LANAYRU_PROVINCE,
+}
+
 # Items
 
 ITEM_COUNTS: Dict[str, int] = defaultdict(lambda: 1)
@@ -167,14 +170,14 @@ def group(name: str, count: int) -> Dict[EXTENDED_ITEM_NAME, None]:
 
 
 HINT = "Hint"
-HINTS = group(HINT, MAX_HINTS)
+HINTS = group(HINT, MAX_STONE_HINTS + MAX_FI_HINTS)
 
 # SAILCLOTH = EIN("Sailcloth")
 BOMB_BAG = EIN("Bomb Bag")
 GUST_BELLOWS = EIN("Gust Bellows")
 WHIP = EIN("Whip")
 CLAWSHOTS = EIN("Clawshots")
-WATER_SCALE = EIN("Water Scale")
+WATER_DRAGON_SCALE = EIN("Water Dragon's Scale")
 FIRESHIELD_EARRINGS = EIN("Fireshield Earrings")
 SEA_CHART = EIN("Sea Chart")
 EMERALD_TABLET = EIN("Emerald Tablet")
@@ -185,7 +188,7 @@ STONE_OF_TRIALS = EIN("Stone of Trials")
 BABY_RATTLE = EIN("Baby Rattle")
 CAWLINS_LETTER = EIN("Cawlin's Letter")
 HORNED_COLOSSUS_BEETLE = EIN("Horned Colossus Beetle")
-GODDESS_HARP = EIN("Goddess Harp")
+GODDESS_HARP = EIN("Goddess's Harp")
 BALLAD_OF_THE_GODDESS = EIN("Ballad of the Goddess")
 FARORES_COURAGE = EIN("Farore's Courage")
 NAYRUS_WISDOM = EIN("Nayru's Wisdom")
@@ -200,6 +203,7 @@ LIFE_TREE_FRUIT = EIN("Life Tree Fruit")
 TRIFORCE_OF_COURAGE = EIN("Triforce of Courage")
 TRIFORCE_OF_WISDOM = EIN("Triforce of Wisdom")
 TRIFORCE_OF_POWER = EIN("Triforce of Power")
+SCRAPPER = EIN("Scrapper")
 
 GRATITUDE_CRYSTAL_PACK = "Gratitude Crystal Pack"
 GRATITUDE_CRYSTAL = "Gratitude Crystal"
@@ -215,6 +219,7 @@ FULL_ET_KEY = "Full ET Key"
 EMPTY_BOTTLE = "Empty Bottle"
 PROGRESSIVE_WALLET = "Progressive Wallet"
 EXTRA_WALLET = "Extra Wallet"
+GROUP_OF_TADTONES = "Group of Tadtones"
 
 GRATITUDE_CRYSTAL_PACKS = group(GRATITUDE_CRYSTAL_PACK, 13)
 GRATITUDE_CRYSTALS = group(GRATITUDE_CRYSTAL, 15)
@@ -230,6 +235,7 @@ KEY_PIECES = group(KEY_PIECE, 5)
 EMPTY_BOTTLES = group(EMPTY_BOTTLE, 5)
 PROGRESSIVE_WALLETS = group(PROGRESSIVE_WALLET, 4)
 EXTRA_WALLETS = group(EXTRA_WALLET, 3)
+TADTONE_GROUPS = group(GROUP_OF_TADTONES, 17)
 
 small_key = lambda d: d + " Small Key"
 SMALL_KEY = {dun: small_key(dun) for dun in ALL_DUNGEONS}
@@ -313,7 +319,7 @@ RARE_TREASURES = group(RARE_TREASURE, 12)
 EVIL_CRYSTALS = group(EVIL_CRYSTAL, 2)
 ELDIN_ORES = group(ELDIN_ORE, 2)
 GODDESS_PLUMES = group(GODDESS_PLUME, 1)
-DUSK_RELICS = group(DUSK_RELIC, 1)
+DUSK_RELICS = group(DUSK_RELIC, 41)
 TUMBLEWEEDS = group(TUMBLEWEED, 1)
 FIVE_BOMBS_GROUP = group(FIVE_BOMBS, 1)
 
@@ -327,7 +333,7 @@ PROGRESS_ITEMS = (
             GUST_BELLOWS,
             WHIP,
             CLAWSHOTS,
-            WATER_SCALE,
+            WATER_DRAGON_SCALE,
             FIRESHIELD_EARRINGS,
             SEA_CHART,
             EMERALD_TABLET,
@@ -352,6 +358,7 @@ PROGRESS_ITEMS = (
             TRIFORCE_OF_WISDOM,
             TRIFORCE_OF_POWER,
             # SAILCLOTH,
+            SCRAPPER,
         ]
     )
     | GRATITUDE_CRYSTAL_PACKS
@@ -367,6 +374,7 @@ PROGRESS_ITEMS = (
     | EMPTY_BOTTLES
     | PROGRESSIVE_WALLETS
     | EXTRA_WALLETS
+    | TADTONE_GROUPS
 )
 
 NONPROGRESS_ITEMS = (
@@ -477,9 +485,9 @@ DUNGEON_MAIN_EXITS = {
 }
 
 DUNGEON_FINAL_CHECK = {
-    SV: SV + sep + RUBY_TABLET,
-    ET: ET + sep + AMBER_TABLET,
-    LMF: LMF + sep + GODDESS_HARP,
+    SV: SV + sep + "Strike Crest",
+    ET: ET + sep + "Strike Crest",
+    LMF: LMF + sep + "Exit Hall of Ancient Robots",
     AC: AC + sep + "Farore's Flame",
     SSH: SSH + sep + "Nayru's Flame",
     FS: FS + sep + "Din's Flame",
@@ -636,7 +644,7 @@ DUNGEON_ENTRANCE_EXITS: dict[str, list[str]] = {
     SK_ENTRANCE: ["Skyloft - Exit to Sky Keep"],
 }
 
-LMF_SECOND_EXIT = LMF + sep + "Great Hall" + sep + "Exit to Temple of Time"
+LMF_SECOND_EXIT = LMF + sep + "Hall of Ancient Robots" + sep + "Exit to Temple of Time"
 
 SKYLOFT_TRIAL_GATE = "Trial Gate on Skyloft"
 FARON_TRIAL_GATE = "Trial Gate in Faron Woods"
@@ -654,6 +662,8 @@ SONG_OF_THE_HERO_TRIAL_HINT = EIN("Song of the Hero - Trial Hint")
 FARORES_COURAGE_TRIAL_HINT = EIN("Farore's Courage - Trial Hint")
 NAYRUS_WISDOM_TRIAL_HINT = EIN("Nayru's Wisdom - Trial Hint")
 DINS_POWER_TRIAL_HINT = EIN("Din's Power - Trial Hint")
+
+FI_HINTS_KEY = "Fi"
 
 
 SONG_HINTS = {
@@ -678,10 +688,10 @@ SILENT_REALM_EXITS: dict[str, str] = {
 }
 
 SILENT_REALM_CHECKS: dict[str, str] = {
-    SKYLOFT_SILENT_REALM: "Skyloft Silent Realm - Stone of Trials",
-    FARON_SILENT_REALM: "Faron Silent Realm - Water Scale",
-    ELDIN_SILENT_REALM: "Eldin Silent Realm - Fireshield Earrings",
-    LANAYRU_SILENT_REALM: "Lanayru Silent Realm - Clawshots",
+    SKYLOFT_SILENT_REALM: "Skyloft Silent Realm - Trial Reward",
+    FARON_SILENT_REALM: "Faron Silent Realm - Trial Reward",
+    ELDIN_SILENT_REALM: "Eldin Silent Realm - Trial Reward",
+    LANAYRU_SILENT_REALM: "Lanayru Silent Realm - Trial Reward",
 }
 
 SILENT_REALM_CHECKS_REV = lambda norm: {
@@ -725,7 +735,7 @@ RUPEE_CHECKS = [
     "Ancient Cistern - First Rupee in East Part in Short Tunnel",
     "Ancient Cistern - Second Rupee in East Part in Short Tunnel",
     "Ancient Cistern - Third Rupee in East Part in Short Tunnel",
-    # "Ancient Cistern - Rupee under Lilypad",
+    "Ancient Cistern - Rupee under Lilypad",
     "Ancient Cistern - Rupee in East Hand",
     "Ancient Cistern - Rupee in West Hand",
     "Sky Keep - Rupee in Fire Sanctuary Room in Alcove",
@@ -747,7 +757,14 @@ GONDO_ITEMS = {
     number(PROGRESSIVE_BUG_NET, 1),
 }
 
+EXTRA_WALLET_SIZE = 300
 
+WALLET_SIZES = {0: 300, 1: 500, 2: 1000, 3: 5000, 4: 9000}
+
+RUPEE_COUNTER = 501
+
+# lists are used for progressive items,
+# tuples for setting multiple flags for one item
 ITEM_FLAGS = {
     PROGRESSIVE_BOW: [19, 90, 91],
     PROGRESSIVE_BEETLE: [53, 75, 76, 77],
@@ -757,6 +774,7 @@ ITEM_FLAGS = {
     PROGRESSIVE_POUCH: [112, 113, 113, 113, 113],
     PROGRESSIVE_WALLET: [108, 109, 110, 111],
     PROGRESSIVE_SWORD: [10, 11, 12, 9, 13, 14],
+    EXTRA_WALLET: 199,
     EMERALD_TABLET: 177,
     RUBY_TABLET: 178,
     AMBER_TABLET: 179,
@@ -764,7 +782,7 @@ ITEM_FLAGS = {
     CLAWSHOTS: 20,
     WHIP: 137,
     GUST_BELLOWS: 49,
-    WATER_SCALE: 68,
+    WATER_DRAGON_SCALE: 68,
     FIRESHIELD_EARRINGS: 138,
     GODDESS_HARP: 16,
     BALLAD_OF_THE_GODDESS: 186,
@@ -786,7 +804,11 @@ ITEM_FLAGS = {
     TRIFORCE_OF_POWER: 96,
     TRIFORCE_OF_WISDOM: 97,
     SPIRAL_CHARGE: 21,
-    # SAILCLOTH: 15
+    GRATITUDE_CRYSTAL_PACK: 35,
+    HYLIAN_SHIELD: 125,
+    EMPTY_BOTTLE: 153,
+    # SCRAPPER: 215, TODO: that itemflag doesn't exist
+    # SAILCLOTH: 15,
 }
 
 
@@ -800,7 +822,7 @@ ITEM_STORY_FLAGS = {
     CAWLINS_LETTER: 547,
     SPIRAL_CHARGE: 364,
     SEA_CHART: 271,
-    WATER_SCALE: 206,  # Completed Faron Trial
+    WATER_DRAGON_SCALE: 206,  # Completed Faron Trial
     FIRESHIELD_EARRINGS: 207,  # Completed Eldin Trial
     CLAWSHOTS: 208,  # Completed Lanayru Trial
     STONE_OF_TRIALS: (210, 209),  # Obtained SoT, Completed Hylia's Trial
@@ -811,6 +833,7 @@ ITEM_STORY_FLAGS = {
     TRIFORCE_OF_WISDOM: 730,
     COMPLETE_TRIFORCE: 645,
     FULL_ET_KEY: 120,
+    SCRAPPER: 323,
     PROGRESSIVE_SWORD: [
         906,
         907,
@@ -853,7 +876,7 @@ RANDOM_STARTING_ITEMS = [
     CLAWSHOTS,
     WHIP,
     GUST_BELLOWS,
-    WATER_SCALE,
+    WATER_DRAGON_SCALE,
     FIRESHIELD_EARRINGS,
     GODDESS_HARP,
     SPIRAL_CHARGE,
@@ -870,10 +893,38 @@ ALLOWED_STARTING_ITEMS = (
     | PROGRESSIVE_BOWS
     | PROGRESSIVE_BUG_NETS
     | PROGRESSIVE_WALLETS
+    | EXTRA_WALLETS
     | HEART_CONTAINERS
     | HEART_PIECES
     | KEY_PIECES
     | ALL_SMALL_KEYS
     | ALL_BOSS_KEYS
     | ALL_MAPS
+    | GRATITUDE_CRYSTAL_PACKS
+    | EMPTY_BOTTLES
+    | TADTONE_GROUPS
+    | {SCRAPPER: None}
+)
+
+LOCATION_FILTER_TYPES = (
+    "Goddess Chests",
+    "Faron Woods Goddess Chests",
+    "Lake Floria Goddess Chests",
+    "Eldin Volcano Goddess Chests",
+    "Volcano Summit Goddess Chests",
+    "Lanayru Desert Goddess Chests",
+    "Sand Sea Goddess Chests",
+    "Combat",
+    "Minigames",
+    "Beedle's Shop Purchases",
+    "Beedle's Shop Purchase (Cheap)",
+    "Beedle's Shop Purchase (Medium)",
+    "Beedle's Shop Purchase (Expensive)",
+    "Batreaux's Rewards",
+    "Loose Crystals",
+    "Gratitude Crystal Sidequests",
+    "Scrapper Deliveries",
+    "Rupees (No Quick Beetle)",
+    "Rupees (Quick Beetle)",
+    "Tadtones",
 )

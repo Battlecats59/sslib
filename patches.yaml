@@ -8,8 +8,6 @@ global:
     - 96  # Fi's text after obtaining first map
     - 745 # 5 Beacons
     - 496 # Skipper's cutscene after Sea Chart
-    - 264 # Talked to Skipper first time
-    - 273 # Talked to Skipper first time after saying no (prevents weird first text)
     - 130 # Start with Beacon
     - 358 # Interface choice unlocked
     - 792 # SG Big Door cs
@@ -19,7 +17,6 @@ global:
     - storyflag: 194 # open thunderhead
       onlyif: Option "open-thunderhead" Is "Open"
     - 58  # b-wheel
-    - 323 # Scrapper repaired
     - 661 # Windmill Repaired
     - 494 # open gate to faron
     - 138 # Sealed Temple layer 1
@@ -39,13 +36,17 @@ global:
     - 178 # Cutscene showing off Bokoblin Base with Plats
     - 81  # Tadtone Dowsing
     - 82  # Tadtones music scroll
+    - 108 # Heart Dowsing
     # Cutscene flags
     ## Surface
+    - 137 # Sealed Grounds Intro Cutscene (enable statue select from start)
     - 87  # Faron Woods Intro Cutscene
     - 91  # Deep Woods Intro Cutscene
     - 88  # Lake Floria Intro Cutscene
+    - 182 # Eldin Volcano Intro Cutscene
     - 180 # Thrill Digger Intro Cutscene
     - 562 # Volcano Summit Intro Cutscene
+    - 190 # Lanayru Mine Intro Cutscene
     - 92  # Lanayru Desert Intro Cutscene
     - 157 # Ancient Harbour Intro Cutscene
     - 526 # Lanayru Gorge Intro Cutscene
@@ -71,7 +72,7 @@ global:
     - storyflag: 347 # Horde cutscene watched - must be set because the cutscene forces the horde fight
       onlyif: Option "skip-horde" Enabled
     - storyflag: 486 # Ghirahim 3 defeated
-      onlyif: Option "skip-g3" Enabled
+      onlyif: Option "skip-g3" Enabled & Option "skip-horde" Enabled
     - storyflag: 8 # LMF rising CS watched
       onlyif: Option "open-lmf" Is "Open"
   startitems: # careful, items are NOT progressive here (only set item flag, no text), storyflag for upgrade has to be set manually
@@ -107,27 +108,31 @@ global:
     Faron Woods:
       - 15 # fi text after vine to deep woods
       - 14 # text in front of VP statue
-      - onlyif: Option "open-lake-floria" Is "Open" # & Option "starting-items" Contains "Water Scale"
+      - onlyif: Option "open-lake-floria" Is "Open" # & Option "starting-items" Contains "Water Dragon's Scale"
         flag: 49 # Cutscene of Lake Floria Gates opening
-      - onlyif: Option "open-lake-floria" Is "Open" # & Option "starting-items" Contains "Water Scale"
+      - onlyif: Option "open-lake-floria" Is "Open" # & Option "starting-items" Contains "Water Dragon's Scale"
         flag: 50 # Open Lake Floria Gates
       - 51 # Fi text before talking to Yerbal
       - 52 # Fi text after opening floria gate
       - 19 # Great Tree Intro Cutscene
       - 30 # Enter Skyview Cutscene
     Sealed Grounds:
+      - 4  # Pushed log from BtT to Faron Woods
       - 7  # vents active
+      - 13 # door to temple unlocked
+      - 21 # ballad of the goddess played (item and cutscene trigger instantly activate when outside of BiT)
+      - 28 # groose cutscene watched (prevents groose cutscene from taking priority outside of BiT)
       - onlyif: Option "triforce-required" Disabled
         flag: 50 # horde door open
       - onlyif: Option "skip-horde" Enabled
         flag: 51 # door from Hylia's Realm to Hylia's Temple unlocked (since horde is skipped, this is never set)
-      - 13 # door to temple unlocked
-      - 21 # ballad of the goddess played (item and cutscene trigger instantly activate when outside of BiT)
-      - 28 # groose cutscene watched (prevents groose cutscene from taking priority outside of BiT)
+      - 39 # Log to Behind the Temple pushed down
+      - 55 # First time landing cutscene
     Ancient Cistern:
       - 62 # Ancient Cistern Intro Cutscene
     Eldin Volcano:
       - 2  # gets rid of first digging mitts mogma text
+      - 16 # First time landing cutscene
       - 58 # digging mitts mogma cutscene watched
     Eldin Volcano Summit: # VS + Boko Base
       - 70 # Initial panning cutscene watched
@@ -147,6 +152,7 @@ global:
       - 15 # Set boulder entering dragon's mouth cutscene watched and removes lavafall in front of Boss Door
     Lanayru Desert:
       - 3  # Obtain map of the past from robot in ToT area
+      - 6  # First time landing cutscene
       - 7  # pushed first minecart to end
       - 50 # Enter Lanayru Mining Facility (LMF) Cutscene
       - 55 # Lanayru Desert Intro Cutscene
@@ -166,6 +172,8 @@ global:
       - 16 # Lanayru Gorge Intro Cutscene
     Fire Sanctuary:
       - 83 # Cutscene showing the outside of the Fire Sanctuary
+      - onlyif: Option "fs-lava-flow" Enabled
+        flag: 64 # Blow up rock underground starting lava chase (back half lava flow)
   objpackoarcadd: # Models to add to the global ObjectPack.arc.LZ file
     - GetSozaiL # Monster Horn (part of treasure)
     # - GetSozaiM # Evil Crystal (part of treasure), already part of objectpack
@@ -177,26 +185,6 @@ global:
   #   - GetSozaiN
   #   - GetSozaiO
   #   - GetSozaiP
-
-S100: # Faron Silent Realm
-  - name: Fi text near waking water
-    type: objdelete
-    id: 0xFCDB
-    layer: 2
-    room: 0
-    objtype: OBJ
-#   - name: Test Trial
-#     type: objpatch
-#     id: 0xFC94
-#     layer: 2
-#     room: 0
-#     objtype: OBJ
-#     object:
-#       params1: 0x3801FFFF
-#   - name: Trialitem
-#     type: oarcadd
-#     oarc: GetMoleGloveA
-#     destlayer: 2
 B100:
   - name: Layer override
     type: layeroverride
@@ -470,14 +458,6 @@ B301: # after Sandship boss
     object:
       params1: 0xC303FF03 # change to zone temp flag 3
       anglez: 0xFFFF # don't set any storyflag here
-B400: # Demise's Sanctuary :)
-  - name: Make Demise's death Cutscene unskippable
-    type: objpatch
-    index: 1
-    room: 0
-    objtype: EVNT
-    object:
-      skipflag: 255
 D003_0: # Sky Keep Courage Room
   - name: Fi text
     type: objdelete
@@ -789,7 +769,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJ
     object:
-      trigstoryfid: 1114 # bow
+      trigstoryfid: 944 # bow
   - name: Fledge for Arrow minigame
     type: objpatch
     id: 0xFDD8
@@ -797,7 +777,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJ
     object:
-      trigstoryfid: 1114 # bow
+      trigstoryfid: 944 # bow
 #  - name: Batreaux unlock
 #    type: objpatch
 #    id: 0xFC4A
@@ -887,7 +867,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJ
     object:
-      untrigstoryfid: 1114 # bow
+      untrigstoryfid: 944 # bow
   - name: untrigger fledge on academy after bow layer 6
     type: objpatch
     id: 0xFDD3
@@ -895,7 +875,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJ
     object:
-      untrigstoryfid: 1114 # bow
+      untrigstoryfid: 944 # bow
   - name: delete Wryna l4 2
     type: objdelete
     id: 0xFDF1
@@ -1062,10 +1042,10 @@ F001r: # Knight Academy
     layer: 4
     room: 0
     objtype: OBJ
-  - name: Move Fledge closer to Link's room
+  - name: Move Fledge closer to Link's room at night
     type: objpatch
-    id: 0xFC77
-    layer: 3
+    id: 0xFC7D
+    layer: 4
     room: 0
     objtype: OBJ
     object:
@@ -1078,7 +1058,18 @@ F001r: # Knight Academy
     room: 0
     objtype: OBJ
     object:
+      posx: 850
+      posz: -1700
       untrigstoryfid: 923
+  - name: Move Fledge closer to Link's room at day
+    type: objpatch
+    id: 0xFC77
+    layer: 3
+    room: 0
+    objtype: OBJ
+    object:
+      posx: 850
+      posz: -1700
   - name: Fledge Pouch Check Storyflag at day
     type: objpatch
     id: 0xFC78
@@ -1086,6 +1077,8 @@ F001r: # Knight Academy
     room: 0
     objtype: OBJ
     object:
+      posx: 850
+      posz: -1700
       untrigstoryfid: 923
   - name: Fledge trains without wryna
     type: objpatch
@@ -1191,6 +1184,14 @@ F004r: # Bazaar
     layer: 0
     room: 0
     objtype: OBJ
+  - name: Patch Scrapper Junk Despawn Flag
+    type: objpatch
+    id: 0xFC74
+    layer: 0
+    room: 0
+    objtype: OBJ
+    object:
+      params1: 0x285FFCFF # >> 21 == 322
 F005r: # Orielle and Parrow's House
   - name: Always Spawn Parrow
     type: objpatch
@@ -1445,6 +1446,16 @@ F020: # Sky
     layer: 0
     room: 0
     objtype: STAG
+  - name: Enlarge Thunderhead Entrance
+    type: objpatch
+    id: 0xFC9D
+    layer: 0
+    room: 0
+    objtype: STAG
+    object:
+      posy: -4500
+      sizex: 12000
+      sizey: 12800
 F023: # Thunderhead
   - name: Strich layer 1
     type: objadd
@@ -2040,6 +2051,35 @@ F103_1: # Flooded Great Tree
     objtype: PLY
     object:
       play_cutscene: -1
+F103: # Flooded Faron Woods
+  - name: Add bomb flower on lilypad near Bucha
+    type: objadd
+    layer: 0
+    room: 0
+    objtype: OBJ
+    object:
+      params1: 0xFFF0FFF0
+      params2: 0xFFFFFFFF
+      posx: -2296.102783203125
+      posy: 4500
+      posz: -1793.0338134765625
+      anglex: 0
+      angley: 0
+      anglez: 0
+      id: 0xFF00
+      name: Bombf
+  - name: Remove Tadtone Dowsing Trigger # is a start flag
+    type: objdelete
+    id: 0xFDE5
+    layer: 2
+    room: 0
+    objtype: OBJ
+  - name: Remove buggy Cranioc CS Trigger
+    type: objdelete
+    id: 0xFDF1
+    layer: 2
+    room: 0
+    objtype: STAG
 D100: # Skyview
   - name: Layer override
     type: layeroverride
@@ -2139,7 +2179,7 @@ D100: # Skyview
     objtype: OBJS
     object:
       setscenefid: 13 # 0x0 20
-  - name: Always open Bar from inside Beetle Room
+  - name: Always open Bar from inside Stalfos Fight Room
     type: objpatch
     index: 6
     layer: 0
@@ -2340,6 +2380,16 @@ D101: # Ancient Cistern
       flag6: 0
       zero: 0
       saveprompt: 0
+  - name: Move Rupee under Lilypad # So it doesn't get caught up in the water stream
+    type: objpatch
+    id: 0xFC22
+    layer: 0
+    room: 5
+    objtype: OBJ
+    object:
+      posx: -800
+      posy: -310
+      posz: -7590
   - name: extra Bomb flower
     type: objadd
     layer: 0
@@ -2434,21 +2484,6 @@ F200: # Eldin main area
     destlayer: 0
     room: 0
     objtype: STAG
-  - name: Intro cutscene patch
-    type: objpatch
-    id: 0xFC26
-    layer: 1
-    room: 0
-    objtype: STAG
-    object:
-      event: 4 # IntroSkip
-  - name: Give watched intro cs flag on cs skip
-    type: objpatch
-    room: 0
-    objtype: EVNT
-    index: 4
-    object:
-      story_flag1: 182 # Have watched Eldin Volcano intro Cutscene
   - name: First Mogma cs Fi
     type: objdelete
     id: 0xFC22
@@ -3821,6 +3856,12 @@ F300: # lanayru Main Area
     layer: 0
     room: 0
     objtype: OBJ
+  - name: Remove Fi text before Rescue Caged Robot Check
+    type: objdelete
+    id: 0xFC29
+    layer: 0
+    room: 0
+    objtype: OBJ
   - name: Remove Fi text for 5 Beacons
     type: objdelete
     id: 0xFCBC
@@ -3876,6 +3917,22 @@ F300: # lanayru Main Area
       anglez: 0
       id: 0xFE50
       name: Tubo
+  - name: LMF exit when not raised
+    type: objadd
+    index: 19
+    room: 0
+    objtype: PLY
+    object:
+      storyflag: 2047
+      play_cutscene: -1
+      byte4: -1
+      posx: 39
+      posy: -170
+      posz: -5100
+      anglex: 0
+      angley: 34000
+      anglez: 0
+      entrance_id: 19
 F300_1: # Lanayru Mine
   - name: Layer override
     type: layeroverride
@@ -3883,21 +3940,6 @@ F300_1: # Lanayru Mine
       - story_flag: -1
         night: 0
         layer: 1
-  - name: Intro cutscene patch
-    type: objpatch
-    id: 0xFC8C
-    layer: 1
-    room: 0
-    objtype: STAG
-    object:
-      event: 9 # IntroSkip
-  - name: Give watched intro cs flag on cs skip
-    type: objpatch
-    room: 0
-    objtype: EVNT
-    index: 9
-    object:
-      story_flag1: 190 # Have watched Lanayru Desert intro Cutscene
   - name: Remove First timeshift stone cs
     type: objdelete
     id: 0xFC47
@@ -4220,6 +4262,30 @@ F301_1: # Sand Sea Main Area
     room: 0
     objtype: STAG
     id: 0xFC6B
+  - name: Remove excess entrance to Sandship (layer 2)
+    type: objdelete
+    id: 0xFC98
+    layer: 2
+    room: 0
+    objtype: STAG
+  - name: Remove excess entrance to Sandship (layer 3)
+    type: objdelete
+    id: 0xFCB7
+    layer: 3
+    room: 0
+    objtype: STAG
+  - name: Remove excess entrance to Sandship (layer 4)
+    type: objdelete
+    id: 0xFCB7
+    layer: 4
+    room: 0
+    objtype: STAG
+  - name: Remove excess entrance to Sandship (layer 5)
+    type: objdelete
+    id: 0xFCB7
+    layer: 5
+    room: 0
+    objtype: STAG
   - name: Cutscene after shipyard
     type: objdelete
     id: 0xFC07
@@ -4699,13 +4765,22 @@ F302: # Lanayru Gorge
     object:
       layer: 2
       entrance: 4
-  - name: Move Key to Layer 2
+  - name: Move Small Key
     type: objmove
     id: 0xFCC3
     layer: 1
     destlayer: 0
     room: 0
     objtype: OBJ
+  - name: Patch Small Key
+    type: objpatch
+    id: 0xFCC3
+    layer: 1
+    room: 0
+    objtype: OBJ
+    object:
+      anglex: 0
+      angley: 0
   - name: patch FrmLand
     type: objpatch
     id: 0xFC05
@@ -4755,32 +4830,60 @@ F303: # Lanayru Caves
   - name: Layer override
     type: layeroverride
     override:
-      - story_flag: 208 #clawshots
-        night: 0
-        layer: 1
       - story_flag: -1
         night: 0
         layer: 0
-  - name: Delete Wall blocking path to Gorge
-    type: objdelete
-    id: 0xFC62
-    layer: 1
-    room: 0
-    objtype: SOBJ
+# Add oarcs
+  - name: Add Goron_motion
+    type: oarcadd
+    oarc: Goron_motion
+    destlayer: 0
+  - name: Add GoronD
+    type: oarcadd
+    oarc: GoronD
+    destlayer: 0
+# Golo
   - name: Move Golo out of the Way
     type: objpatch
-    room: 0
-    layer: 1
     id: 0xFC5C
+    layer: 1
+    room: 0
     objtype: OBJ
     object:
-      posx: -195
-      posy: 0
-      posz: 2146
-  - name: Delete temp rock in the back
-    type: objdelete
-    id: 0xFC61
+      posx: -150
+      posz: 2090
+      angley: 61000
+      anglez: 40455
+      untrigstoryfid: 2047 # never untrigger
+  - name: Move Golo onto layer 0
+    type: objmove
+    id: 0xFC5C
     layer: 1
+    destlayer: 0
+    room: 0
+    objtype: OBJ
+  - name: Move trigger onto layer 0
+    type: objmove
+    id: 0xFC5D
+    layer: 1
+    destlayer: 0
+    room: 0
+    objtype: OBJ
+  - name: Move Stool out of Golo's way
+    type: objpatch
+    id: 0xFC19
+    layer: 0
+    room: 0
+    objtype: OBJ
+    object:
+      posx: -400
+      posz: 1850
+# Rock blocking Gorge access
+  - name: Move rock blocking Gorge onto layer 0
+    type: objmove
+    id: 0xFC5F
+    layer: 1
+    destlayer: 0
     room: 0
     objtype: OBJS
   - name: Fi text after chest
@@ -4795,14 +4898,6 @@ F303: # Lanayru Caves
     layer: 0
     room: 0
     objtype: STAG
-  - name: never untrigger goron
-    type: objpatch
-    id: 0xFC5C
-    layer: 1
-    room: 0
-    objtype: OBJ
-    object:
-      untrigstoryfid: 2047 # never untrigger
 F402: # Sealed Temple
   - name: Layer override
     type: layeroverride
@@ -5011,49 +5106,6 @@ F401: # Sealed grounds Whirlpool
     layer: 1
     room: 1
     objtype: OBJ
-  - name: Intro cutscene skip
-    type: objpatch
-    index: 8
-    room: 1
-    objtype: PLY
-    object:
-      play_cutscene: -1
-  - name: Set Sealed Grounds intro cutscene watched 1
-    type: objadd
-    room: 1
-    layer: 1
-    objtype: STAG
-    object:
-      params1: 0xFFFFFFF
-      params2: 0xFF5FFFFF
-      posx: -7500
-      posy: 8404.3876953125
-      posz: 0
-      sizex: 2000
-      sizey: 2000
-      sizez: 2000
-      anglex: 137 # Have watched Sealed Grounds intro Cutscene
-      angley: 0
-      anglez: 65535
-      name: SwAreaT
-  - name: Set Sealed Grounds intro cutscene watched 2
-    type: objadd
-    room: 1
-    layer: 1
-    objtype: STAG
-    object:
-      params1: 0xFFFFFFF
-      params2: 0xFF5FFFFF
-      posx: -7500
-      posy: 8404.3876953125
-      posz: 0
-      sizex: 2000
-      sizey: 2000
-      sizez: 2000
-      anglex: 24 # Fi cs around faron pillar (probably unnecessary to patch)
-      angley: 0
-      anglez: 65535
-      name: SwAreaT
   - name: Groosenator before imp 2
     type: objdelete
     id: 0xFC9D
@@ -5217,7 +5269,7 @@ F403: # Hylia's Realm
     index: 1
     objtype: EVNT
     object:
-      exit_id: 7
+      exit_id: 5 # go to post g3 cutscene, sets g3 defeated storyflag
   - name: Skip Demise Fight
     onlyif: Option "skip-demise" Enabled
     type: objpatch
@@ -5256,7 +5308,39 @@ F407: # Sky Keep beaten CS
   #     room: 0
   #     layer: 0
   #     entrance: 52 # where you spawn after opening sky keep
-S200:
+S000: # Skyloft Silent Realm
+  - name: Trial completed storyflag
+    type: objpatch
+    id: 0xFC26
+    layer: 2
+    room: 0
+    objtype: OBJ
+    object:
+      params2: 0xFF7F039A # storyflag 922
+S100: # Faron Silent Realm
+  - name: Fi text near waking water
+    type: objdelete
+    id: 0xFCDB
+    layer: 2
+    room: 0
+    objtype: OBJ
+  - name: Trial completed storyflag
+    type: objpatch
+    id: 0xFC94
+    layer: 2
+    room: 0
+    objtype: OBJ
+    object:
+      params2: 0xFF7F0397 # storyflag 919
+S200: # Eldin Silent Realm
+  - name: Trial completed storyflag
+    type: objpatch
+    id: 0xFC37
+    layer: 2
+    room: 2
+    objtype: OBJ
+    object:
+      params2: 0xFF7F0398 # storyflag 920
   - name: Unforce layer
     type: objpatch
     room: 2
@@ -5264,3 +5348,12 @@ S200:
     objtype: SCEN
     object:
       layer: 0
+S300: # Lanayru Silent Realm
+  - name: Trial completed storyflag
+    type: objpatch
+    id: 0xFC18
+    layer: 2
+    room: 0
+    objtype: OBJ
+    object:
+      params2: 0xFF7F0399 # storyflag 921

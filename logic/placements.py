@@ -141,7 +141,7 @@ MAP_CHECKS = [
     "Lanayru Mining Facility - Chest after Armos Fight",
     "Ancient Cistern - Chest after Whip Hooks",
     "Sandship - Chest before 4-Door Corridor",
-    "Fire Sanctuary - Chest after Second Trapped Mogma",
+    "Fire Sanctuary - Rescue Second Trapped Mogma",
     "Sky Keep - First Chest",
 ]
 VANILLA_MAPS_PLACEMENT = norm_restrict_vanilla(MAP_CHECKS)
@@ -171,9 +171,9 @@ DUNGEON_MAPS_RESTRICTED_RESTRICTION = norm_values(
 
 VANILLA_TRIFORCES_PLACEMENT = norm_values(
     {
-        TRIFORCE_OF_COURAGE: "Sky Keep - Triforce of Courage",
-        TRIFORCE_OF_WISDOM: "Sky Keep - Triforce of Wisdom",
-        TRIFORCE_OF_POWER: "Sky Keep - Triforce of Power",
+        TRIFORCE_OF_COURAGE: "Sky Keep - Sacred Power of Farore",
+        TRIFORCE_OF_WISDOM: "Sky Keep - Sacred Power of Nayru",
+        TRIFORCE_OF_POWER: "Sky Keep - Sacred Power of Din",
     }
 )
 
@@ -184,3 +184,77 @@ TRIFORCES_RESTRICTION = norm_values(
 
 VANILLA_RUPEES = norm_force_vanilla(RUPEE_CHECKS)
 VANILLA_QUICK_BEETLE_RUPEES = norm_force_vanilla(QUICK_BEETLE_CHECKS)
+
+TADTONE_CHECKS = [
+    "Flooded Faron Woods - Yellow Tadtone under Lilypad",
+    "Flooded Faron Woods - 8 Light Blue Tadtones near Viewing Platform",
+    "Flooded Faron Woods - 4 Purple Tadtones under Viewing Platform",
+    "Flooded Faron Woods - Red Moving Tadtone near Viewing Platform",
+    "Flooded Faron Woods - Light Blue Tadtone under Great Tree Root",
+    "Flooded Faron Woods - 8 Yellow Tadtones near Kikwi Elder",
+    "Flooded Faron Woods - 4 Light Blue Moving Tadtones under Kikwi Elder",
+    "Flooded Faron Woods - 4 Red Moving Tadtones North West of Great Tree",
+    "Flooded Faron Woods - Green Tadtone behind Upper Bombable Rock",
+    "Flooded Faron Woods - 2 Dark Blue Tadtones in Grass West of Great Tree",
+    "Flooded Faron Woods - 8 Green Tadtones in West Tunnel",
+    "Flooded Faron Woods - 2 Red Tadtones in Grass near Lower Bombable Rock",
+    "Flooded Faron Woods - 16 Dark Blue Tadtones in the South West",
+    "Flooded Faron Woods - 4 Purple Moving Tadtones near Floria Gate",
+    "Flooded Faron Woods - Dark Blue Moving Tadtone inside Small Hollow Tree",
+    "Flooded Faron Woods - 4 Yellow Tadtones under Small Hollow Tree",
+    "Flooded Faron Woods - 8 Purple Tadtones in Clearing after Small Hollow Tree",
+]
+
+VANILLA_TADTONE_PLACEMENT = norm_restrict_vanilla(TADTONE_CHECKS)
+
+TRIAL_RELIC_CHECKS = [
+    "Skyloft Silent Realm - Relic 1",
+    "Skyloft Silent Realm - Relic 2",
+    "Skyloft Silent Realm - Relic 3",
+    "Skyloft Silent Realm - Relic 4",
+    "Skyloft Silent Realm - Relic 5",
+    "Skyloft Silent Realm - Relic 6",
+    "Skyloft Silent Realm - Relic 7",
+    "Skyloft Silent Realm - Relic 8",
+    "Skyloft Silent Realm - Relic 9",
+    "Skyloft Silent Realm - Relic 10",
+    "Faron Silent Realm - Relic 1",
+    "Faron Silent Realm - Relic 2",
+    "Faron Silent Realm - Relic 3",
+    "Faron Silent Realm - Relic 4",
+    "Faron Silent Realm - Relic 5",
+    "Faron Silent Realm - Relic 6",
+    "Faron Silent Realm - Relic 7",
+    "Faron Silent Realm - Relic 8",
+    "Faron Silent Realm - Relic 9",
+    "Faron Silent Realm - Relic 10",
+    "Lanayru Silent Realm - Relic 1",
+    "Lanayru Silent Realm - Relic 2",
+    "Lanayru Silent Realm - Relic 3",
+    "Lanayru Silent Realm - Relic 4",
+    "Lanayru Silent Realm - Relic 5",
+    "Lanayru Silent Realm - Relic 6",
+    "Lanayru Silent Realm - Relic 7",
+    "Lanayru Silent Realm - Relic 8",
+    "Lanayru Silent Realm - Relic 9",
+    "Lanayru Silent Realm - Relic 10",
+    "Eldin Silent Realm - Relic 1",
+    "Eldin Silent Realm - Relic 2",
+    "Eldin Silent Realm - Relic 3",
+    "Eldin Silent Realm - Relic 4",
+    "Eldin Silent Realm - Relic 5",
+    "Eldin Silent Realm - Relic 6",
+    "Eldin Silent Realm - Relic 7",
+    "Eldin Silent Realm - Relic 8",
+    "Eldin Silent Realm - Relic 9",
+    "Eldin Silent Realm - Relic 10",
+]
+
+
+def SOME_VANILLA_RELICS(
+    max_relics: int, norm: Callable[[str], EIN], checks: Dict[EIN, Any]
+) -> Placement:
+    list = [k for k in TRIAL_RELIC_CHECKS if int(k[-2:].strip()) > max_relics]
+    list2 = map(norm, list)
+    dict = {k: EIN(checks[k]["original item"]) for k in list2}
+    return Placement(locations=dict, items={v: k for k, v in dict.items()})

@@ -1,10 +1,141 @@
 # Changelog
 
 ## Dev
+### Additions
+### Changes
+### Bugfixes
+
+## 2.1.1
+### Bugfixes
+Fixes bug preventing the use of the Dungeon Entrance Rando (DER) option
+
+## 2.1.0
+### Additions
+- Ancient Cistern - Rupee under Lilypad is now a randomized check in the room after the gutters
+- Adds a startflag to have the log leading to Faron Woods already pushed
+- Adds the Strong Dowsing All Dungeons hint distribution
+### Changes
+- Update Dungeon Entrance Rando (DER) option names to better reflect what they do
+- Minor updates to logic
+### Bugfixes
+- Changed the way startflags are stored to prevent lack of flag space errors
+- Fixes a naming issue with the Boss Keysanity Fi Hints hint distribution that prevented it from being used
+
+## 2.0.1
+### Additions
+- New progress dialog tip about swordless movement (CovenEsme)
+- New Boss Key-sanity hint distribution for racing (YourAverageLink)
+### Changes
+- The seed hash is now shown in the progress window while randomizing (lepelog)
+- Renamed several options and checks for added clarity (CovenEsme with input from many others)
+### Bugfixes
+- Fixed a typo in hint text (CovenEsme)
+- Fixed several logic issues with tricks (CovenEsme)
+- Fixed an unpatched dungeon exit from Sandship (CovenEsme)
+- Fixed LMF appearing as unbeaten in Fi help menu (lepelog)
+
+## 2.0.0
 ### Options
-- Added option to make sword reward place swords on heart containers rather than final checks (by YourAverageLink)
-- Added option to randomize progression in Flooded Faron Woods (by CovenEsme)
-  - Added Faron SotH check that is obtained when completing the Tadtones story quest
+- Added Tadtonesanity (by CovenEsme)
+  - Added 17 "Group of Tadtones" items to the item pool
+    - You can hand in all 17 to the Water Dragon to get an item
+    - You can check how many tadtone groups you have by talking to Fi
+  - Added 17 checks in Flooded Faron Woods
+    - Collecting each vanilla group of tadtones in Flooded Faron Woods will give you an item
+- Added option to start at a random location (by CovenEsme)
+  - Has 4 main options: Vanilla, Bird Statues, Any Surface Region, Any
+    - Vanilla: You will spawn in Link's bedroom
+    - Bird Statues: You will spawn at a random Bird Statue or Link's bedroom
+    - Any Surface Region: You will spawn at an entrance on a surface region (Faron, Eldin, Lanayru) or Link's bedroom
+    - Any: You will spawn at any entrance
+  - Fi now has an option to let you return to this starting point! She'll warp you back whenever you like :p
+  - Added an additional option that limits the possible starting locations
+    - When enabled, you will only start at a location in a region unlocked by the tablets you start with
+- Added an option to reduce the number of Peatrice conversations needed before she calls you "Darling" (by CovenEsme)
+- Added cosmetic options to choose model packs to patch player and loftwing models with (by Muzugalium)
+- Added the ability to randomize dusk relics in silent realms (by Peppernicus, Zeldex, & YourAverageLink)
+- Up to 10 relics (chosen by a new option) per silent realm can be randomized to have new items
+### Changes
+- Getting an item underwater gives the item immediately (instead of having to stand on solid ground)
+- Added Fi hints (by YourAverageLink)
+  - Fi hints are a new field in hint distribution files. The number indicated on the field is how many gossip stone hints will be placed in the Fi menu
+    - Fi hints take priority over gossip stone hints; that is, they will be placed on Fi first, then on gossip stones if needed
+    - You may now set the hints per stone count of gossip stones to 0
+    - Fi's hints may be seen in her menu, by selecting Information -> Hints
+      - The information menu is also where Play Time now resides
+- Moved Golo to layer 0 in Lanayru Caves
+- Add an option for a custom hint distribution (by cjs07)
+- The Sand Sea boat moves faster (by YourAverageLink)
+  - Its base speed is 1.5x faster. Sprinting now multiplies its speed by 3 instead of 2, for a total change of 2.25x from before.
+- Removed Fi text trigger surrounding the Hook Beetle Fight check
+- The shortcut log from the Sealed Grounds Spiral to Behind the Temple is now always pushed down
+- The progress text shown at the bottom of save files now shows information about your progress towards the end of the seed (rather than the vanilla game) (by CovenEsme)
+- Added more structured and granular custom model support (by Muzu- with big help from CovenEsme, FrasseFreak, and Dman25)
+  - Added cosmetics tab to UI
+  - Added models folder for custom model packs
+  - Created a standard folder structure for custom model packs (see README in models folder for more info)
+  - Added the ability to choose a model pack to patch over the player model and loftwing models individually
+  - Created a metadata structure to allow custom model makers to define the following:
+    - Colour groups for texture masking
+    - Allowing tunic swap (if set to false, the option on the UI is disabled and grayed out)
+    - Adding a model author name and comment that will be displayed on the UI when the model pack is selected
+  - Added the default player and loftwing models as model pack options
+- Added masked texture recolor support (by Muzu- with big help from CovenEsme, FrasseFreak, and Dman25)
+  - Added color options for each defined color group are displayed on the left side:
+    - Color button allows the user to manually select a color
+    - Randomize button picks a random color for corresponding group
+    - Reset color button returns the color group back to default (this uses the original texture colors)
+  - Added a preview of the model is displayed on the right side (if one is provided)
+    - The preview updates to show how the currently selected colors look on the model
+  - Added a randomize all colors button that selects a random color for all defined color groups
+  - Added a reset all colors button that restores all defined color groups back to default
+  - Added native support for default player and loftwing models
+  - Created structure to allow custom models to define masks, color groups, and previews (see README in models folder for more info)
+  - You may save and load color presets (by YourAverageLink)
+    - Link comes with 9 default color presets - Red Tunic, Blue Tunic, Purple Tunic, Dark Link, Pipit's Tunic / Mallara, Impa / Groose, Hero of the Wild, Hero of the Wind, and Ravio
+    - The Loftwing comes with 7 default color presets - Zelda's Loftwing, the Wing Ceremony Loftwing, Groose's Loftwing, Cawlin's Loftwing, Strich's Loftwing, Orielle's Loftwing, and the Knights' Loftwing
+    - At any point, you may save a new color preset (works just like settings presets), and then load them at a later point.
+    - Model creators may provide their own default presets by adding a default_presets.json file to the model type folder
+    - The Import/Export button opens up a dialog box containing the metadata for your currently selected color. This may be copied and sent to someone else, who can paste in the same dialog box and import the color
+- Added Scrapper as an item (by CovenEsme)
+  - Scrapper is no longer given at the start of the game and instead appears as an item
+  - To account for this, Scrapper has also been made into a possible starting item
+  - In order to get Owlan's Crystals, Dodoh's Crystals, Fun Fun Island Minigame, Kina's Crystals, Sparrot's Crystals, and Song from Levias you must have obtained the Scrapper item
+- Added "Repair Gondo's Junk" check (equivalent to repairing Scrapper in vanilla) (by CovenEsme)
+  - Requires 1 Ancient Flower in return for a check
+- Switch the randomizer to output an iso instead of a wbfs using a different library
+- Upon completing a silent realm, the trial gate will remain open. (This is to prevent softlocks with dusk relic shuffle)
+- Items inside silent realms (other than dusk relics) will glow and have beams above them; their color is distinct from the tears
+  - In Faron, items are yellow
+  - In Eldin, items are blue
+  - In Lanayru, items are green
+  - In Skyloft, items are red
+### Bugfixes
+- Ensure the tadtones jingle music isn't randomized or manually replaced to prevent a softlock
+- Fix bug where Fledge wouldn't correctly spawn for the Archery minigame when starting with the bow
+- Fix issues where hearts wouldn't spawn from digspots, pots, and some enemies even when the "Spawn Hearts" option was enabled
+
+## 1.4.1
+### Bugfixes
+- Fix Sealed Grounds crashing after receiving the fire dragon item after obtaining the other dragon items
+
+## 1.4.0
+### Options
+- Split hero mode options to make each effect individually toggleable (by Zeldex)
+  - Option to allow recovery hearts to spawn
+  - Option to have upgraded skyward strike
+  - Option to have faster air meter depletion
+- Added option to freely choose the damage multiplier
+- Added option to start with various items (by CovenEsme)
+  - Includes: b-wheel items, pouches, quest items, songs, triforces, wallets, extra wallets, gratitude crystal packs, harp, water scale, earrings, mitts, life tree seedling, sea chart, spiral charge, stone of trials and Earth Temple key pieces.
+  - Added option to start with extra health
+  - Added option to start with a random progress item
+  - Added option to start with max bugs and treasures
+  - Added option to start with a full wallet
+  - Added option to start with Hylian Shield
+  - Added option to start with Empty Bottles
+- Added the ability to ban individual locations (by cjs07)
+- Removed the "Banned Types" option
 - Added chest dowsing functionality as an option (by YourAverageLink)
   - Uses the main quest dowsing slot (top slot), with a custom dowsing icon to indicate its usage for chests.
   - Vanilla: No change in dowsing functionality (rupee/treasure dowsing works on chests)
@@ -15,48 +146,58 @@
 - Added hint distribution designed for use with the new chest dowsing feature 
   - Removes hints for easily dowsable chests and adds some for non-dowsable checks
   - Only shows one hint per Gossip Stone
-- Added option to start with various items (by CovenEsme)
-  - Includes: b-wheel items, pouches, quest items, songs, triforces, wallets, harp, water scale, earrings, mitts, life tree seedling, sea chart, spiral charge, stone of trials and Earth Temple key pieces.
-- Added option to start with extra health (by CovenEsme)
-- Added option to start with a random progress item (by CovenEsme)
-- Added the ability to ban individual locations (by cjs07)
-- Removed the "Banned Types" option
-- Added options to control entry into Lake Floria
-  - Talk to Yerbal: You are required to talk to Yerbal and he will open the floria door
-  - Vanilla: You are logically required to talk to Yerbal and draw on the floria door
-  - Open: The floria door is open from the start of the game. You are not required to talk to Yerbal or draw on the floria door
-- Added cosmetic option to have stars appear in the sky during both day and night (by CovenEsme)
-  - Stars appear on the surface regions, the Sky and Skyloft
-  - Some users (particularly Wii Console users) may experience some minor lag when enabling this option (can be adjusted)
-- Added cosmetic option to control the number of stars that appear in the sky
-  - This works with both the stars in the daytime sky (if the "Starry Skies" cosmetic option is enabled) and the usual stars in the nighttime sky
-  - The default value is 700 and matches how things worked before
-  - Values larger than 700 will decrease the performance of the game
-- Added cosmetic option to have a lightning skyward strike effects. (by Zeldex)
-- Updated existing `fix-bit-crashes` option to a `bit-patches` option (by CovenEsme)
-  - This option is now a drop-down choice instead of a toggle
-  - A new option for `disable-bit` has been added that prevents all instances of the Back in Time (BiT) trick from being performed
-  - A new option for `vanilla` has been added that keeps the vanilla game behaviour where BiT is possible but crashes under certain circumstances
-  - The `fix-bit-crashes` option works the same as it did previously
-- Added cosmetic option to set the in-game interface setting from the start of the game
-  - It is now possible to start with the Standard, Light, or Pro interface without having to change the setting from the inventory screen
+- Added an accessibility toggle for light and dark themes (by CovenEsme)
+  - You can now pick to have a light theme, dark theme, or to automatically change based on the theme of your computer
+- Added option to randomize the boss key puzzles (by CovenEsme)
+- Added option to get all extra dowsing abilities after obtaining Whitesword
+- Added option to remove enemy battle music
+- Split hero mode options to make each effect customizable
+- Added option to freely choose the damage multiplier
 ### Changes
 - New GUI (by cjs07)
   - Rearranged options and regrouped into simpler, broader categories
   - Removed the Progress Locations tab
   - Made many miscellaneous changes
-- Presets (by cjs07)
-  - Presets allow users to save and load their favorite settings quickly from the main page of the randomizer
-  - The randomizer is distributed with a set of default presets that cannot be changed
-    - This list includes all 6 Season 2 Tournament modes and a new beginner friendly mode
-  - Presets persist between versions and are forward compatible with new versions.
-  - User preset data is sharable between users via the `presets.txt` file
-  - Only options included in permalinks are saved, with the exception of the spoiler log toggle
-- Added Water Dragon to the Great Tree (by CovenEsme)
-- Added entrance and exit to and from Flooded Great Tree (by CovenEsme)
-  - Entering Flooded Great Tree for the first time automatically starts the Tadtones story quest
-  - New logical option for completing the Owlan's Crystals check
-    - Added access to Flooded Faron as an alternative to needing bomb bag
+  - Added a dark theme
+- Accessibility options (by CovenEsme)
+  - Added a toggle for enabling and disabling a custom theme 
+  - Added a button that opens a window with customization options for the theme of the randomizer
+    - It is now possible to customize the way the randomizer program looks in fine detail
+    - You can customize the light and dark mode colors of each widget to create a custom theme that works in both light and dark modes
+    - Widgets are grouped into categories that can be selected with a drop down menu
+    - Hovering over a widget label will show a tooltip describing what it does
+  - Added theme presets
+    - Allows you to choose between various theme presets. Currently, there are "Default", "High Contrast", and "Readibility" options
+    - The "Readibility" theme preset also changes the font family to "OpenDyslexic3"
+  - Added font settings
+    - It is now possible to set the font family used by the randomizer program
+    - It is also possible to change the font point size. The default value is 10 (previously 9), can go as small as 6 and as large as 14.
+  - Added option to make the curved corners of the randomizer interace sharp and pointy instead of curved
+- Added option to make wallet upgrades come pre-filled with Rupees
+- Added option to make sword reward place swords on heart containers rather than final checks (by YourAverageLink)
+- Added options to control entry into Lake Floria
+  - Talk to Yerbal: You are required to talk to Yerbal and he will open the floria door
+  - Vanilla: You are logically required to talk to Yerbal and draw on the floria door
+  - Open: The floria door is open from the start of the game. You are not required to talk to Yerbal or draw on the floria door
+- Updated existing `fix-bit-crashes` option to a `bit-patches` option (by CovenEsme)
+  - This option is now a drop-down choice instead of a toggle
+  - A new option for `disable-bit` has been added that prevents all instances of the Back in Time (BiT) trick from being performed
+  - A new option for `vanilla` has been added that keeps the vanilla game behaviour where BiT is possible but crashes under certain circumstances
+  - The `fix-bit-crashes` option works the same as it did previously
+- Added cosmetic option to set the in-game interface setting from the start of the game (by CovenEsme)
+  - It is now possible to start with the Standard, Light, or Pro interface without having to change the setting from the inventory screen
+- Added cosmetic option to control the number of stars that appear in the sky (by CovenEsme)
+  - This works with both the stars in the daytime sky (if the "Starry Skies" cosmetic option is enabled) and the usual stars in the nighttime sky
+  - The default value is 700 and matches how things worked before
+  - Values larger than 700 will decrease the performance of the game
+- Added cosmetic option to have stars appear in the sky during both day and night (by CovenEsme)
+  - Stars appear on the surface regions, the Sky and Skyloft
+  - Some users (particularly Wii Console users) may experience some minor lag when enabling this option (can be adjusted)
+- Added cosmetic option to have a lightning skyward strike effects. (by Zeldex)
+- Added option to randomize the boss key puzzles (by CovenEsme)
+- Added option to get all extra dowsing abilities after obtaining Whitesword (by Peppernicus)
+- Added option to remove enemy battle music (by YourAverageLink)
+### Changes
 - Added Bokoblin Base as a region visitable in the randomizer (by CovenEsme)
   - Talking to the Shiekah Stone in the first room in Eldin Volcano takes you to the Bokoblin Base jail
   - Talking to the Shiekah Stone in the Bokoblin Base jail takes you back to Eldin Volcano
@@ -69,12 +210,42 @@
     - The lava platforms found in Boko Base will also appear in Eldin Volcano after talking to the Fire Dragon
 - Added 2 new hint stones in Eldin Volcano / Bokoblin Base (by CovenEsme)
   - Accessible via the lava platforms in Boko Base (or the newly added ones in Eldin), the 2 Eldin caves each contain a Gossip Stone
-- Machi is no longer rescued after beating Skyview
-- Added custom dowsing images for new chest dowsing functionality (by YourAverageLink)
-- Shooting the bell during pumpkin archery ends the minigame immediately
+- Added Water Dragon to the Great Tree (by CovenEsme)
+- Added entrance and exit to and from Flooded Great Tree (by CovenEsme)
+  - Entering Flooded Great Tree for the first time automatically starts the Tadtones story quest
+  - New logical option for completing the Owlan's Crystals check
+    - Added access to Flooded Faron Woods as an alternative to needing bomb bag
+- New GUI (by cjs07)
+  - Rearranged options and regrouped into simpler, broader categories
+  - Removed the Progress Locations tab
+  - Made many miscellaneous changes
+- Added quick text (by CovenEsme and Muzugalium - with help from Lepelog and YourAverageLink)
+  - Removes the delay between clearing a textbox and being able to clear the next one
+  - Removes the delay between opening a textbox and being able to clear the textbox
+  - Removes the background blur to text due to a visual bug
+  - Added the ability to hold down the B button to clear textboxes
 - Removed first time textboxes (by CovenEsme)
-  - Removes rupee, heart, arrow, bomb, stamina fruit, silent realm tear and light fruit first time textboxes
-- Overhauled call Fi menu (by Muzu, CovenEsme, and Lepelog)
+  - Removes rupee, heart, arrow, bomb, deku seed, stamina fruit, silent realm tear and light fruit first time textboxes
+- Removed/shortened cutscenes/dialogue
+  - Removed all skippable cutscenes except boss intro cutscenes (by CovenEsme)
+    - When starting a new file, Link will now spawn directly in his room
+  - Removed the panning cutscenes during the Fledge's Gift check (by CovenEsme)
+  - Shortened Yerbal's text to become in-line with the rest of the randomizer (by CovenEsme)
+  - Removed the cutscene after completing the Isle of Songs puzzle (by CovenEsme and Zeldex)
+  - Removed thrill digger tower cutscene (by Muzugalium)
+  - Removed lily pad flipping cutscenes (by Muzugalium)
+  - Removed pyrup cutscene (by Muzugalium)
+  - Removed camera pans during Golo's gift (by Muzugalium)
+  - Removed mogma cutscene before circles (by Muzugalium)
+  - Sped up bridge extending cutscenes in Eldin (by lepelog)
+- Presets (by cjs07)
+  - Presets allow users to save and load their favorite settings quickly from the main page of the randomizer
+  - The randomizer is distributed with a set of default presets that cannot be changed
+    - This list includes all 6 Season 2 Tournament modes and a new beginner friendly mode
+  - Presets persist between versions and are forward compatible with new versions.
+  - User preset data is sharable between users via the `presets.txt` file
+  - Only options included in permalinks are saved, with the exception of the spoiler log toggle
+- Overhauled call Fi menu (by Muzu, CovenEsme, and lepelog)
   - Added menu choice to view required dungeons
     - Removed required dungeons from notice board in academy
   - Added menu choice to view dungeon status
@@ -86,24 +257,11 @@
     - These include caves key, spiral charge, and life tree fruit (with space for life tree seedling when that gets added)
   - Added menu choice to view general requirements for beating a seed (e.g. how to raise and open Gate of Time, etc.)
   - Added explicit menu choice to view play time (temporarily to fill space)
-- Added Lanayru Desert map of the past as a starting item (by CovenEsme)
-- Removed bipping after getting slingshot, practice sword, the Potion Lady's Gift check, buying a shield and Owlan's Gift check (by CovenEsme)
-- Removed the cutscene after completing the Isle of Songs puzzle
-- Removed the panning cutscenes during the Fledge's Gift check (by CovenEsme)
-- Shortened Yerbal's text to become in-line with the rest of the randomizer
-- Added the ability to hold down the B button to clear textboxes (by CovenEsme)
-- Added quick text (by CovenEsme and Muzugalium - with help from Lepelog and YourAverageLink)
-  - Removes the delay between clearing a textbox and being able to clear the next one
-  - Removes the delay between opening a textbox and being able to clear the textbox
-  - Removes the background blur to text due to a visual bug
 - Added back the Sword Pedestal in the Goddess Statue (by CovenEsme)
   - Pulling out the Goddess Sword from its pedestal now gives the 2 checks within the Goddess Statue
   - The 2 small chests previously found within the Goddess Statue have been removed
-- Removed all skippable cutscenes except boss intro cutscenes (by CovenEsme)
-  - When starting a new file, Link will now spawn directly in his room
-- Removed first set of bars in Sky Keep (by CovenEsme)
-  - The first chest in Sky Keep is no longer required to get the other checks within Sky Keep
-- Expanded arc replacements to cover the remaining unpatched arcs (by Muzu)
+- Removed bipping after getting slingshot, practice sword, the Potion Lady's Gift check, buying a shield and Owlan's Gift check (by CovenEsme)
+- Expanded arc replacements to cover the remaining unpatched arcs (by Muzugalium)
   - Previously unpatched arcs (such as DoButton.arc) are now picked up from the arc replacements folder and patched
   - The arc replacements folder now supports sub folders so people can organise arcs freely
   - The arc replacements folder is now auto-generated if it doesn't exist
@@ -114,6 +272,21 @@
     - Text arcs intended for the fr_US folder must be prefixed with "fr" (e.g. fr0-Common.arc) 
     - The cursor arc intended for the regular layout folder supports the default name (i.e. cursor.arc)
     - The cursor arc intended for the mpls_movie/layout folder (motion plus tutorial cursor) must be prefixed with "mpls" (i.e. mplscursor.arc)
+- Added a copy button that copies the settings string to the clipboard (by CovenEsme)
+- Updated and standardized the option tooltip text (by CovenEsme)
+  - Tooltip text is now more descriptive
+  - Tooltip text now features **bold** highlights for **WARNINGS** regarding potentially troublesome settings and option names for drop down choices
+- Renamed Slingshot check to Kikwi Elder's Reward (by YourAveragelink)
+- Machi is no longer rescued after beating Skyview (by lepelog)
+- Added custom dowsing images for new chest dowsing functionality (by YourAverageLink)
+- Added Lanayru Desert map of the past as a starting item (by CovenEsme)
+- Shooting the bell during pumpkin archery ends the minigame immediately (by lepelog)
+- Removed first set of bars in Sky Keep (by CovenEsme)
+  - The first chest in Sky Keep is no longer required to get the other checks within Sky Keep
+- Removed lavafall in front of ET boss door (by CovenEsme and Peppernicus)
+- Added seed and permalink to error messages (by cjs07)
+- Removed the check for a button combination to show the built in crash screen (by lepelog)
+- Added changelog to the download
 ### Bugfixes
 - Fixed a bug that prevented tricks from being properly reloaded when the randomizer restarted multiple times without changes to the list
 - Fixed a softlock caused by collecting the last 2 tears in a trial too close together
@@ -124,7 +297,13 @@
 - Fixed bug where setting the `map-mode` or `boss-key-mode` options to "Vanilla" AND starting with some but not all maps or boss keys would throw an error
   - Any maps or boss keys NOT added as starting items will now be placed in their vanilla locations (if the `map-mode`/`boss-key-mode` options are set to "Vanilla")
   - Any maps or boss keys added as starting items will be added to the starting inventory
+- Fixed UI scaling issues. The randomizer program now scales when resized instead of remaining a fixed size.
 - Fixed bug where most items in Beedle's Shop where partially hidden in the table
+- Fixed bulk mode for Windows
+- Fixed barbed wire staying after obtaining triforce of wisdom
+- Fixed Windows file encoding bug
+- Fixed Beedle's Shop rupees showing the wrong color
+- Fixed crash in Bug Heaven minigame
 
 
 ## 1.3.2

@@ -85,7 +85,6 @@ class Rando:
         runtime_requirements = (
             self.logic_options_requirements
             | self.endgame_requirements
-            | self.ban_options
             | {i: DNFInventory(True) for i in self.placement.starting_items}
             | self.no_logic_requirements
         )
@@ -101,6 +100,7 @@ class Rando:
             self.unrequired_dungeons,
             self.randomized_dungeon_entrance,
             self.randomized_trial_entrance,
+            self.randomized_start_entrance,
             list(self.placement.locations),
         )
 
@@ -142,7 +142,7 @@ class Rando:
 
         self.initialize_items()  # self.randosettings
 
-        self.randomize_dungeons_trials()
+        self.randomize_dungeons_trials_starting_entrances()
 
     def randomize_required_dungeons(self):
         """
@@ -164,26 +164,47 @@ class Rando:
         for tablet randomizer adds random tablets
         """
         starting_items = {
-            number(PROGRESSIVE_SWORD, i)
-            for i in range(SWORD_COUNT[self.options["starting-sword"]])
+            number(PROGRESSIVE_SWORD, sword_num)
+            for sword_num in range(SWORD_COUNT[self.options["starting-sword"]])
         }
 
         for tablet in self.rng.sample(TABLETS, k=self.options["starting-tablet-count"]):
             starting_items.add(tablet)
 
         starting_items |= {
-            number(HEART_CONTAINER, i)
-            for i in range(self.options["starting-heart-containers"])
+            number(HEART_CONTAINER, heart_container_num)
+            for heart_container_num in range(self.options["starting-heart-containers"])
         }
 
         starting_items |= {
-            number(HEART_PIECE, i) for i in range(self.options["starting-heart-pieces"])
+            number(HEART_PIECE, heart_piece_num)
+            for heart_piece_num in range(self.options["starting-heart-pieces"])
         }
+
+        starting_items |= {
+            number(GRATITUDE_CRYSTAL_PACK, crystal_pack_num)
+            for crystal_pack_num in range(self.options["starting-crystal-packs"])
+        }
+
+        starting_items |= {
+            number(EMPTY_BOTTLE, bottle_num)
+            for bottle_num in range(self.options["starting-bottles"])
+        }
+
+        starting_items |= {
+            number(GROUP_OF_TADTONES, tadtone_num)
+            for tadtone_num in range(self.options["starting-tadtones"])
+        }
+
+        if self.options["start-with-hylian-shield"]:
+            starting_items.add(HYLIAN_SHIELD)
 
         if not self.options["open-et"]:
             starting_items |= {
-                number(KEY_PIECE, i)
-                for i in range(self.options["starting-items"].count(KEY_PIECE))
+                number(KEY_PIECE, key_piece_num)
+                for key_piece_num in range(
+                    self.options["starting-items"].count(KEY_PIECE)
+                )
             }
 
         for item in self.options["starting-items"]:
@@ -204,11 +225,7 @@ class Rando:
                 for item in RANDOM_STARTING_ITEMS
                 if item not in self.options["starting-items"]
             ]
-            if len(possible_random_starting_items) == 0:
-                raise ValueError(
-                    "All valid progress items have already been added as starting items."
-                )
-            else:
+            if len(possible_random_starting_items) > 0:
                 random_item = self.rng.choice(possible_random_starting_items)
                 if random_item not in EXTENDED_ITEM.items_list:
                     random_item = number(random_item, 0)
@@ -220,23 +237,6 @@ class Rando:
         self.placement.add_starting_items(starting_items)
 
     def ban_the_banned(self):
-        banned_req = DNFInventory(BANNED_BIT)
-        nothing_req = DNFInventory(True)
-        maybe_req = lambda b: banned_req if b else nothing_req
-        self.ban_options = {
-            BEEDLE_STALL_ACCESS: maybe_req(self.options["shop-mode"] == "Always Junk"),
-            MEDIUM_PURCHASES: maybe_req(
-                self.options["shop-mode"] == "Randomized - Cheap"
-            ),
-            EXPENSIVE_PURCHASES: maybe_req(
-                self.options["shop-mode"] == "Randomized - Cheap"
-                or self.options["shop-mode"] == "Randomized - Medium"
-            ),
-        } | {
-            MAY_GET_n_CRYSTALS(c): (maybe_req(c > self.options["max-batreaux-reward"]))
-            for c in CRYSTAL_THRESHOLDS
-        }
-
         self.banned: List[EIN] = []
         self.banned.extend(map(self.norm, self.options["excluded-locations"]))
 
@@ -251,6 +251,10 @@ class Rando:
                 or self.options["triforce-shuffle"] == "Anywhere"
             ):
                 self.banned.append(self.norm(entrance_of_exit(DUNGEON_MAIN_EXITS[SK])))
+
+        # ban the forced vanilla relic checks to ensure songs can be counted as nonprogress items if the rewards are also off
+        if not self.options["treasuresanity-in-silent-realms"]:
+            self.banned.extend(map(self.norm, TRIAL_RELIC_CHECKS))
 
     def get_endgame_requirements(self):
         # needs to be able to open GoT and open it, requires required dungeons
@@ -335,7 +339,7 @@ class Rando:
         )
 
     def set_placement_options(self):
-        shop_mode = self.options["shop-mode"]
+        shopsanity = self.options["shopsanity"]
         place_gondo_progressives = self.options["gondo-upgrades"]
         damage_multiplier = self.options["damage-multiplier"]
 
@@ -348,11 +352,12 @@ class Rando:
             TALK_TO_YERBAL_OPTION: self.options["open-lake-floria"] == "Talk to Yerbal",
             VANILLA_LAKE_FLORIA_OPTION: self.options["open-lake-floria"] == "Vanilla",
             OPEN_LAKE_FLORIA_OPTION: self.options["open-lake-floria"] == "Open",
-            RANDOMIZED_BEEDLE_OPTION: shop_mode != "Vanilla",
+            RANDOMIZED_BEEDLE_OPTION: shopsanity != "Vanilla",
             GONDO_UPGRADES_ON_OPTION: not place_gondo_progressives,
             NO_BIT_CRASHES: self.options["bit-patches"] == "Fix BiT Crashes",
             NONLETHAL_HOT_CAVE: damage_multiplier < 12,
             UPGRADED_SKYWARD_STRIKE: self.options["upgraded-skyward-strike"],
+            FS_LAVA_FLOW_OPTION: self.options["fs-lava-flow"],
         }
 
         enabled_tricks = set(self.options["enabled-tricks-bitless"])
@@ -424,18 +429,11 @@ class Rando:
         if not place_gondo_progressives:
             self.placement.add_unplaced_items(GONDO_ITEMS)
 
-        if shop_mode == "Vanilla":
+        if not shopsanity:
             self.placement |= VANILLA_BEEDLE_PLACEMENT(self.norm, self.areas.checks)
-        elif shop_mode == "Randomized":
-            pass
-        elif shop_mode == "Always Junk":
-            pass
 
-        small_key_mode = self.options["small-key-mode"]
-        boss_key_mode = self.options["boss-key-mode"]
-        map_mode = self.options["map-mode"]
-        triforce_mode = self.options["triforce-shuffle"]
         # remove small keys from the dungeon pool if small key sanity is enabled
+        small_key_mode = self.options["small-key-mode"]
         if small_key_mode == "Vanilla":
             self.placement |= VANILLA_SMALL_KEYS_PLACEMENT(self.norm, self.areas.checks)
         elif small_key_mode == "Own Dungeon - Restricted":
@@ -447,6 +445,7 @@ class Rando:
             pass
 
         # remove boss keys from the dungeon pool if boss key sanity is enabled
+        boss_key_mode = self.options["boss-key-mode"]
         if boss_key_mode == "Vanilla":
             self.placement |= VANILLA_BOSS_KEYS_PLACEMENT(self.norm, self.areas.checks)
         elif boss_key_mode == "Own Dungeon":
@@ -455,6 +454,7 @@ class Rando:
             pass
 
         # remove maps from the dungeon pool if maps are shuffled
+        map_mode = self.options["map-mode"]
         if map_mode == "Removed":
             pass
             # handled later
@@ -467,20 +467,28 @@ class Rando:
         elif map_mode == "Anywhere":
             pass
 
-        rupeesanity = self.options["rupeesanity"]
-        if rupeesanity == "Vanilla":
+        if not self.options["rupeesanity"]:
             self.placement |= VANILLA_RUPEES(self.norm, self.areas.checks)
-        elif rupeesanity == "No Quick Beetle":
-            self.placement |= VANILLA_QUICK_BEETLE_RUPEES(self.norm, self.areas.checks)
-        elif rupeesanity == "All":
-            pass
 
+        triforce_mode = self.options["triforce-shuffle"]
         if triforce_mode == "Vanilla":
             self.placement |= VANILLA_TRIFORCES_PLACEMENT(self.norm)
         elif triforce_mode == "Sky Keep":
             self.placement |= TRIFORCES_RESTRICTION(self.norm)
         elif triforce_mode == "Anywhere":
             pass
+
+        tadtonesanity = self.options["tadtonesanity"]
+        if not tadtonesanity:
+            self.placement |= VANILLA_TADTONE_PLACEMENT(self.norm, self.areas.checks)
+        trial_treasure_amount = self.options["trial-treasure-amount"]
+        if not self.options["treasuresanity-in-silent-realms"]:
+            trial_treasure_amount = 0
+
+        # make non-randomized trial relics vanilla
+        self.placement |= SOME_VANILLA_RELICS(
+            trial_treasure_amount, self.norm, self.areas.checks
+        )
 
     #
     #
@@ -505,16 +513,17 @@ class Rando:
             self.placement.reverse_map_transitions[en1] = ex2[0]
             self.placement.reverse_map_transitions[en2] = ex1[0]
 
-    def randomize_dungeons_trials(self):
+    def randomize_dungeons_trials_starting_entrances(self):
         # Do this in a deliberately hacky way, this is not supposed to be how ER works
+        # Dungeon Entrance Rando.
         der = self.options["randomize-entrances"]
         dungeons = ALL_DUNGEONS.copy()
         entrances = [DUNGEON_OVERWORLD_ENTRANCES[dungeon] for dungeon in ALL_DUNGEONS]
-        if der == "All Dungeons":
+        if der == "All Surface Dungeons":
             indices = list(range(len(REGULAR_DUNGEONS)))
             shuffle_indices(self.rng, dungeons, indices=indices)
 
-        elif der == "All Dungeons + Sky Keep":
+        elif der == "All Surface Dungeons + Sky Keep":
             self.rng.shuffle(dungeons)
 
         elif der == "Required Dungeons Separately":
@@ -548,6 +557,7 @@ class Rando:
 
         self.reassign_entrances(dungeon_entrances, dungeons)
 
+        # Trial Gate Entrance Rando.
         ter = self.options["randomize-trials"]
         pool = ALL_SILENT_REALMS.copy()
         gates = [SILENT_REALM_GATES[realm] for realm in ALL_SILENT_REALMS]
@@ -561,3 +571,63 @@ class Rando:
         trial_entrances = [self.norm(TRIAL_GATE_EXITS[k]) for k in gates]
         trials = [self.norm(SILENT_REALM_EXITS[k]) for k in pool]
         self.reassign_entrances(trial_entrances, trials)
+
+        # Ugly patch for needlessly useful songs : remove the trial exits from logic
+        for trial_exit in trials:
+            self.placement.map_transitions[trial_exit] = EIN(
+                entrance_of_exit(trial_exit)
+            )
+
+        # Starting Entrance Rando.
+        ser = self.options["random-start-entrance"]
+        limit_ser = self.options["limit-start-entrance"]
+        allowed_provinces = [
+            TABLET_TO_PROVINCE[item]
+            for item in self.placement.starting_items
+            if item in TABLETS
+        ]
+        allowed_provinces.append(THE_SKY)
+
+        possible_start_entrances = [
+            (entrance, values)
+            for entrance, values in self.areas.map_entrances.items()
+            if values.get("can-start-at", True)
+            and (
+                "Start Entrance" in str(entrance)
+                or (
+                    (not limit_ser or values.get("province") in allowed_provinces)
+                    and (
+                        (
+                            ser == "Bird Statues"
+                            and values.get("subtype", False)
+                            and values["subtype"] == "bird-statue-entrance"
+                        )
+                        or (
+                            ser == "Any Surface Region"
+                            and values.get("province") in TABLET_TO_PROVINCE.values()
+                        )
+                        or (ser == "Any")
+                    )
+                )
+            )
+        ]
+
+        start_entrance = self.rng.choice(possible_start_entrances)
+        self.placement.map_transitions["\Start"] = start_entrance[0]
+        values = start_entrance[1]
+
+        self.randomized_start_entrance = {
+            "statue-name": values.get("statue-name", values["short_name"]),
+            "stage": values["stage"],
+            "room": values["room"],
+            "layer": values["layer"],
+            "entrance": values["entrance"],
+            "day-night": values["tod"],
+        }
+
+        assert self.randomized_start_entrance["statue-name"] is not None
+        assert self.randomized_start_entrance["stage"] is not None
+        assert self.randomized_start_entrance["room"] is not None
+        assert self.randomized_start_entrance["layer"] is not None
+        assert self.randomized_start_entrance["entrance"] is not None
+        assert self.randomized_start_entrance["day-night"] is not None

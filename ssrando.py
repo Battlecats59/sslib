@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from functools import cached_property
 import sys
-import os
 import re
 import random
 from pathlib import Path
@@ -20,7 +19,7 @@ from logic.placement_file import PlacementFile
 import SpoilerLog
 
 from gamepatches import GamePatcher, GAMEPATCH_TOTAL_STEP_COUNT
-from paths import RANDO_ROOT_PATH, IS_RUNNING_FROM_SOURCE
+from paths import CUSTOM_HINT_DISTRIBUTION_PATH, RANDO_ROOT_PATH, IS_RUNNING_FROM_SOURCE
 from options import OPTIONS, Options
 from sslib.utils import encodeBytes
 from version import VERSION, VERSION_WITHOUT_COMMIT
@@ -62,6 +61,28 @@ class BaseRandomizer:
         raise NotImplementedError("abstract")
 
 
+def calculate_rando_hash(seed: int, options: Options):
+    assert seed != -1
+    # hash of seed, options, version
+    current_hash = hashlib.md5()
+    current_hash.update(str(seed).encode("ASCII"))
+    current_hash.update(options.get_permalink().encode("ASCII"))
+    current_hash.update(VERSION.encode("ASCII"))
+    if options["hint-distribution"] == "Custom":
+        if not CUSTOM_HINT_DISTRIBUTION_PATH.exists():
+            raise Exception(
+                "Custom hint distribution file not found. Make sure custom_hint_distribution.json exists at the same location as the randomizer"
+            )
+        with CUSTOM_HINT_DISTRIBUTION_PATH.open("r") as f:
+            normalized_json = json.dumps(json.load(f))
+            current_hash.update(normalized_json.encode("ASCII"))
+    with open(RANDO_ROOT_PATH / "names.txt") as f:
+        names = [s.strip() for s in f.readlines()]
+    hash_random = random.Random()
+    hash_random.seed(current_hash.digest())
+    return " ".join(hash_random.choice(names) for _ in range(3))
+
+
 class Randomizer(BaseRandomizer):
     def __init__(
         self, areas: Areas, options: Options, progress_callback=dummy_progress_callback
@@ -85,19 +106,7 @@ class Randomizer(BaseRandomizer):
         self.rando = Rando(self.areas, self.options, self.rng)
         self.excluded_locations = self.options["excluded-locations"]
         self.dry_run = bool(self.options["dry-run"])
-        self.randomizer_hash = self._get_rando_hash()
-
-    def _get_rando_hash(self):
-        # hash of seed, options, version
-        current_hash = hashlib.md5()
-        current_hash.update(str(self.seed).encode("ASCII"))
-        current_hash.update(self.options.get_permalink().encode("ASCII"))
-        current_hash.update(VERSION.encode("ASCII"))
-        with open(RANDO_ROOT_PATH / "names.txt") as f:
-            names = [s.strip() for s in f.readlines()]
-        hash_random = random.Random()
-        hash_random.seed(current_hash.digest())
-        return " ".join(hash_random.choice(names) for _ in range(3))
+        self.randomizer_hash = calculate_rando_hash(self.seed, self.options)
 
     def check_valid_directory_setup(self):
         # catch common errors with directory setup
@@ -185,6 +194,7 @@ class Randomizer(BaseRandomizer):
                 barren_nonprogress=self.logic.get_barren_regions(),
                 randomized_dungeon_entrance=self.logic.randomized_dungeon_entrance,
                 randomized_trial_entrance=self.logic.randomized_trial_entrance,
+                randomized_start_entrance=self.logic.randomized_start_entrance,
             )
             with log_address.open("w") as f:
                 json.dump(dump, f, indent=2)
@@ -203,6 +213,7 @@ class Randomizer(BaseRandomizer):
                     barren_nonprogress=self.logic.get_barren_regions(),
                     randomized_dungeon_entrance=self.logic.randomized_dungeon_entrance,
                     randomized_trial_entrance=self.logic.randomized_trial_entrance,
+                    randomized_start_entrance=self.logic.randomized_start_entrance,
                 )
         if not self.dry_run:
             GamePatcher(
@@ -226,9 +237,10 @@ class Randomizer(BaseRandomizer):
         plcmt_file = PlacementFile()
         plcmt_file.dungeon_connections = self.logic.randomized_dungeon_entrance
         plcmt_file.trial_connections = self.logic.randomized_trial_entrance
+        plcmt_file.start_entrance = self.logic.randomized_start_entrance
         plcmt_file.hash_str = self.randomizer_hash
         plcmt_file.hints = {
-            k: v.to_ingame_text(lambda s: self.areas.prettify(s, custom=True))
+            k: v.to_ingame_text(lambda s: self.areas.prettify(s))
             for (k, v) in self.logic.placement.hints.items()
         }
         plcmt_file.item_locations = self.logic.placement.locations
@@ -240,6 +252,7 @@ class Randomizer(BaseRandomizer):
         plcmt_file.version = VERSION
         plcmt_file.trial_object_seed = self.rng.randint(1, MAX_SEED)
         plcmt_file.music_rando_seed = self.rng.randint(1, MAX_SEED)
+        plcmt_file.bk_angle_seed = self.rng.randint(0, 2**32 - 1)
 
         plcmt_file.check_valid(self.areas)
 
@@ -248,9 +261,13 @@ class Randomizer(BaseRandomizer):
 
 class PlandoRandomizer(BaseRandomizer):
     def __init__(
-        self, placement_file: PlacementFile, progress_callback=dummy_progress_callback
+        self,
+        placement_file: PlacementFile,
+        areas,
+        progress_callback=dummy_progress_callback,
     ):
         super().__init__(progress_callback)
+        self.areas = areas
         self.placement_file = placement_file
 
     @cached_property
@@ -260,7 +277,7 @@ class PlandoRandomizer(BaseRandomizer):
     def randomize(self):
         GamePatcher(
             self.areas,
-            self.options,
+            self.placement_file.options,
             self.progress_callback,
             self.actual_extract_path,
             self.rando_root_path,

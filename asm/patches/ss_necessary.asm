@@ -54,19 +54,6 @@ bl set_goddess_sword_pulled_scene_flag
 .org 0x801d4b20
 li r5, -1
 
-; Change starting location to remove intro cutscenes
-.org 0x801bb960 ; Change starting stage
-subi r3, r13, 0x5b44 ; previously 0x601c (F405 -> F001r)
-
-.org 0x801bb964 ; Change starting roomID
-li r4, 1 ; Room 0 -> 1
-
-.org 0x801bb968 ; Change starting layer
-li r5, 3 ; Layer 0 -> 3
-
-.org 0x801bb96c ; Change starting entrance
-li r6, 5 ; Entrance 0 -> 5
-
 ; patch to not update sword model when getting an upgrade
 .org 0x8005e2f0
 stwu r1, -0x30(r1) ; change function prologue to match the function it branches to at the end
@@ -260,6 +247,10 @@ nop
 nop
 nop
 
+; we need to make sure you can't die in thrill digger and bug heaven, even with a high damage multiplier
+.org 0x801e351c
+bl no_minigame_death
+
 ;remove heromode check for air meter
 .org 0x801c5d8c
 nop
@@ -273,7 +264,124 @@ bgt 0x801b0788
 bl rando_text_command_handler
 b 0x801b0764 ; return to original function
 
+; don't enable jank fi menu handling: everything in the menu is overwritten anyways
+.org 0x801b19e0
+li r0, 0
+
+; patch starting entrance
+.org 0x801bb980
+bl send_to_start
+
+; here is the required sequence of buttons stored,
+; to get the crash screen to show up, since it's 0 terminated,
+; overwriting the first element with 0 will make it not check any buttons
+.org 0x804dba00
+.word 0
+
+; allow collecting items underwater
+.org 0x8025685c
+bl allow_item_get_underwater
+
+; Update branches
+.org 0x802511f4
+beq 0x80251208
+.org 0x802511fc
+beq 0x80251208
+
+; If getting an big item underwater, act like a small item
+; Fixes janky item get animation underwater
+; Uses excess space from multiple copies of the same code
+.org 0x8025121c
+; r5 is re-assigned after this
+lwz r5, LINK_PTR@sda21(r13) ; get LINK_PTR
+lwz r5, 0x364(r5) ; get actionflags
+rlwinm. r5, r5, 0x0, 0xd, 0xd ; is Link in water?
+cmpwi r5, 0
+bne 0x80251208 ; if in water, use DefaultGetItem event
+nop
+
+; Modify STORYFLAG_DEFINITIONS to allow flag 953 to be a counter
+; STATIC_STORYFLAGS[index] = 805a9b7e
+; shiftMask uses 7 lsb for the counter (max value of 128)
+; shiftMask >> 4 = 0 so:
+; Story Flag #953 (0x03B9) - US from 805A9B7E 0x01 to 805A9B7E 0x40
+.org 0x80511502
+.byte 0x53 ; index
+.byte 0x7  ; shiftMask
+
+
+; allow tadtone dowsing after getting hasCollectedAllTadtones flag
+.org 0x80097b84
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+
+; Show Tadtone Scroll even after getting Water Dragon's Reward
+.org 0x80299ca8
+nop
+nop
+nop
+nop
+
+; don't allow collecting the trial reward again if it has been completed
+; this is in a global function that checks if all tears have been collected
+.org 0x802d7660
+bl has_not_already_completed_trial
+
+; use a custom function to detect items in silent realms to put different color glows for tears & items
+.org 0x8024cffc
+lhz r3, 0x0330(r29)
+bl get_glow_color
+cmpwi r3, 0x4
+
+; get_glow_color replaces this tear subtype function, so skip over it
+.org 0x8024d00c
+nop
+nop
+
+; don't allow setting storyflag -1 (0x7FFF) in flows (breaks trials & probably other things)
+.org 0x801aff50
+cmplwi r4, -1
+beq 0x801aff60
+mr r3, r4
+bl storyflag_set_to_1
+
+; hook into function before spawning link at entrance
+.org 0x8006358c
+bl do_er_fixes
+
+; Check for scrapper repaired when also checking if a scrapper quest was started
+; Prevents picking up scrapper item when scrapper hasn't been found yet
+;
+; ScrapperPickupMgr__checkQuestStartedStoryflag
+.org 0x800a5c88
+b check_scrapper_repaired
+
+; set respawn info when starting a new file
+.org 0x801ba668
+b allow_set_respawn_info
+
+; remove low heart fi text
+.org 0x8016c718
+li r3, 1
+
+; remove wallet full fi text
+.org 0x8016c808
+li r3, 1
+
+
+; Prevent picking up Skyview - Item behind Bars with sword
+.org 0x8024d3b0
+nop
+
 .close
+
+
 
 .open "d_a_obj_time_door_beforeNP.rel"
 .org 0xD4C
@@ -336,13 +444,10 @@ mflr r0
 stw r0,20(r1)
 stw r31,12(r1)
 mr r31,r3 ; r31 is AcOWarp ptr
-lwz r3, STORYFLAG_MANAGER@sda21(r13)
-lhz r4, 0xaa(r31) ; 3rd and 4th byte in params2 is storyflag for completing trial
-bl FlagManager__setFlagTo1 ; set storyflag for completing trial
 lbz r3, 0x4(r31) ; first byte of params1 is itemid
 li r4, -1 ; set pouch slot param to -1, otherwise pouch items break
 li r5, 0 ; 3rd arg for giveItem function call
-bl giveItem ; give the item for the trial
+bl giveItem ; give the item for the trial and save the pointer to it
 stw r3, 0xC94(r31)
 lwz r0,20(r1)
 lwz r31,12(r1)
@@ -356,42 +461,40 @@ cmpwi r3, 0 ; function returns 0 if returning from the trial should be delayed
 beq 0x23A4
 nop
 
-; the trial storyflags got changed, cause they used the same one as the items associated with it
-.org 0x2F48
-li r4, 0x397 ; new storyflag
+; to allow trials to be re-enterable, remove references to untrigger storyflags
+; (0x80ccefa0 - address + 0x130)
+.org 0x2F10
+blr ; skip over func that deletes trial if storyflag is set
 
-.org 0x2F88
-li r4, 0x398
+.org 0x2B1C
+li r3, 0 ; skip over storyflag checks
 
-.org 0x2FD4
-li r4, 0x399
+.org 0x2B5C
+li r3, 0
 
-.org 0x3020
-li r4, 0x39A
+.org 0x2BA8
+li r3, 0
 
-.org 0x2B08
-li r4, 0x397
+.org 0x2BF4
+li r3, 0
 
-.org 0x2B48
-li r4, 0x398
+.org 0xCA0
+li r3, 0
 
-.org 0x2B94
-li r4, 0x399
+.org 0xCE0
+li r3, 0
 
-.org 0x2BE0
-li r4, 0x39A
+.org 0xD2C
+li r3, 0
 
-.org 0xC8C
-li r4, 0x397
+.org 0xD78
+li r3, 0
 
-.org 0xCCC
-li r4, 0x398
+.org 0x2E70
+blr ; remove function that checks for untrigger sceneflag and involves collision destructor
 
-.org 0xD18
-li r4, 0x399
-
-.org 0xD64
-li r4, 0x39A
+.org 0x2008
+li r3, 0 ; checks for untrigger sceneflag; always set to false
 
 ; this usually delays starting the trial finish event until the
 ; tear display is ready, which can softlock so skip the check,
@@ -402,6 +505,10 @@ li r4, 0x39A
 ; preferably, the tear display should be fixed, but this works for now
 .org 0x1A9c
 lbz r0, 0xc90(r30)
+
+; hijack the destructor of the trial
+.org 0x4D6C
+b set_trial_completed_storyflag
 
 .close
 
@@ -476,7 +583,7 @@ li r4, -1 ; -1 for bottle slot, or pouch items break
 .open "d_a_birdNP.rel"
 .org 0xA154 ; 809b72e4 in ghidra
 mr r3, r31
-bl loftwing_speed_limit
+bl enforce_loftwing_speed_cap
 nop
 nop
 nop
@@ -488,10 +595,12 @@ nop ; don't cap speed here
 ble skip_store_max
 stfs f0,0xfb8(r3)
 skip_store_max:
-b loftwing_speed_limit
+b enforce_loftwing_speed_cap
 .close
 
 .open "d_a_npc_dive_game_judgeNP.rel"
+
+; (80703568 - 80700ac0) + 130
 .org 0x2BD8 ; in function that checks if he should loose his party wheel
 li r4, 0x130 ; always loose it (batreaux storyflag)
 
@@ -681,6 +790,13 @@ rlwinm. r0, r0, 0, 23, 23 ; check & 0x100 now
 b set_sot_placed_flag
 .close
 
+.open "d_a_obj_time_boatNP.rel"
+
+.org 0x107C ; 0x80e1b56c
+bl fix_sadship_boat
+
+.close
+
 ; make sure groose stays at his groosenator after finishing faron SotH
 .open "d_a_npc_bbrvlNP.rel"
 ; .org 0x80992b24
@@ -701,4 +817,175 @@ li r3, 0 ; act as if storyflag 16 is not set
 ; .org 0x809a0528
 .org 0x11c18
 li r3, 0 ; act as if storyflag 16 is not set
+.close
+
+
+.open "d_a_obj_clefNP.rel"
+
+; (addr - text0) + offset
+; (0x - 0x80ea8380) + 0x130
+
+; Allow anglez to be used to store the item id
+.org 0x104C ; 0x80ea929c
+nop ; don't overwrite anglez with zero
+
+.org 0x17AC ; 80ea99fc
+li r0, 0 ; replace anglez with zero since it's only used for this
+
+
+; Still init clef actors even if hasCollectedAllTadtones flag is set
+.org 0xA58 ; 0x80ea8ca8
+nop
+nop
+nop
+nop
+nop
+
+;;;;;;;;;;;;;;;;;;
+;;; Give items ;;;
+;;;;;;;;;;;;;;;;;;
+; Give item when in STATE_WAIT_UPDATE
+.org 0x1CA4 ; 0x80ea9ef4
+mr r4, r29 ; move self into r4
+bl give_random_item_from_collecting_tadtone_group
+
+; Give item when in STATE_MOVE_TOWARD_PATH_UPDATE
+.org 0x236C ; 0x80eaa5bc
+mr r4, r29 ; move self into r4
+bl give_random_item_from_collecting_tadtone_group
+
+; Give item when in STATE_PATH_MOVE_UPDATE
+.org 0x28EC ; 0x80eaab3c
+mr r4, r29 ; move self into r4
+bl give_random_item_from_collecting_tadtone_group
+
+; Give item when in STATE_GRAVITATE
+.org 0x303C ; 0x80eab28c
+mr r4, r29 ; move self into r4
+bl give_random_item_from_collecting_tadtone_group
+.close
+
+
+.open "d_t_clef_gameNP.rel"
+
+; (addr - text0) + offset
+; (0x - 0x80ee7a60) + 0x110
+
+; Still init clef game even if hasCollectedAllTadtones flag is set
+.org 0x2C8 ; 0x80ee7c18
+nop
+nop
+nop
+nop
+nop
+
+; don't delyeet yourself p l e a s e
+; ensure TgClefGame always exists when in Flooded Faron Woods
+.org 0x3B4 ; 0x80ee7d04
+nop
+
+.org 0x3BC ; 0x80ee7d0c
+bl check_tadtone_counter_before_event
+
+; Check for hasCollectedAllTadtones after managing vanilla tadtones
+.org 0x45C ; 0x80ee7dac
+b 0x3A4 ; 0x80ee7cf4 check for hasCollectedAllTadtones
+
+; re-write return to use extra instruction space at end of function
+; not very elegant but works better than re-writing the whole function
+; now starts at 0x80ee7db0
+lwz r31, 0x4c(r1)
+li r3, 1
+lwz r30, 0x48(r1)
+lwz r0, 0x54(r1)
+mtlr r0
+addi r1, r1, 0x50
+blr
+
+; update return branches to use new address 0x80ee7db0
+.org 0x3B8 ; 0x80ee7d08
+b 0x460
+.org 0x3D8 ; 0x80ee7d28
+bne 0x460
+.org 0x3E8 ; 0x80ee7d38
+beq 0x460
+.org 0x434 ; 0x80ee7d84
+b 0x460
+
+.close
+
+.open "d_a_t_wood_areaNP.rel"
+; skip over the check for valid nearby items so any item can be bonked down nearby
+.org 0x91c
+nop
+.close
+
+.open "d_a_obj_time_boatNP.rel"
+
+; 0x80e20260 in ghidra, seems to be some base multiplier at 0.3 (but changing this to something
+; less than 1 doesnt seem to change anything?)
+.org 0x5d74
+.float 1.5 ; seems to make the boat go 1.5x faster
+
+; 0x80e20274 in ghidra, sand sea boat sprint speed multiplier
+.org 0x5d88
+.float 3.0 ; original sprint speed multiplier is 2.0, so total speed difference is 2.25x
+
+.close
+
+
+.open "d_lyt_file_selectNP.rel"
+
+; text0: 0x80ec54e0
+; (80ecc27c - 80ec54e0) + 130
+
+; Change function that gets the File Progress Text from
+; counting the number of flags activated and instead use
+; the first unset flag in the list.
+
+; 0x80ecc264
+.org 0x6EB4
+bne 0x6EBC ; branch if flag is set (to check next flag in list)
+b 0x6ECC   ; 0x80ecc27c - branch out of loop
+
+; Replace unnecessary bound check
+; 80ecc27c
+.org 0x6ECC
+mr r29, r28
+nop
+nop
+
+; 0x80ecdc44
+.org 0x8898
+.word 9   ; Obtained the Goddess's Harp
+.word 340 ; Raised the Gate of Time (GoT)
+.word -1  ; Obtained the Required Sword (will be filled later in gamepatches)
+.word 902 ; Beaten Required Dungeon 1
+.word 903 ; Beaten Required Dungeon 2
+.word 926 ; Beaten Required Dungeon 3
+.word 927 ; Beaten Required Dungeon 4
+.word 928 ; Beaten Required Dungeon 5
+.word 929 ; Beaten Required Dungeon 6
+.word 144 ; Triggered the Imprisoned 2 Fight
+.word 132 ; Defeated the Imprisoned 2
+.word 341 ; Opened the Gate of Time (GoT)
+.word 645 ; Collected all Triforces (beaten Sky Keep)
+.word 134 ; Defeated the Horde
+.word 486 ; Defeated Ghirahim 3
+.word -1
+
+.close
+
+
+.open "d_a_npc_salbage_robot_repairNP.rel"
+
+; (80890fb4 - 8088fd00) + 130
+
+; NpcSalbageRobotRepair__isRepaired
+; Replace Scrapper Repaired storyflag with rando flag for Repair Gondo's Junk check
+;
+; 0x808906d4
+.org 0xB04
+li r4, 322 ; Repair Gondo's Junk check flag
+
 .close

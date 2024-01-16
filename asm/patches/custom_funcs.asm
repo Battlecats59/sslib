@@ -177,11 +177,182 @@ li r3, 154 ; storyflag for SSH timeshift stone being active
 li r4, 0 ; storyflag will be unset
 b setStoryflagToValue
 
+; prevents giving the item a second time when the trial storyflag is set
+.global has_not_already_completed_trial
+has_not_already_completed_trial:
+; we use storyflags 919-922 (inclusive) for the trials, it is stored in params2
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+li r3, 0x20A
+li r4, 0
+bl findActorByActorType ; find trial actor
+lhz r4, 0xaa(r3)
+lwz r3, STORYFLAG_MANAGER@sda21(r13)
+bl FlagManager__getFlagOrCounter
+; the original stores a 1 in r31, store here if the trial was already completed, so we need to invert
+; the storyflag
+xori r31, r3, 1
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
 .global patch_bit
 patch_bit:
 li r0, 0
 stb r0, -0x3ca3(r13) ; RELOADER_TYPE
 blr
+
+; new health is in r0, need to return in r4
+; if new health is 0 and we are either in thrill digger
+; or bug heaven, let link live with a quarter heart
+.global no_minigame_death
+no_minigame_death:
+mr r4, r0
+cmpwi r4, 0 ; check if health greater or equal zero
+bgtlr
+lwz r5, -0x71f0(r13) ; SPECIAL_MINIGAME_STATE
+cmpwi r5, 3 ; thrill digger
+beq prevent_death
+cmpwi r5, 5 ; bug heaven
+bnelr
+prevent_death:
+li r4, 1 ; quarter heart, enough to survive
+blr
+
+.global allow_item_get_underwater
+allow_item_get_underwater:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+
+lwz r6, LINK_PTR@sda21(r13)
+lwz r6, 0x364(r6) ; get actionflags
+rlwinm. r6, r6, 0x0, 0xd, 0xd ; is Link in water?
+cmpwi r6, 0
+beq return_vanilla
+li r6, 0
+b return
+
+return_vanilla:
+li r6, 4
+
+return:
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
+
+.global get_item_model_name
+get_item_model_name:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+
+mr r3, r26
+bl get_item_model_name_ptr
+cmpwi r3, 0 ; null check
+bne return_item_model_name
+lwz r3, 0x4(r28) ; vanilla instruction
+
+return_item_model_name:
+mr r26, r3
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
+
+; 
+.global is_custom_rando_item
+is_custom_rando_item:
+lhz r3, 0xd44(r31) ; get itemId
+cmpwi r3, 511
+bgt is_not_custom_rando_item
+cmpwi r3, 200
+blt is_not_custom_rando_item
+b 0x8024a7c4 ; branch to AcItem__mainModel alloc
+
+is_not_custom_rando_item:
+li r3, 0
+b 0x8024abb4 ; return false
+
+
+.global fix_custom_item_get
+fix_custom_item_get:
+; Custom Func to change tadtone Height r31 = AcItem
+stwu r1, -0x10(r1) ; change stack
+mflr r0
+stw r0, 0x14(r1) ; Save LR
+stw r4, 0x8(r1) ; save matrix ptr
+lhz r0, 0xd44(r31) ; Get item id
+
+cmpwi r0, 214 ; check if tadtone
+beq change_item_get_props
+cmpwi r0, 215 ; check if Scrapper
+bne exit ; if not, go as normal
+
+change_item_get_props:
+lwz r12, 0x8b8(r31) ; AcItem + 0x8b8 = ActorStateManager
+addi r3, r31, 0x8b8 ; ActorStateManager in r3
+lwz r12, 0x28(r12)
+mtctr r12
+bctrl ; Calls Get Current State ID
+lwz r12, 0x0(r3)
+lis r4, -0x7FA5
+addi r4, r4, 0x46b8
+lwz r12, 0x14(r12)
+bctrl ; Calls == on AcItem::STATE_GET
+cmpwi r3, 0
+beq exit ; branch if its not in STATE_GET
+
+lwz r4, 0x8(r1) ; grab matrix
+lfs f0, -0x2b84(r2) ; r2 = 0x8057e9c0 (grabs float if using below)
+lfs f1, 0x1c(r4)
+fadds f1, f1, f0
+stfs f1, 0x1c(r4)
+
+; change scale
+cmpwi r3, 0 ; is Scrapper
+; bne change_scrapper_scale_factor
+
+; tadtone scale factor
+lfs f0, -0x2ba8(r2) ; 0.5  0x8057be18
+b change_scale
+
+change_scrapper_scale_factor:
+lfs f0, -0x27d8(r2) ; 0.3  0x8057c1e8
+
+change_scale:
+lfs f1, 0xcc(r31)
+fmuls f1, f1, f0
+stfs f1, 0xcc(r31)
+stfs f1, 0xd0(r31)
+stfs f1, 0xd4(r31)
+
+exit:
+lwz r4, 0x8(r1)
+lwz r3, 0x334(r31) 
+lwz r12, 0x0(r3)
+lwz r12, 0x18(r12)
+mtctr r12
+bctrl ; branches to setLocalMatrix (r3 = model, r4 = mtx)
+lwz r0, 0x14(r1)
+mtlr r0 ; return LR to normal
+addi r1, r1, 0x10 ; return SP
+blr
+
+
+.global check_scrapper_repaired
+check_scrapper_repaired:
+cmpwi r3, 0 ; check quest started flag
+beqlr
+
+li r4, 323 ; scrapper repaired storyflag
+b checkStoryflagIsSet
+
 
 ; space to declare all the functions defined in the
 ; custom-functions rust project
@@ -190,28 +361,17 @@ blr
 .global rando_text_command_handler
 .global textbox_a_pressed_or_b_held
 .global set_goddess_sword_pulled_scene_flag
+.global randomize_boss_key_start_pos
+.global get_item_arc_name
+.global get_item_model_name_ptr
+.global is_custom_rando_item
+.global give_item_with_sceneflag
+.global storyflag_set_to_1
+.global send_to_start
+.global do_er_fixes
+.global allow_set_respawn_info
+.global get_glow_color
 
-.close
-
-
-.open "d_a_birdNP.rel"
-.org @NextFreeSpace
-.global loftwing_speed_limit ; expects loftwing actor in r3
-loftwing_speed_limit:
-lis r6, INPUT_BUFFER@ha ; input buffer
-lwz r6, INPUT_BUFFER@l(r6)
-andis. r0, r6, 0x0400 ; check for B pressed
-bne c_up_pressed
-lfs f1,-0x3948(r2) ; 350.0f constant
-b past_if_else
-c_up_pressed:
-lfs f1,-0x56c0(r2) ; 80.0f constant
-past_if_else:
-lfs f0, 0x144(r3)
-fcmpo cr0, f1, f0
-bgelr
-stfs f1, 0x144(r3)
-blr
 .close
 
 .open "d_t_D3_scene_changeNP.rel"
@@ -244,6 +404,17 @@ beqlr
 li r3, 1
 stw r3, 0xC94(r4)
 blr
+
+.global set_trial_completed_storyflag
+set_trial_completed_storyflag:
+; if the item has been given, set the flag for the trial to be completed
+lwz r4, 0xC94(r3)
+cmplwi r4, 0 ; 0 means item not given yet
+beqlr
+lhz r4, 0xaa(r3)
+lwz r3, STORYFLAG_MANAGER@sda21(r13)
+b FlagManager__setFlagTo1 ; set storyflag for completing trial
+
 .close
 
 .open "d_a_obj_time_stoneNP.rel"
@@ -627,5 +798,91 @@ li r4, 1
 bl setStoryflagToValue
 
 b 0x950
+
+.close
+
+
+.open "d_a_obj_clefNP.rel"
+.org @NextFreeSpace
+
+.global give_random_item_from_collecting_tadtone_group
+give_random_item_from_collecting_tadtone_group:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+
+lha r3, 0xbc(r29) ; get randomized itemId
+li r4, -1
+li r5, 0
+mr r6, r25 ; get flag
+bl give_item_with_sceneflag ; r3 = itemId, r4 = pouchSlot (-1), r5 = 0, r6 = sceneflag
+mr r4, r29 ; move self back into r4
+
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
+.close
+
+
+.open "d_t_clef_gameNP.rel"
+.org @NextFreeSpace
+
+.global check_tadtone_counter_before_event
+check_tadtone_counter_before_event:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+
+lwz r3, STORYFLAG_MANAGER@sda21(r13)
+li r4, 953 ; tadtone counter
+bl FlagManager__getFlagOrCounter
+cmpwi r3, 17
+bne return_not_start_event
+
+; get event delay
+lbz r3, 0x17f(r30) ; replaced instruction
+b return
+
+return_not_start_event:
+; 0x3c = default delay before starting event
+; any value > 1 is sufficent
+li r3, 0x3c
+
+return:
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
+.close
+
+
+.open "d_a_obj_time_boatNP.rel"
+.org @NextFreeSpace
+
+.global fix_sadship_boat
+fix_sadship_boat:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+
+lis r3, 0x8057
+ori r3, r3, 0xd4e8
+bl isCurrentStage
+cmpwi r3, 0
+beq not_ancient_harbour
+bl AcOTimeBoat__checkActivatedStoryflag
+b return_boat_state
+
+not_ancient_harbour:
+li r3, 1
+
+return_boat_state:
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
 
 .close

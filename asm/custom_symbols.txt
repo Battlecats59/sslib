@@ -6,20 +6,38 @@ main.dol:
   setSceneflagForArea: 0x806783E0
   alloc_keyboard_arcs_conditional: 0x80678450
   unset_sandship_timestone_if_necessary: 0x8067849C
-  patch_bit: 0x806784CC
-  process_startflags: 0x806784D8
-  handle_bk_map_dungeonflag: 0x80678790
-  rando_text_command_handler: 0x80678840
-  textbox_a_pressed_or_b_held: 0x80678A58
-  set_goddess_sword_pulled_scene_flag: 0x80678A88
-d_a_birdNP.rel:
-  loftwing_speed_limit: 0xF298
+  has_not_already_completed_trial: 0x806784CC
+  patch_bit: 0x80678504
+  no_minigame_death: 0x80678510
+  allow_item_get_underwater: 0x80678538
+  get_item_model_name: 0x80678574
+  is_custom_rando_item: 0x806785A8
+  fix_custom_item_get: 0x806785C8
+  check_scrapper_repaired: 0x8067867C
+  process_startflags: 0x8067868C
+  handle_bk_map_dungeonflag: 0x806788AC
+  rando_text_command_handler: 0x8067895C
+  textbox_a_pressed_or_b_held: 0x80678C44
+  set_goddess_sword_pulled_scene_flag: 0x80678C74
+  randomize_boss_key_start_pos: 0x80678CA0
+  get_item_arc_name: 0x80678CCC
+  get_item_model_name_ptr: 0x80678D10
+  enforce_loftwing_speed_cap: 0x80678D4C
+  give_item_with_sceneflag: 0x80678E40
+  storyflag_set_to_1: 0x80678ED4
+  get_start_info: 0x80678F04
+  send_to_start: 0x80678F10
+  do_er_fixes: 0x80678F6C
+  allow_set_respawn_info: 0x80679294
+  get_glow_color: 0x806792BC
+  FORCE_MOGMA_CAVE_DIVE: 0x80679426
 d_t_D3_scene_changeNP.rel:
   trigger_exit_one: 0x804
   trigger_exit_one_lbl: 0x340
   function_end: 0x344
 d_a_obj_warpNP.rel:
   check_should_delay_walk_out_event: 0x6100
+  set_trial_completed_storyflag: 0x6128
 d_a_obj_time_stoneNP.rel:
   set_first_time_cs_already_watched: 0x6548
 d_a_obj_sw_sword_beamNP.rel:
@@ -41,3 +59,9 @@ d_t_player_restartNP.rel:
   only_set_flag_conditionally: 0x6A4
 d_a_obj_toD3_stone_figureNP.rel:
   set_sot_placed_flag: 0x1388
+d_a_obj_clefNP.rel:
+  give_random_item_from_collecting_tadtone_group: 0x4A2C
+d_t_clef_gameNP.rel:
+  check_tadtone_counter_before_event: 0x724
+d_a_obj_time_boatNP.rel:
+  fix_sadship_boat: 0x6448

@@ -1,7 +1,6 @@
 from .constants import *
 from options import Options
 from version import VERSION
-from util.file_accessor import read_yaml_file_cached
 
 import json
 
@@ -24,6 +23,7 @@ class PlacementFile:
         self.trial_connections = {}
         self.trial_object_seed = -1
         self.music_rando_seed = -1
+        self.bk_angle_seed = -1
 
     def read_from_file(self, f):
         self._read_from_json(json.load(f))
@@ -45,6 +45,7 @@ class PlacementFile:
             "trial-connections": self.trial_connections,
             "trial-object-seed": self.trial_object_seed,
             "music-rando-seed": self.music_rando_seed,
+            "bk-angle-seed": self.bk_angle_seed,
         }
         return json.dumps(retval, indent=2)
 
@@ -62,6 +63,7 @@ class PlacementFile:
         self.trial_connections = jsn["trial-connections"]
         self.trial_object_seed = jsn["trial-object-seed"]
         self.music_rando_seed = jsn["music-rando-seed"]
+        self.bk_angle_seed = jsn["bk-angle-seed"]
 
     def check_valid(self, areas):
         """checks, if the current state is valid, throws an exception otherwise
@@ -108,7 +110,7 @@ class PlacementFile:
         )
 
         check_sets_equal(
-            set(areas.gossip_stones.keys()) | set(SONG_HINTS),
+            {FI_HINTS_KEY} | set(areas.gossip_stones.keys()) | set(SONG_HINTS),
             set(self.hints.keys()),
             "Gossip Stone Hints",
         )

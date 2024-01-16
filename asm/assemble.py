@@ -430,52 +430,55 @@ try:
                     "-o",
                     bin_name,
                 ]
+
                 # add custom functions from rust
                 if is_custom_function and file_path == "main.dol":
-                    result = call(
+                    if result := call(["cargo", "fmt"], cwd="./custom-functions"):
+                        raise Exception("Formatting rust functions failed.")
+                    if result := call(
                         ["cargo", "build", "--release"], cwd="./custom-functions"
-                    )
-                    if result != 0:
+                    ):
                         raise Exception("Building rust functions failed.")
-                    command.append(
-                        "./custom-functions/target/powerpc-unknown-eabi/release/libcustom_functions.a"
+
+                    command.extend(
+                        (
+                            "-(",
+                            "./custom-functions/target/powerpc-unknown-eabi/release/libcustom_functions.a",
+                            "--gc-sections",
+                            "--print-gc-sections",
+                            "-)",
+                        )
                     )
+
                 if file_path.endswith(".rel"):
                     # Output an ELF with relocations for RELs.
                     command += ["--relocatable"]
                 else:
-                    # For main, just output the raw binary code, not an ELF.
-                    command += ["--oformat", "binary"]
+                    # normally, just output the raw binary code, not an ELF.
+                    # for the main custom function output an elf first so that the linker pruning works
+                    if not is_custom_function:
+                        command += ["--oformat", "binary"]
                     pass
                 print(" ".join(command))
                 print()
                 result = call(command)
                 if result != 0:
                     raise Exception("Linker call failed.")
-
                 # Keep track of custom symbols so they can be passed in the linker script to future assembler calls.
                 with open(map_name) as f:
-                    on_custom_symbols = False
                     for line in f.read().splitlines():
-                        if line.startswith(" .text          "):
-                            on_custom_symbols = True
+                        match = re.search(
+                            r" +0x(?:00000000)?([0-9a-f]{8}) +([a-zA-Z]\S+)$", line
+                        )
+                        if not match:
                             continue
-
-                        if on_custom_symbols:
-                            if not line:
-                                break
-                            match = re.search(
-                                r" +0x(?:00000000)?([0-9a-f]{8}) +([a-zA-Z]\S+)", line
-                            )
-                            if not match:
-                                continue
-                            symbol_address = int(match.group(1), 16)
-                            symbol_name = match.group(2)
-                            custom_symbols_for_file[symbol_name] = symbol_address
-                            temp_linker_script += "%s = 0x%08X;\n" % (
-                                symbol_name,
-                                symbol_address,
-                            )
+                        symbol_address = int(match.group(1), 16)
+                        symbol_name = match.group(2)
+                        custom_symbols_for_file[symbol_name] = symbol_address
+                        temp_linker_script += "%s = 0x%08X;\n" % (
+                            symbol_name,
+                            symbol_address,
+                        )
 
                 if file_path.endswith(".rel"):
                     # This is for a REL, so we can't link it.
@@ -492,8 +495,25 @@ try:
                         % org_offset
                     )
 
-                with open(bin_name, "rb") as f:
-                    binary_data = f.read()
+                if is_custom_function and file_path == "main.dol":
+                    objcopied_name = os.path.join(temp_dir, "main_copy.bin")
+                    command = [
+                        get_bin("powerpc-eabi-objcopy"),
+                        "-O",
+                        "binary",
+                        bin_name,
+                        objcopied_name,
+                    ]
+                    print(" ".join(command))
+                    print()
+                    result = call(command)
+                    if result != 0:
+                        raise Exception("Objcopy call failed.")
+                    with open(objcopied_name, "rb") as f:
+                        binary_data = f.read()
+                else:
+                    with open(bin_name, "rb") as f:
+                        binary_data = f.read()
 
                 code_chunk_size_in_bytes = len(binary_data)
                 next_free_space_offsets[file_path] += code_chunk_size_in_bytes

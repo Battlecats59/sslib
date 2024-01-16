@@ -27,7 +27,7 @@ Main:
       Chest behind Bombable Rock: Access to Boulder
       Chest Left of Main Room Bridge: Access to Boulder
       Ledd's Gift: Can Defeat Lizalfos
-      Rock to West Room: (Bomb Bag | Hook Beetle) & Access to Boulder
+      Rock to West Room: Bomb Bag | Hook Beetle
       Wall to Lava Section: Bomb Bag | (Hook Beetle & Access to Boulder)
       Rupee in Lava Tunnel: Wall to Lava Section & Beetle
       Lower Lava Section Portcullis: Wall to Lava Section & Beetle
@@ -46,13 +46,14 @@ Main:
       Hub Room: Nothing
       # It'd be annoying to put in logic, but you need boulder access to reach the central part
     locations:
-      Bomb Bag: Can Defeat Lizalfos
+      Chest after Double Lizalfos Fight: Can Defeat Lizalfos
 
   West Room:
     exits:
-      Hub Room: Nothing
+      Hub Room: Rock to Hub Room
     locations:
       Chest in West Room: Nothing
+      Rock to Hub Room: Bomb Bag | Hook Beetle
 
   Room with Slopes:
     exits:
@@ -97,4 +98,4 @@ Spring:
   exits:
     Exit: Nothing
   locations:
-    Amber Tablet: Goddess Sword
+    Strike Crest: Goddess Sword
