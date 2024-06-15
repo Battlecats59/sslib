@@ -639,6 +639,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.vlay_shuffles = QVBoxLayout()
         self.vlay_shuffles.setObjectName(u"vlay_shuffles")
+        self.vlay_batreaux_counts = QVBoxLayout()
+        self.vlay_batreaux_counts.setObjectName(u"vlay_batreaux_counts")
+        self.label_for_option_batreaux_counts = QLabel(self.box_shuffles)
+        self.label_for_option_batreaux_counts.setObjectName(u"label_for_option_batreaux_counts")
+
+        self.vlay_batreaux_counts.addWidget(self.label_for_option_batreaux_counts)
+
+        self.option_batreaux_counts = QComboBox(self.box_shuffles)
+        self.option_batreaux_counts.setObjectName(u"option_batreaux_counts")
+
+        self.vlay_batreaux_counts.addWidget(self.option_batreaux_counts)
+
+
+        self.vlay_shuffles.addLayout(self.vlay_batreaux_counts)
+
         self.option_shopsanity = QCheckBox(self.box_shuffles)
         self.option_shopsanity.setObjectName(u"option_shopsanity")
 
@@ -2072,7 +2087,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(6)
         self.option_triforce_shuffle.setCurrentIndex(-1)
         self.option_randomize_entrances.setCurrentIndex(-1)
         self.option_chest_dowsing.setCurrentIndex(-1)
@@ -2143,6 +2158,7 @@ class Ui_MainWindow(object):
         self.label_for_option_open_lmf.setText(QCoreApplication.translate("MainWindow", u"Open Lanayru Mining Facility", None))
         self.label_for_option_open_lake_floria.setText(QCoreApplication.translate("MainWindow", u"Open Lake Floria", None))
         self.box_shuffles.setTitle(QCoreApplication.translate("MainWindow", u"Shuffles", None))
+        self.label_for_option_batreaux_counts.setText(QCoreApplication.translate("MainWindow", u"Batreaux Crystal Counts", None))
         self.option_shopsanity.setText(QCoreApplication.translate("MainWindow", u"Shuffle Beedle's Shop", None))
         self.option_rupeesanity.setText(QCoreApplication.translate("MainWindow", u"Rupeesanity", None))
         self.option_tadtonesanity.setText(QCoreApplication.translate("MainWindow", u"Tadtonesanity", None))

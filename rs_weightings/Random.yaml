@@ -281,6 +281,13 @@
     Bird Statues: 1
     Any Surface Region: 1
     Any: 1
+- name: Batreaux Crystal Counts
+  command: batreaux-counts
+  type: singlechoice
+  choices: 
+    Vanilla: 0
+    Half: 0
+    Random: 1
 
 ## bools
 - name: Imp 2
@@ -450,9 +457,8 @@
     Short Sidequests: 50
     Long Sidequests: 50
     Scrapper Deliveries: 50
-    Batreaux's Rewards (30 & below): 75
-    Batreaux's Rewards (40 & 50): 50
-    Batreaux's Rewards (70s & 80): 25
+    Batreaux's Rewards (Lower Rewards): 75
+    Batreaux's Rewards (Higher Rewards): 50
     Beedle's Airshop (Cheap): 75
     Beedle's Airshop (Medium): 50
     Beedle's Airshop (Expensive): 25

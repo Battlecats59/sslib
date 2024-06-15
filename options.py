@@ -403,9 +403,8 @@ class Options:
     def check_group_conditions(self, group, non_prog_groups):
         if group.startswith("Batreaux's Rewards"):
             conditions = (
-                "Batreaux's Rewards (30 & below)",
-                "Batreaux's Rewards (40 & 50)",
-                "Batreaux's Rewards (70s & 80)",
+                "Batreaux's Rewards (Lower Rewards)",
+                "Batreaux's Rewards (Higher Rewards)",
             )
         elif group.startswith("Beedle's Airshop"):
             conditions = (
