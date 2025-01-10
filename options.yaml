@@ -168,7 +168,7 @@
   default: Anywhere
   help: "Choose where Triforces will appear in the game.
         **Vanilla**: Triforces are placed in their vanilla locations in Sky Keep.
-        **Sky Keep**: Triforecs are shuffled only within Sky Keep.
+        **Sky Keep**: Triforces are shuffled only within Sky Keep.
         **Anywhere**: Triforces are shuffled with all other valid locations in the game."
   ui: option_triforce_shuffle
 - name: Seed
@@ -248,7 +248,7 @@
   type: boolean
   default: true
   help: "If enabled, the extra progressive items upgradeable in the Scrap Shop in vanilla will be shuffled.
-        Includes: Quick Beetle, Tough Beetle, Iron Bow, Sacred Bow, Big Bug Net and Scatershot.
+        Includes: Quick Beetle, Tough Beetle, Iron Bow, Sacred Bow, Big Bug Net and Scattershot.
         Note, there are no random items obtainable by talking to Gondo at the Scrap Shop."
   ui: option_gondo_upgrades
 - name: Gate of Time Starting State
@@ -501,10 +501,10 @@
     - Fix BiT Crashes
   default: Vanilla
   help: "Changes how the Back in Time (BiT) glitch works.
-        Disable BiT: Makes it impossible to activate BiT.
-        Vanilla: Keeps the vanilla game behaviour where BiT is possible but Eldin BiT (and others) will still crash.
-        Fix BiT Crashes: Does not load some arcs to make all areas accessible in BiT.
-        WARNING: All 3 files must be filled BEFORE activating BiT otherwise this will not work."
+        **Disable BiT**: Makes it impossible to activate BiT.
+        **Vanilla**: Keeps the vanilla game behaviour where BiT is possible but Eldin BiT (and others) will still crash.
+        **Fix BiT Crashes**: Does not load some arcs to make all areas accessible in BiT.
+        **WARNING**: All 3 files must be filled BEFORE activating BiT otherwise this will not work."
   ui: option_bit_patches
 - name: Output placement file
   command: out-placement-file
@@ -794,15 +794,13 @@
     - Weak
     - Balanced
     - Junk
-    - Co-op S1
-    - S2 - 2D
-    - S2 - 3D
-    - S2 - 3D EUD Off
     - CDMC
     - Dowsing & Fi Hints
     - 2D Dowsing & Fi Hints
     - Boss Keysanity Fi Hints
     - Strong Dowsing All Dungeons
+    - Remlits Tournament
+    - Fi & Gossip Stones
     - Custom
   default: Balanced
   help: "Determines the distribution of hints that appear on Gossip Stones.
@@ -1108,3 +1106,34 @@
   help: If enabled, location hints (always, sometimes, & random hints) will display special flavor text
         if they have it (such as "drawing on a magical wall" instead of Gorko's Goddess Wall Reward).
   ui: option_cryptic_location_hints
+- name: Random Starting Statues
+  command: random-start-statues
+  type: boolean
+  default: false
+  help: If enabled, the starting statue for each surface region will be randomized. All overworld statues
+        except Inside the Volcano and Inside Fire Sanctuary may be chosen.
+  ui: option_random_start_statues
+- name: Random Puzzles
+  command: random-puzzles
+  type: boolean
+  default: false
+  permalink: true
+  help: "Randomizes the Isle of Songs puzzle, the Ancient Cistern/Sandship directional door puzzles,
+        and the Lanayru Mining Facility switches puzzle."
+  ui: option_random_puzzles
+- name: Ammo Availability
+  command: ammo-availability
+  type: singlechoice
+  bits: 2
+  choices:
+    - Scarce
+    - Vanilla
+    - Useful
+    - Plentiful
+  default: Plentiful
+  help: "Determines the number of locations where ammo refills can be found.
+        **Scarce**: Ammo will only be available from chance-based drops and Rupin's Gear shop.
+        **Vanilla**: Ammo will appear when breaking pots and barrels in the same way as the vanilla game.
+        **Useful**: Ammo pots will be added in key places near checks requiring a specific ammo to reduce back-tracking.
+        **Plentiful**: Ammo pots will be added next to all Bird Statues."
+  ui: option_ammo_availability

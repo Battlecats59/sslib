@@ -14,6 +14,7 @@ Upper Skyloft:
     Central Skyloft: Nothing
   locations:
     Owlan's Gift: Day
+    Ring Knight Academy Bell: Distance Activator | Gust Bellows | (Bomb Bag & Bomb Throws Trick)
     Chest near Goddess Statue: Nothing
     Pumpkin Archery -- 600 Points: Bow & Day
 
@@ -277,6 +278,8 @@ Skyloft Village:
 
   Rupin's House:
     can-sleep: true
+    locations:
+      Can Sell Treasures: Night
     exits:
       Exit: Nothing
 

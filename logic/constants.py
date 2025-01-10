@@ -30,6 +30,7 @@ NO_BIT_CRASHES = EIN("No BiT crashes")
 NONLETHAL_HOT_CAVE = EIN("Nonlethal Hot Cave")
 UPGRADED_SKYWARD_STRIKE = EIN("Upgraded Skyward Strike option")
 FS_LAVA_FLOW_OPTION = EIN("FS Lava Flow option")
+NO_RANDOM_PUZZLES_OPTION = EIN("No Random Puzzles option")
 
 GOT_OPENING_REQUIREMENT = EIN("GoT Opening Requirement")
 GOT_RAISING_REQUIREMENT = EIN("GoT Raising Requirement")
@@ -51,6 +52,7 @@ LOGIC_OPTIONS = dict.fromkeys(
         NONLETHAL_HOT_CAVE,
         UPGRADED_SKYWARD_STRIKE,
         FS_LAVA_FLOW_OPTION,
+        NO_RANDOM_PUZZLES_OPTION,
         GOT_OPENING_REQUIREMENT,
         GOT_RAISING_REQUIREMENT,
         HORDE_DOOR_REQUIREMENT,
@@ -137,6 +139,8 @@ FARON_PROVINCE = "Faron Province"
 ELDIN_PROVINCE = "Eldin Province"
 LANAYRU_PROVINCE = "Lanayru Province"
 THE_SKY = "The Sky"
+
+ALL_SURFACE_PROVINCES = [FARON_PROVINCE, ELDIN_PROVINCE, LANAYRU_PROVINCE]
 
 TABLET_TO_PROVINCE = {
     EMERALD_TABLET: FARON_PROVINCE,
@@ -848,7 +852,13 @@ ITEM_STORY_FLAGS = {
     PROGRESSIVE_BOW: [944, 945, 946],  # Bow, Iron, Sacred
     PROGRESSIVE_SLINGSHOT: [947, 948],  # Slingshot, Scatershot
     PROGRESSIVE_BUG_NET: [949, 950],  # Bug Net, Big Bug Net
-    PROGRESSIVE_POUCH: [931, 932, 932, 932, 932]  # Adventure Pouch, Pouch Expansion * 4
+    PROGRESSIVE_POUCH: [
+        931,
+        932,
+        932,
+        932,
+        932,
+    ],  # Adventure Pouch, Pouch Expansion * 4
     # SAILCLOTH: 32
 }
 

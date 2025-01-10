@@ -27,7 +27,9 @@ class AdditionalInfo:
     randomized_dungeon_entrance: dict[str, str]
     randomized_trial_entrance: dict[str, str]
     randomized_start_entrance: dict[str, str]
+    randomized_start_statues: dict[str, str]
     known_locations: List[EIN]
+    puzzles: Any
 
 
 class LogicUtils(Logic):
@@ -54,7 +56,9 @@ class LogicUtils(Logic):
         self.randomized_dungeon_entrance = additional_info.randomized_dungeon_entrance
         self.randomized_trial_entrance = additional_info.randomized_trial_entrance
         self.randomized_start_entrance = additional_info.randomized_start_entrance
+        self.randomized_start_statues = additional_info.randomized_start_statues
         self.known_locations = additional_info.known_locations
+        self.puzzles = additional_info.puzzles
 
     def check(self, useroutput):
         full_inventory = Logic.fill_inventory(self.requirements, EMPTY_INV)
@@ -203,7 +207,14 @@ class LogicUtils(Logic):
         ]
 
     def get_useful_items(self, bit=EVERYTHING_UNBANNED_BIT):
-        return self._get_useful_items(bit)
+        res = self._get_useful_items(bit)
+        if not res:
+            res = [
+                loc
+                for i in self.full_inventory.intset
+                if (loc := EXTENDED_ITEM.get_item_name(i)) in PROGRESS_ITEMS
+            ]
+        return res
 
     @cache
     def locations_by_hint_region(self, region):
@@ -229,15 +240,19 @@ class LogicUtils(Logic):
             if (region := check.get("cube_region")) is None:
                 region = check["hint_region"]
             useless_regions.discard(region)
+        useless_regions = sorted(useless_regions)
 
-        inacc_regions = set(ALL_HINT_REGIONS)
+        checks_per_region = {k: 0 for k in ALL_HINT_REGIONS}
         for c in self.areas.checks.values():
             if non_banned[c["req_index"]]:
                 if (region := c.get("cube_region")) is None:
                     region = c["hint_region"]
-                inacc_regions.discard(region)
+                checks_per_region[region] += 1
 
-        return sorted(useless_regions - inacc_regions), sorted(inacc_regions)
+        return (
+            {k: v for k in useless_regions if (v := checks_per_region[k]) > 0},
+            [k for k, v in checks_per_region.items() if v == 0],
+        )
 
     def get_barren_regions(self, bit=EVERYTHING_UNBANNED_BIT):
         return self._get_barren_regions(bit)

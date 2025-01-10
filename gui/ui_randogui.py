@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'randogui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1202, 759)
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -45,7 +45,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.hlay_output.setObjectName(u"hlay_output")
         self.label_output = QLabel(self.tab_setup)
         self.label_output.setObjectName(u"label_output")
-        self.label_output.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.label_output.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.hlay_output.addWidget(self.label_output)
 
@@ -113,7 +113,7 @@ class Ui_MainWindow(object):
         self.hlay_setup_options.setObjectName(u"hlay_setup_options")
         self.box_additional_files = QGroupBox(self.tab_setup)
         self.box_additional_files.setObjectName(u"box_additional_files")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.box_additional_files.sizePolicy().hasHeightForWidth())
@@ -138,7 +138,7 @@ class Ui_MainWindow(object):
 
         self.vlay_additional_files.addWidget(self.option_out_placement_file)
 
-        self.vspace_additional_files = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_additional_files = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_additional_files.addItem(self.vspace_additional_files)
 
@@ -161,7 +161,7 @@ class Ui_MainWindow(object):
 
         self.vlay_advanced.addWidget(self.option_dry_run)
 
-        self.vspace_advanced = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_advanced = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_advanced.addItem(self.vspace_advanced)
 
@@ -194,22 +194,20 @@ class Ui_MainWindow(object):
 
         self.vlay_cosmetics.addWidget(self.option_starry_skies)
 
-        self.hlay_star_count = QHBoxLayout()
-        self.hlay_star_count.setObjectName(u"hlay_star_count")
         self.label_for_option_star_count = QLabel(self.box_cosmetics)
         self.label_for_option_star_count.setObjectName(u"label_for_option_star_count")
-        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.label_for_option_star_count.sizePolicy().hasHeightForWidth())
         self.label_for_option_star_count.setSizePolicy(sizePolicy3)
 
-        self.hlay_star_count.addWidget(self.label_for_option_star_count)
+        self.vlay_cosmetics.addWidget(self.label_for_option_star_count)
 
         self.option_star_count = QSpinBox(self.box_cosmetics)
         self.option_star_count.setObjectName(u"option_star_count")
         self.option_star_count.setEnabled(True)
-        sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.option_star_count.sizePolicy().hasHeightForWidth())
@@ -217,10 +215,7 @@ class Ui_MainWindow(object):
         self.option_star_count.setMaximum(32767)
         self.option_star_count.setSingleStep(100)
 
-        self.hlay_star_count.addWidget(self.option_star_count)
-
-
-        self.vlay_cosmetics.addLayout(self.hlay_star_count)
+        self.vlay_cosmetics.addWidget(self.option_star_count)
 
         self.label_for_option_interface = QLabel(self.box_cosmetics)
         self.label_for_option_interface.setObjectName(u"label_for_option_interface")
@@ -232,7 +227,7 @@ class Ui_MainWindow(object):
 
         self.vlay_cosmetics.addWidget(self.option_interface)
 
-        self.vspace_cosmetics = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_cosmetics = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_cosmetics.addItem(self.vspace_cosmetics)
 
@@ -280,7 +275,7 @@ class Ui_MainWindow(object):
 
         self.vlay_music_rando.addWidget(self.option_no_enemy_music)
 
-        self.vspace_music_rando = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_music_rando = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_music_rando.addItem(self.vspace_music_rando)
 
@@ -296,7 +291,7 @@ class Ui_MainWindow(object):
         self.box.setSizePolicy(sizePolicy2)
         self.verticalLayout_28 = QVBoxLayout(self.box)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
-        self.vspace_10 = QSpacerItem(20, 342, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_10 = QSpacerItem(20, 342, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_28.addItem(self.vspace_10)
 
@@ -353,7 +348,7 @@ class Ui_MainWindow(object):
 
         self.hlay_presets.addWidget(self.box_presets)
 
-        self.hspace_presets = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.hspace_presets = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.hlay_presets.addItem(self.hspace_presets)
 
@@ -418,27 +413,19 @@ class Ui_MainWindow(object):
 
         self.vlay_completion.addLayout(self.vlay_got_dungeon_req)
 
-        self.hlay_req_dungeons = QHBoxLayout()
-        self.hlay_req_dungeons.setObjectName(u"hlay_req_dungeons")
         self.label_for_option_required_dungeon_count = QLabel(self.box_completion)
         self.label_for_option_required_dungeon_count.setObjectName(u"label_for_option_required_dungeon_count")
 
-        self.hlay_req_dungeons.addWidget(self.label_for_option_required_dungeon_count)
+        self.vlay_completion.addWidget(self.label_for_option_required_dungeon_count)
 
         self.option_required_dungeon_count = QSpinBox(self.box_completion)
         self.option_required_dungeon_count.setObjectName(u"option_required_dungeon_count")
         self.option_required_dungeon_count.setEnabled(True)
-        sizePolicy5 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.option_required_dungeon_count.sizePolicy().hasHeightForWidth())
-        self.option_required_dungeon_count.setSizePolicy(sizePolicy5)
-        self.option_required_dungeon_count.setMaximumSize(QSize(41, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_required_dungeon_count.sizePolicy().hasHeightForWidth())
+        self.option_required_dungeon_count.setSizePolicy(sizePolicy4)
+        self.option_required_dungeon_count.setMaximumSize(QSize(16777215, 16777215))
 
-        self.hlay_req_dungeons.addWidget(self.option_required_dungeon_count)
-
-
-        self.vlay_completion.addLayout(self.hlay_req_dungeons)
+        self.vlay_completion.addWidget(self.option_required_dungeon_count)
 
         self.option_triforce_required = QCheckBox(self.box_completion)
         self.option_triforce_required.setObjectName(u"option_triforce_required")
@@ -480,25 +467,20 @@ class Ui_MainWindow(object):
 
         self.vlay_completion.addWidget(self.option_demise)
 
-        self.hlay_demise_count = QHBoxLayout()
-        self.hlay_demise_count.setObjectName(u"hlay_demise_count")
         self.label_for_option_demise_count = QLabel(self.box_completion)
         self.label_for_option_demise_count.setObjectName(u"label_for_option_demise_count")
 
-        self.hlay_demise_count.addWidget(self.label_for_option_demise_count)
+        self.vlay_completion.addWidget(self.label_for_option_demise_count)
 
         self.option_demise_count = QSpinBox(self.box_completion)
         self.option_demise_count.setObjectName(u"option_demise_count")
-        sizePolicy5.setHeightForWidth(self.option_demise_count.sizePolicy().hasHeightForWidth())
-        self.option_demise_count.setSizePolicy(sizePolicy5)
-        self.option_demise_count.setMaximumSize(QSize(41, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_demise_count.sizePolicy().hasHeightForWidth())
+        self.option_demise_count.setSizePolicy(sizePolicy4)
+        self.option_demise_count.setMaximumSize(QSize(16777215, 16777215))
 
-        self.hlay_demise_count.addWidget(self.option_demise_count)
+        self.vlay_completion.addWidget(self.option_demise_count)
 
-
-        self.vlay_completion.addLayout(self.hlay_demise_count)
-
-        self.vspace_completion = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_completion = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_completion.addItem(self.vspace_completion)
 
@@ -561,7 +543,12 @@ class Ui_MainWindow(object):
 
         self.vlay_open.addWidget(self.option_open_lake_floria)
 
-        self.vspace_open = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.option_random_puzzles = QCheckBox(self.box_open)
+        self.option_random_puzzles.setObjectName(u"option_random_puzzles")
+
+        self.vlay_open.addWidget(self.option_random_puzzles)
+
+        self.vspace_open = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_open.addItem(self.vspace_open)
 
@@ -594,7 +581,7 @@ class Ui_MainWindow(object):
 
         self.vlay_shuffles.addWidget(self.option_tadtonesanity)
 
-        self.vspace_shuffles = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_shuffles = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_shuffles.addItem(self.vspace_shuffles)
 
@@ -647,7 +634,12 @@ class Ui_MainWindow(object):
 
         self.vlay_entrance_rando.addWidget(self.option_limit_start_entrance)
 
-        self.vspace_entrance_rando = QSpacerItem(20, 70, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
+        self.option_random_start_statues = QCheckBox(self.box_entrance_rando)
+        self.option_random_start_statues.setObjectName(u"option_random_start_statues")
+
+        self.vlay_entrance_rando.addWidget(self.option_random_start_statues)
+
+        self.vspace_entrance_rando = QSpacerItem(20, 70, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.vlay_entrance_rando.addItem(self.vspace_entrance_rando)
 
@@ -745,7 +737,7 @@ class Ui_MainWindow(object):
 
         self.vlay_dungeons.addWidget(self.option_fs_lava_flow)
 
-        self.vspace_dungeons = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_dungeons = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_dungeons.addItem(self.vspace_dungeons)
 
@@ -778,7 +770,17 @@ class Ui_MainWindow(object):
 
         self.vlay_convenience_tweaks.addWidget(self.option_full_wallet_upgrades)
 
-        self.vspace_convenience_tweaks = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.label_for_option_ammo_availability = QLabel(self.box_convenience_tweaks)
+        self.label_for_option_ammo_availability.setObjectName(u"label_for_option_ammo_availability")
+
+        self.vlay_convenience_tweaks.addWidget(self.label_for_option_ammo_availability)
+
+        self.option_ammo_availability = QComboBox(self.box_convenience_tweaks)
+        self.option_ammo_availability.setObjectName(u"option_ammo_availability")
+
+        self.vlay_convenience_tweaks.addWidget(self.option_ammo_availability)
+
+        self.vspace_convenience_tweaks = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_convenience_tweaks.addItem(self.vspace_convenience_tweaks)
 
@@ -806,24 +808,19 @@ class Ui_MainWindow(object):
 
         self.vlay_vanilla_tweaks.addWidget(self.option_bit_patches)
 
-        self.hlay_peatrice_conversations = QHBoxLayout()
-        self.hlay_peatrice_conversations.setObjectName(u"hlay_peatrice_conversations")
         self.label_for_option_peatrice_conversations = QLabel(self.box_vanilla_tweaks)
         self.label_for_option_peatrice_conversations.setObjectName(u"label_for_option_peatrice_conversations")
 
-        self.hlay_peatrice_conversations.addWidget(self.label_for_option_peatrice_conversations)
+        self.vlay_vanilla_tweaks.addWidget(self.label_for_option_peatrice_conversations)
 
         self.option_peatrice_conversations = QSpinBox(self.box_vanilla_tweaks)
         self.option_peatrice_conversations.setObjectName(u"option_peatrice_conversations")
-        sizePolicy5.setHeightForWidth(self.option_peatrice_conversations.sizePolicy().hasHeightForWidth())
-        self.option_peatrice_conversations.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.option_peatrice_conversations.sizePolicy().hasHeightForWidth())
+        self.option_peatrice_conversations.setSizePolicy(sizePolicy4)
 
-        self.hlay_peatrice_conversations.addWidget(self.option_peatrice_conversations)
+        self.vlay_vanilla_tweaks.addWidget(self.option_peatrice_conversations)
 
-
-        self.vlay_vanilla_tweaks.addLayout(self.hlay_peatrice_conversations)
-
-        self.vspace_vanilla_tweaks = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_vanilla_tweaks = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_vanilla_tweaks.addItem(self.vspace_vanilla_tweaks)
 
@@ -858,7 +855,7 @@ class Ui_MainWindow(object):
 
         self.vlay_rupoor_mode.addWidget(self.option_rupoor_mode)
 
-        self.vspace_item_pool = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_item_pool = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_rupoor_mode.addItem(self.vspace_item_pool)
 
@@ -883,11 +880,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_trialshuffle.setObjectName(u"verticalLayout_trialshuffle")
         self.label_for_option_shuffle_trial_objects = QLabel(self.box_silent_realms)
         self.label_for_option_shuffle_trial_objects.setObjectName(u"label_for_option_shuffle_trial_objects")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.label_for_option_shuffle_trial_objects.sizePolicy().hasHeightForWidth())
-        self.label_for_option_shuffle_trial_objects.setSizePolicy(sizePolicy6)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.label_for_option_shuffle_trial_objects.sizePolicy().hasHeightForWidth())
+        self.label_for_option_shuffle_trial_objects.setSizePolicy(sizePolicy5)
 
         self.verticalLayout_trialshuffle.addWidget(self.label_for_option_shuffle_trial_objects)
 
@@ -904,26 +901,22 @@ class Ui_MainWindow(object):
 
         self.vlay_silent_realms.addWidget(self.option_treasuresanity_in_silent_realms)
 
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.horizontalLayout_9.setContentsMargins(-1, -1, -1, 0)
         self.label_for_option_trial_treasure_amount = QLabel(self.box_silent_realms)
         self.label_for_option_trial_treasure_amount.setObjectName(u"label_for_option_trial_treasure_amount")
 
-        self.horizontalLayout_9.addWidget(self.label_for_option_trial_treasure_amount)
+        self.vlay_silent_realms.addWidget(self.label_for_option_trial_treasure_amount)
 
         self.option_trial_treasure_amount = QSpinBox(self.box_silent_realms)
         self.option_trial_treasure_amount.setObjectName(u"option_trial_treasure_amount")
-        self.option_trial_treasure_amount.setMaximumSize(QSize(48, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_trial_treasure_amount.sizePolicy().hasHeightForWidth())
+        self.option_trial_treasure_amount.setSizePolicy(sizePolicy4)
+        self.option_trial_treasure_amount.setMaximumSize(QSize(16777215, 16777215))
         self.option_trial_treasure_amount.setMinimum(1)
         self.option_trial_treasure_amount.setMaximum(10)
 
-        self.horizontalLayout_9.addWidget(self.option_trial_treasure_amount)
+        self.vlay_silent_realms.addWidget(self.option_trial_treasure_amount)
 
-
-        self.vlay_silent_realms.addLayout(self.horizontalLayout_9)
-
-        self.vspace_silent_realms = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_silent_realms = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_silent_realms.addItem(self.vspace_silent_realms)
 
@@ -956,27 +949,22 @@ class Ui_MainWindow(object):
 
         self.vlay_heromode_changes.addWidget(self.option_enable_heart_drops)
 
-        self.hlay_damage_multiplier = QHBoxLayout()
-        self.hlay_damage_multiplier.setObjectName(u"hlay_damage_multiplier")
         self.label_for_option_damage_multiplier = QLabel(self.box_heromode_changes)
         self.label_for_option_damage_multiplier.setObjectName(u"label_for_option_damage_multiplier")
 
-        self.hlay_damage_multiplier.addWidget(self.label_for_option_damage_multiplier)
+        self.vlay_heromode_changes.addWidget(self.label_for_option_damage_multiplier)
 
         self.option_damage_multiplier = QSpinBox(self.box_heromode_changes)
         self.option_damage_multiplier.setObjectName(u"option_damage_multiplier")
-        sizePolicy5.setHeightForWidth(self.option_damage_multiplier.sizePolicy().hasHeightForWidth())
-        self.option_damage_multiplier.setSizePolicy(sizePolicy5)
-        self.option_damage_multiplier.setMaximumSize(QSize(41, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_damage_multiplier.sizePolicy().hasHeightForWidth())
+        self.option_damage_multiplier.setSizePolicy(sizePolicy4)
+        self.option_damage_multiplier.setMaximumSize(QSize(16777215, 16777215))
         self.option_damage_multiplier.setMinimum(1)
         self.option_damage_multiplier.setMaximum(255)
 
-        self.hlay_damage_multiplier.addWidget(self.option_damage_multiplier)
+        self.vlay_heromode_changes.addWidget(self.option_damage_multiplier)
 
-
-        self.vlay_heromode_changes.addLayout(self.hlay_damage_multiplier)
-
-        self.vspace_heromode_changes = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_heromode_changes = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_heromode_changes.addItem(self.vspace_heromode_changes)
 
@@ -1012,7 +1000,7 @@ class Ui_MainWindow(object):
 
         self.hlay_misc_logic_settings.addWidget(self.edit_tricks)
 
-        self.hspace_misc_logic_settings = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.hspace_misc_logic_settings = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.hlay_misc_logic_settings.addItem(self.hspace_misc_logic_settings)
 
@@ -1051,9 +1039,9 @@ class Ui_MainWindow(object):
 
         self.included_locations = QListView(self.tab_logic_settings)
         self.included_locations.setObjectName(u"included_locations")
-        self.included_locations.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.included_locations.setProperty("showDropIndicator", False)
-        self.included_locations.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.included_locations.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.included_locations.setProperty(u"showDropIndicator", False)
+        self.included_locations.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.included_locations.setSelectionRectVisible(False)
 
         self.vlay_include_locations.addWidget(self.included_locations)
@@ -1063,32 +1051,32 @@ class Ui_MainWindow(object):
 
         self.vlay_exclude_locations_controls = QVBoxLayout()
         self.vlay_exclude_locations_controls.setObjectName(u"vlay_exclude_locations_controls")
-        self.vspace_9 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_9 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_exclude_locations_controls.addItem(self.vspace_9)
 
         self.include_location = QPushButton(self.tab_logic_settings)
         self.include_location.setObjectName(u"include_location")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.include_location.sizePolicy().hasHeightForWidth())
-        self.include_location.setSizePolicy(sizePolicy7)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.include_location.sizePolicy().hasHeightForWidth())
+        self.include_location.setSizePolicy(sizePolicy6)
 
         self.vlay_exclude_locations_controls.addWidget(self.include_location)
 
-        self.vspace_7 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_7 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_exclude_locations_controls.addItem(self.vspace_7)
 
         self.exclude_location = QPushButton(self.tab_logic_settings)
         self.exclude_location.setObjectName(u"exclude_location")
-        sizePolicy7.setHeightForWidth(self.exclude_location.sizePolicy().hasHeightForWidth())
-        self.exclude_location.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.exclude_location.sizePolicy().hasHeightForWidth())
+        self.exclude_location.setSizePolicy(sizePolicy6)
 
         self.vlay_exclude_locations_controls.addWidget(self.exclude_location)
 
-        self.vspace_8 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_8 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_exclude_locations_controls.addItem(self.vspace_8)
 
@@ -1122,9 +1110,9 @@ class Ui_MainWindow(object):
 
         self.excluded_locations = QListView(self.tab_logic_settings)
         self.excluded_locations.setObjectName(u"excluded_locations")
-        self.excluded_locations.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.excluded_locations.setProperty("showDropIndicator", False)
-        self.excluded_locations.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.excluded_locations.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.excluded_locations.setProperty(u"showDropIndicator", False)
+        self.excluded_locations.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.excluded_locations.setSelectionRectVisible(False)
 
         self.verticalLayout_30.addWidget(self.excluded_locations)
@@ -1179,7 +1167,7 @@ class Ui_MainWindow(object):
 
         self.vlay_stone_hints.addWidget(self.option_precise_item)
 
-        self.vspace_stone_hints = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_stone_hints = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_stone_hints.addItem(self.vspace_stone_hints)
 
@@ -1237,7 +1225,7 @@ class Ui_MainWindow(object):
 
         self.vlay_other_hints.addWidget(self.option_dungeon_dowsing)
 
-        self.vspace_other_hints = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_other_hints = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_other_hints.addItem(self.vspace_other_hints)
 
@@ -1253,7 +1241,7 @@ class Ui_MainWindow(object):
         self.box_4.setSizePolicy(sizePolicy2)
         self.verticalLayout_14 = QVBoxLayout(self.box_4)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.vspace_4 = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_4 = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_14.addItem(self.vspace_4)
 
@@ -1266,7 +1254,7 @@ class Ui_MainWindow(object):
         self.box_5.setSizePolicy(sizePolicy2)
         self.verticalLayout_15 = QVBoxLayout(self.box_5)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.vspace_5 = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_5 = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_15.addItem(self.vspace_5)
 
@@ -1279,7 +1267,7 @@ class Ui_MainWindow(object):
         self.box_6.setSizePolicy(sizePolicy2)
         self.verticalLayout_16 = QVBoxLayout(self.box_6)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.vspace_6 = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_6 = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_16.addItem(self.vspace_6)
 
@@ -1314,9 +1302,9 @@ class Ui_MainWindow(object):
         self.randomized_items.setObjectName(u"randomized_items")
         sizePolicy1.setHeightForWidth(self.randomized_items.sizePolicy().hasHeightForWidth())
         self.randomized_items.setSizePolicy(sizePolicy1)
-        self.randomized_items.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.randomized_items.setProperty("showDropIndicator", False)
-        self.randomized_items.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.randomized_items.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.randomized_items.setProperty(u"showDropIndicator", False)
+        self.randomized_items.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.randomized_items.setSelectionRectVisible(False)
 
         self.vlay_randomized_items_section.addWidget(self.randomized_items)
@@ -1326,30 +1314,30 @@ class Ui_MainWindow(object):
 
         self.vlay_starting_items_controls = QVBoxLayout()
         self.vlay_starting_items_controls.setObjectName(u"vlay_starting_items_controls")
-        self.vlay_starting_items_controls.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.vspace_starting_items_controls_upper = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vlay_starting_items_controls.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        self.vspace_starting_items_controls_upper = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_starting_items_controls.addItem(self.vspace_starting_items_controls_upper)
 
         self.randomize_item = QPushButton(self.box_starting_items)
         self.randomize_item.setObjectName(u"randomize_item")
-        sizePolicy7.setHeightForWidth(self.randomize_item.sizePolicy().hasHeightForWidth())
-        self.randomize_item.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.randomize_item.sizePolicy().hasHeightForWidth())
+        self.randomize_item.setSizePolicy(sizePolicy6)
 
         self.vlay_starting_items_controls.addWidget(self.randomize_item)
 
-        self.vspace_starting_items_controls_middle = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_starting_items_controls_middle = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_starting_items_controls.addItem(self.vspace_starting_items_controls_middle)
 
         self.start_with_item = QPushButton(self.box_starting_items)
         self.start_with_item.setObjectName(u"start_with_item")
-        sizePolicy7.setHeightForWidth(self.start_with_item.sizePolicy().hasHeightForWidth())
-        self.start_with_item.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.start_with_item.sizePolicy().hasHeightForWidth())
+        self.start_with_item.setSizePolicy(sizePolicy6)
 
         self.vlay_starting_items_controls.addWidget(self.start_with_item)
 
-        self.vspace_starting_items_controls_lower = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_starting_items_controls_lower = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_starting_items_controls.addItem(self.vspace_starting_items_controls_lower)
 
@@ -1373,9 +1361,9 @@ class Ui_MainWindow(object):
         self.starting_items.setObjectName(u"starting_items")
         sizePolicy1.setHeightForWidth(self.starting_items.sizePolicy().hasHeightForWidth())
         self.starting_items.setSizePolicy(sizePolicy1)
-        self.starting_items.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.starting_items.setProperty("showDropIndicator", False)
-        self.starting_items.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.starting_items.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.starting_items.setProperty(u"showDropIndicator", False)
+        self.starting_items.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.starting_items.setSelectionRectVisible(False)
 
         self.vlay_starting_items_section.addWidget(self.starting_items)
@@ -1388,11 +1376,11 @@ class Ui_MainWindow(object):
 
         self.box_additional_options = QGroupBox(self.tab_starting_items)
         self.box_additional_options.setObjectName(u"box_additional_options")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.box_additional_options.sizePolicy().hasHeightForWidth())
-        self.box_additional_options.setSizePolicy(sizePolicy8)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.box_additional_options.sizePolicy().hasHeightForWidth())
+        self.box_additional_options.setSizePolicy(sizePolicy7)
         self.verticalLayout_29 = QVBoxLayout(self.box_additional_options)
         self.verticalLayout_29.setObjectName(u"verticalLayout_29")
         self.label_for_option_starting_sword = QLabel(self.box_additional_options)
@@ -1405,83 +1393,62 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_29.addWidget(self.option_starting_sword)
 
-        self.hlay_starting_tablets = QHBoxLayout()
-        self.hlay_starting_tablets.setObjectName(u"hlay_starting_tablets")
         self.label_for_option_starting_tablet_count = QLabel(self.box_additional_options)
         self.label_for_option_starting_tablet_count.setObjectName(u"label_for_option_starting_tablet_count")
 
-        self.hlay_starting_tablets.addWidget(self.label_for_option_starting_tablet_count)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_tablet_count)
 
         self.option_starting_tablet_count = QSpinBox(self.box_additional_options)
         self.option_starting_tablet_count.setObjectName(u"option_starting_tablet_count")
-        sizePolicy5.setHeightForWidth(self.option_starting_tablet_count.sizePolicy().hasHeightForWidth())
-        self.option_starting_tablet_count.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.option_starting_tablet_count.sizePolicy().hasHeightForWidth())
+        self.option_starting_tablet_count.setSizePolicy(sizePolicy4)
         self.option_starting_tablet_count.setMaximumSize(QSize(16777215, 16777215))
 
-        self.hlay_starting_tablets.addWidget(self.option_starting_tablet_count)
+        self.verticalLayout_29.addWidget(self.option_starting_tablet_count)
 
-
-        self.verticalLayout_29.addLayout(self.hlay_starting_tablets)
-
-        self.hlay_starting_bottles = QHBoxLayout()
-        self.hlay_starting_bottles.setObjectName(u"hlay_starting_bottles")
         self.label_for_option_starting_bottles = QLabel(self.box_additional_options)
         self.label_for_option_starting_bottles.setObjectName(u"label_for_option_starting_bottles")
 
-        self.hlay_starting_bottles.addWidget(self.label_for_option_starting_bottles)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_bottles)
 
         self.option_starting_bottles = QSpinBox(self.box_additional_options)
         self.option_starting_bottles.setObjectName(u"option_starting_bottles")
-        sizePolicy5.setHeightForWidth(self.option_starting_bottles.sizePolicy().hasHeightForWidth())
-        self.option_starting_bottles.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.option_starting_bottles.sizePolicy().hasHeightForWidth())
+        self.option_starting_bottles.setSizePolicy(sizePolicy4)
 
-        self.hlay_starting_bottles.addWidget(self.option_starting_bottles)
+        self.verticalLayout_29.addWidget(self.option_starting_bottles)
 
-
-        self.verticalLayout_29.addLayout(self.hlay_starting_bottles)
-
-        self.hlay_starting_crystal_packs = QHBoxLayout()
-        self.hlay_starting_crystal_packs.setObjectName(u"hlay_starting_crystal_packs")
         self.label_for_option_starting_crystal_packs = QLabel(self.box_additional_options)
         self.label_for_option_starting_crystal_packs.setObjectName(u"label_for_option_starting_crystal_packs")
 
-        self.hlay_starting_crystal_packs.addWidget(self.label_for_option_starting_crystal_packs)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_crystal_packs)
 
         self.option_starting_crystal_packs = QSpinBox(self.box_additional_options)
         self.option_starting_crystal_packs.setObjectName(u"option_starting_crystal_packs")
-        sizePolicy5.setHeightForWidth(self.option_starting_crystal_packs.sizePolicy().hasHeightForWidth())
-        self.option_starting_crystal_packs.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.option_starting_crystal_packs.sizePolicy().hasHeightForWidth())
+        self.option_starting_crystal_packs.setSizePolicy(sizePolicy4)
 
-        self.hlay_starting_crystal_packs.addWidget(self.option_starting_crystal_packs)
+        self.verticalLayout_29.addWidget(self.option_starting_crystal_packs)
 
-
-        self.verticalLayout_29.addLayout(self.hlay_starting_crystal_packs)
-
-        self.hlay_starting_tadtones = QHBoxLayout()
-        self.hlay_starting_tadtones.setObjectName(u"hlay_starting_tadtones")
-        self.hlay_starting_tadtones.setContentsMargins(-1, 0, -1, -1)
         self.label_for_option_starting_tadtones = QLabel(self.box_additional_options)
         self.label_for_option_starting_tadtones.setObjectName(u"label_for_option_starting_tadtones")
 
-        self.hlay_starting_tadtones.addWidget(self.label_for_option_starting_tadtones)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_tadtones)
 
         self.option_starting_tadtones = QSpinBox(self.box_additional_options)
         self.option_starting_tadtones.setObjectName(u"option_starting_tadtones")
-        sizePolicy5.setHeightForWidth(self.option_starting_tadtones.sizePolicy().hasHeightForWidth())
-        self.option_starting_tadtones.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.option_starting_tadtones.sizePolicy().hasHeightForWidth())
+        self.option_starting_tadtones.setSizePolicy(sizePolicy4)
 
-        self.hlay_starting_tadtones.addWidget(self.option_starting_tadtones)
-
-
-        self.verticalLayout_29.addLayout(self.hlay_starting_tadtones)
+        self.verticalLayout_29.addWidget(self.option_starting_tadtones)
 
         self.option_random_starting_item = QCheckBox(self.box_additional_options)
         self.option_random_starting_item.setObjectName(u"option_random_starting_item")
-        sizePolicy9 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy9.setHorizontalStretch(0)
-        sizePolicy9.setVerticalStretch(0)
-        sizePolicy9.setHeightForWidth(self.option_random_starting_item.sizePolicy().hasHeightForWidth())
-        self.option_random_starting_item.setSizePolicy(sizePolicy9)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.option_random_starting_item.sizePolicy().hasHeightForWidth())
+        self.option_random_starting_item.setSizePolicy(sizePolicy8)
 
         self.verticalLayout_29.addWidget(self.option_random_starting_item)
 
@@ -1505,40 +1472,35 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_29.addWidget(self.option_max_starting_treasures)
 
-        self.hlay_heart_options = QHBoxLayout()
-        self.hlay_heart_options.setObjectName(u"hlay_heart_options")
         self.label_for_option_starting_heart_containers = QLabel(self.box_additional_options)
         self.label_for_option_starting_heart_containers.setObjectName(u"label_for_option_starting_heart_containers")
-        sizePolicy6.setHeightForWidth(self.label_for_option_starting_heart_containers.sizePolicy().hasHeightForWidth())
-        self.label_for_option_starting_heart_containers.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.label_for_option_starting_heart_containers.sizePolicy().hasHeightForWidth())
+        self.label_for_option_starting_heart_containers.setSizePolicy(sizePolicy5)
 
-        self.hlay_heart_options.addWidget(self.label_for_option_starting_heart_containers)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_heart_containers)
 
         self.option_starting_heart_containers = QSpinBox(self.box_additional_options)
         self.option_starting_heart_containers.setObjectName(u"option_starting_heart_containers")
-        sizePolicy9.setHeightForWidth(self.option_starting_heart_containers.sizePolicy().hasHeightForWidth())
-        self.option_starting_heart_containers.setSizePolicy(sizePolicy9)
-        self.option_starting_heart_containers.setMaximumSize(QSize(41, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_starting_heart_containers.sizePolicy().hasHeightForWidth())
+        self.option_starting_heart_containers.setSizePolicy(sizePolicy4)
+        self.option_starting_heart_containers.setMaximumSize(QSize(16777215, 16777215))
 
-        self.hlay_heart_options.addWidget(self.option_starting_heart_containers)
+        self.verticalLayout_29.addWidget(self.option_starting_heart_containers)
 
         self.label_for_option_starting_heart_pieces = QLabel(self.box_additional_options)
         self.label_for_option_starting_heart_pieces.setObjectName(u"label_for_option_starting_heart_pieces")
-        sizePolicy6.setHeightForWidth(self.label_for_option_starting_heart_pieces.sizePolicy().hasHeightForWidth())
-        self.label_for_option_starting_heart_pieces.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.label_for_option_starting_heart_pieces.sizePolicy().hasHeightForWidth())
+        self.label_for_option_starting_heart_pieces.setSizePolicy(sizePolicy5)
 
-        self.hlay_heart_options.addWidget(self.label_for_option_starting_heart_pieces)
+        self.verticalLayout_29.addWidget(self.label_for_option_starting_heart_pieces)
 
         self.option_starting_heart_pieces = QSpinBox(self.box_additional_options)
         self.option_starting_heart_pieces.setObjectName(u"option_starting_heart_pieces")
-        sizePolicy9.setHeightForWidth(self.option_starting_heart_pieces.sizePolicy().hasHeightForWidth())
-        self.option_starting_heart_pieces.setSizePolicy(sizePolicy9)
-        self.option_starting_heart_pieces.setMaximumSize(QSize(41, 16777215))
+        sizePolicy4.setHeightForWidth(self.option_starting_heart_pieces.sizePolicy().hasHeightForWidth())
+        self.option_starting_heart_pieces.setSizePolicy(sizePolicy4)
+        self.option_starting_heart_pieces.setMaximumSize(QSize(16777215, 16777215))
 
-        self.hlay_heart_options.addWidget(self.option_starting_heart_pieces)
-
-
-        self.verticalLayout_29.addLayout(self.hlay_heart_options)
+        self.verticalLayout_29.addWidget(self.option_starting_heart_pieces)
 
         self.hlay_heart_display = QHBoxLayout()
         self.hlay_heart_display.setObjectName(u"hlay_heart_display")
@@ -1557,7 +1519,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_29.addLayout(self.hlay_heart_display)
 
-        self.vspace_additional_options = QSpacerItem(20, 137, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_additional_options = QSpacerItem(20, 137, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_29.addItem(self.vspace_additional_options)
 
@@ -1584,26 +1546,26 @@ class Ui_MainWindow(object):
         self.option_model_type_select = QComboBox(self.tab_cosmetics)
         self.option_model_type_select.setObjectName(u"option_model_type_select")
         self.option_model_type_select.setEnabled(True)
-        sizePolicy10 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy10.setHorizontalStretch(20)
-        sizePolicy10.setVerticalStretch(0)
-        sizePolicy10.setHeightForWidth(self.option_model_type_select.sizePolicy().hasHeightForWidth())
-        self.option_model_type_select.setSizePolicy(sizePolicy10)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy9.setHorizontalStretch(20)
+        sizePolicy9.setVerticalStretch(0)
+        sizePolicy9.setHeightForWidth(self.option_model_type_select.sizePolicy().hasHeightForWidth())
+        self.option_model_type_select.setSizePolicy(sizePolicy9)
 
         self.hlay_type_options.addWidget(self.option_model_type_select)
 
         self.option_tunic_swap = QCheckBox(self.tab_cosmetics)
         self.option_tunic_swap.setObjectName(u"option_tunic_swap")
         self.option_tunic_swap.setEnabled(True)
-        sizePolicy11 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy11.setHorizontalStretch(40)
-        sizePolicy11.setVerticalStretch(0)
-        sizePolicy11.setHeightForWidth(self.option_tunic_swap.sizePolicy().hasHeightForWidth())
-        self.option_tunic_swap.setSizePolicy(sizePolicy11)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy10.setHorizontalStretch(40)
+        sizePolicy10.setVerticalStretch(0)
+        sizePolicy10.setHeightForWidth(self.option_tunic_swap.sizePolicy().hasHeightForWidth())
+        self.option_tunic_swap.setSizePolicy(sizePolicy10)
 
         self.hlay_type_options.addWidget(self.option_tunic_swap)
 
-        self.hspace_type_options = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.hspace_type_options = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.hlay_type_options.addItem(self.hspace_type_options)
 
@@ -1619,29 +1581,29 @@ class Ui_MainWindow(object):
 
         self.option_model_pack_select = QComboBox(self.tab_cosmetics)
         self.option_model_pack_select.setObjectName(u"option_model_pack_select")
-        sizePolicy12 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy12.setHorizontalStretch(20)
-        sizePolicy12.setVerticalStretch(0)
-        sizePolicy12.setHeightForWidth(self.option_model_pack_select.sizePolicy().hasHeightForWidth())
-        self.option_model_pack_select.setSizePolicy(sizePolicy12)
+        sizePolicy11 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy11.setHorizontalStretch(20)
+        sizePolicy11.setVerticalStretch(0)
+        sizePolicy11.setHeightForWidth(self.option_model_pack_select.sizePolicy().hasHeightForWidth())
+        self.option_model_pack_select.setSizePolicy(sizePolicy11)
 
         self.hlay_pack_options.addWidget(self.option_model_pack_select)
 
         self.button_randomize_all_colors = QPushButton(self.tab_cosmetics)
         self.button_randomize_all_colors.setObjectName(u"button_randomize_all_colors")
-        sizePolicy12.setHeightForWidth(self.button_randomize_all_colors.sizePolicy().hasHeightForWidth())
-        self.button_randomize_all_colors.setSizePolicy(sizePolicy12)
+        sizePolicy11.setHeightForWidth(self.button_randomize_all_colors.sizePolicy().hasHeightForWidth())
+        self.button_randomize_all_colors.setSizePolicy(sizePolicy11)
 
         self.hlay_pack_options.addWidget(self.button_randomize_all_colors)
 
         self.button_reset_all_colors = QPushButton(self.tab_cosmetics)
         self.button_reset_all_colors.setObjectName(u"button_reset_all_colors")
-        sizePolicy12.setHeightForWidth(self.button_reset_all_colors.sizePolicy().hasHeightForWidth())
-        self.button_reset_all_colors.setSizePolicy(sizePolicy12)
+        sizePolicy11.setHeightForWidth(self.button_reset_all_colors.sizePolicy().hasHeightForWidth())
+        self.button_reset_all_colors.setSizePolicy(sizePolicy11)
 
         self.hlay_pack_options.addWidget(self.button_reset_all_colors)
 
-        self.hspace_pack_options = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.hspace_pack_options = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.hlay_pack_options.addItem(self.hspace_pack_options)
 
@@ -1676,19 +1638,19 @@ class Ui_MainWindow(object):
 
         self.label_for_color_presets = QLabel(self.tab_cosmetics)
         self.label_for_color_presets.setObjectName(u"label_for_color_presets")
-        sizePolicy13 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy13.setHorizontalStretch(20)
-        sizePolicy13.setVerticalStretch(0)
-        sizePolicy13.setHeightForWidth(self.label_for_color_presets.sizePolicy().hasHeightForWidth())
-        self.label_for_color_presets.setSizePolicy(sizePolicy13)
-        self.label_for_color_presets.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        sizePolicy12 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy12.setHorizontalStretch(20)
+        sizePolicy12.setVerticalStretch(0)
+        sizePolicy12.setHeightForWidth(self.label_for_color_presets.sizePolicy().hasHeightForWidth())
+        self.label_for_color_presets.setSizePolicy(sizePolicy12)
+        self.label_for_color_presets.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.gridLayout.addWidget(self.label_for_color_presets, 0, 0, 1, 1)
 
         self.color_presets_list = QComboBox(self.tab_cosmetics)
         self.color_presets_list.setObjectName(u"color_presets_list")
-        sizePolicy10.setHeightForWidth(self.color_presets_list.sizePolicy().hasHeightForWidth())
-        self.color_presets_list.setSizePolicy(sizePolicy10)
+        sizePolicy9.setHeightForWidth(self.color_presets_list.sizePolicy().hasHeightForWidth())
+        self.color_presets_list.setSizePolicy(sizePolicy9)
 
         self.gridLayout.addWidget(self.color_presets_list, 0, 1, 1, 3)
 
@@ -1702,25 +1664,25 @@ class Ui_MainWindow(object):
         self.hlay_colors_and_preview.setObjectName(u"hlay_colors_and_preview")
         self.scroll_area_colors = QScrollArea(self.tab_cosmetics)
         self.scroll_area_colors.setObjectName(u"scroll_area_colors")
-        self.scroll_area_colors.setContextMenuPolicy(Qt.PreventContextMenu)
-        self.scroll_area_colors.setFrameShape(QFrame.NoFrame)
-        self.scroll_area_colors.setFrameShadow(QFrame.Plain)
-        self.scroll_area_colors.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.scroll_area_colors.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll_area_colors.setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
+        self.scroll_area_colors.setFrameShape(QFrame.Shape.NoFrame)
+        self.scroll_area_colors.setFrameShadow(QFrame.Shadow.Plain)
+        self.scroll_area_colors.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scroll_area_colors.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.scroll_area_colors.setWidgetResizable(True)
-        self.scroll_area_colors.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.scroll_area_colors.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.scroll_area_widget_contents_colors = QWidget()
         self.scroll_area_widget_contents_colors.setObjectName(u"scroll_area_widget_contents_colors")
-        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 98, 46))
+        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 577, 471))
         self.verticalLayout_34 = QVBoxLayout(self.scroll_area_widget_contents_colors)
         self.verticalLayout_34.setObjectName(u"verticalLayout_34")
         self.vlay_texture_colors = QVBoxLayout()
         self.vlay_texture_colors.setObjectName(u"vlay_texture_colors")
-        self.vspace_colors = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_colors = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_texture_colors.addItem(self.vspace_colors)
 
-        self.hspace_colors = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.hspace_colors = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.vlay_texture_colors.addItem(self.hspace_colors)
 
@@ -1740,7 +1702,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.label_preview_image.sizePolicy().hasHeightForWidth())
         self.label_preview_image.setSizePolicy(sizePolicy1)
         self.label_preview_image.setScaledContents(False)
-        self.label_preview_image.setAlignment(Qt.AlignCenter)
+        self.label_preview_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.hlay_preview.addWidget(self.label_preview_image)
 
@@ -1802,7 +1764,7 @@ class Ui_MainWindow(object):
 
         self.vlay_theme.addWidget(self.option_use_sharp_corners)
 
-        self.vspace_theme = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_theme = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_theme.addItem(self.vspace_theme)
 
@@ -1828,15 +1790,15 @@ class Ui_MainWindow(object):
 
         self.option_font_family = QFontComboBox(self.box_font)
         self.option_font_family.setObjectName(u"option_font_family")
-        sizePolicy14 = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-        sizePolicy14.setHorizontalStretch(0)
-        sizePolicy14.setVerticalStretch(0)
-        sizePolicy14.setHeightForWidth(self.option_font_family.sizePolicy().hasHeightForWidth())
-        self.option_font_family.setSizePolicy(sizePolicy14)
+        sizePolicy13 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        sizePolicy13.setHorizontalStretch(0)
+        sizePolicy13.setVerticalStretch(0)
+        sizePolicy13.setHeightForWidth(self.option_font_family.sizePolicy().hasHeightForWidth())
+        self.option_font_family.setSizePolicy(sizePolicy13)
         self.option_font_family.setEditable(False)
-        self.option_font_family.setSizeAdjustPolicy(QComboBox.AdjustToContentsOnFirstShow)
-        self.option_font_family.setWritingSystem(QFontDatabase.Any)
-        self.option_font_family.setFontFilters(QFontComboBox.ScalableFonts)
+        self.option_font_family.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContentsOnFirstShow)
+        self.option_font_family.setWritingSystem(QFontDatabase.WritingSystem.Any)
+        self.option_font_family.setFontFilters(QFontComboBox.FontFilter.ScalableFonts)
         font1 = QFont()
         font1.setFamilies([u"Arial"])
         font1.setPointSize(10)
@@ -1844,33 +1806,28 @@ class Ui_MainWindow(object):
 
         self.vlay_font.addWidget(self.option_font_family)
 
-        self.hlay_font_size = QHBoxLayout()
-        self.hlay_font_size.setObjectName(u"hlay_font_size")
         self.label_for_option_font_size = QLabel(self.box_font)
         self.label_for_option_font_size.setObjectName(u"label_for_option_font_size")
         sizePolicy.setHeightForWidth(self.label_for_option_font_size.sizePolicy().hasHeightForWidth())
         self.label_for_option_font_size.setSizePolicy(sizePolicy)
 
-        self.hlay_font_size.addWidget(self.label_for_option_font_size)
+        self.vlay_font.addWidget(self.label_for_option_font_size)
 
         self.option_font_size = QSpinBox(self.box_font)
         self.option_font_size.setObjectName(u"option_font_size")
-        sizePolicy9.setHeightForWidth(self.option_font_size.sizePolicy().hasHeightForWidth())
-        self.option_font_size.setSizePolicy(sizePolicy9)
+        sizePolicy4.setHeightForWidth(self.option_font_size.sizePolicy().hasHeightForWidth())
+        self.option_font_size.setSizePolicy(sizePolicy4)
 
-        self.hlay_font_size.addWidget(self.option_font_size)
-
-
-        self.vlay_font.addLayout(self.hlay_font_size)
+        self.vlay_font.addWidget(self.option_font_size)
 
         self.reset_font_button = QPushButton(self.box_font)
         self.reset_font_button.setObjectName(u"reset_font_button")
-        sizePolicy9.setHeightForWidth(self.reset_font_button.sizePolicy().hasHeightForWidth())
-        self.reset_font_button.setSizePolicy(sizePolicy9)
+        sizePolicy8.setHeightForWidth(self.reset_font_button.sizePolicy().hasHeightForWidth())
+        self.reset_font_button.setSizePolicy(sizePolicy8)
 
         self.vlay_font.addWidget(self.reset_font_button)
 
-        self.vspace_font = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_font = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_font.addItem(self.vspace_font)
 
@@ -1888,7 +1845,7 @@ class Ui_MainWindow(object):
         self.box_1.setFlat(False)
         self.verticalLayout_9 = QVBoxLayout(self.box_1)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.vspace = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_9.addItem(self.vspace)
 
@@ -1903,7 +1860,7 @@ class Ui_MainWindow(object):
         self.box_2.setFlat(False)
         self.verticalLayout_10 = QVBoxLayout(self.box_2)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.vspace_2 = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_2 = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_10.addItem(self.vspace_2)
 
@@ -1918,7 +1875,7 @@ class Ui_MainWindow(object):
         self.box_3.setFlat(False)
         self.verticalLayout_11 = QVBoxLayout(self.box_3)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.vspace_3 = QSpacerItem(20, 533, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_3 = QSpacerItem(20, 533, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_11.addItem(self.vspace_3)
 
@@ -1932,14 +1889,14 @@ class Ui_MainWindow(object):
         self.option_description = QLabel(self.centralwidget)
         self.option_description.setObjectName(u"option_description")
         self.option_description.setEnabled(True)
-        sizePolicy15 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-        sizePolicy15.setHorizontalStretch(0)
-        sizePolicy15.setVerticalStretch(0)
-        sizePolicy15.setHeightForWidth(self.option_description.sizePolicy().hasHeightForWidth())
-        self.option_description.setSizePolicy(sizePolicy15)
+        sizePolicy14 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy14.setHorizontalStretch(0)
+        sizePolicy14.setVerticalStretch(0)
+        sizePolicy14.setHeightForWidth(self.option_description.sizePolicy().hasHeightForWidth())
+        self.option_description.setSizePolicy(sizePolicy14)
         self.option_description.setMinimumSize(QSize(0, 48))
         self.option_description.setStyleSheet(u"")
-        self.option_description.setTextFormat(Qt.MarkdownText)
+        self.option_description.setTextFormat(Qt.TextFormat.MarkdownText)
         self.option_description.setWordWrap(True)
 
         self.verticalLayout.addWidget(self.option_description)
@@ -1971,9 +1928,9 @@ class Ui_MainWindow(object):
         self.label_seed = QLabel(self.centralwidget)
         self.label_seed.setObjectName(u"label_seed")
         self.label_seed.setToolTipDuration(-1)
-        self.label_seed.setLayoutDirection(Qt.LeftToRight)
+        self.label_seed.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.label_seed.setAutoFillBackground(False)
-        self.label_seed.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.label_seed.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.hlay_seed.addWidget(self.label_seed)
 
@@ -2007,7 +1964,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(7)
         self.option_triforce_shuffle.setCurrentIndex(-1)
         self.option_randomize_entrances.setCurrentIndex(-1)
         self.option_chest_dowsing.setCurrentIndex(-1)
@@ -2071,6 +2028,7 @@ class Ui_MainWindow(object):
         self.option_open_et.setText(QCoreApplication.translate("MainWindow", u"Open Earth Temple", None))
         self.label_for_option_open_lmf.setText(QCoreApplication.translate("MainWindow", u"Open Lanayru Mining Facility", None))
         self.label_for_option_open_lake_floria.setText(QCoreApplication.translate("MainWindow", u"Open Lake Floria", None))
+        self.option_random_puzzles.setText(QCoreApplication.translate("MainWindow", u"Randomize Puzzles", None))
         self.box_shuffles.setTitle(QCoreApplication.translate("MainWindow", u"Shuffles", None))
         self.option_shopsanity.setText(QCoreApplication.translate("MainWindow", u"Shuffle Beedle's Shop", None))
         self.option_rupeesanity.setText(QCoreApplication.translate("MainWindow", u"Rupeesanity", None))
@@ -2081,6 +2039,7 @@ class Ui_MainWindow(object):
         self.option_randomize_trials.setText(QCoreApplication.translate("MainWindow", u"Randomize Silent Realm Gates", None))
         self.label_for_option_random_start_entrance.setText(QCoreApplication.translate("MainWindow", u"Randomize Starting Spawn", None))
         self.option_limit_start_entrance.setText(QCoreApplication.translate("MainWindow", u"Limit Starting Location", None))
+        self.option_random_start_statues.setText(QCoreApplication.translate("MainWindow", u"Randomize Starting Statues", None))
         self.box_dungeons.setTitle(QCoreApplication.translate("MainWindow", u"Dungeons", None))
         self.label_for_option_map_mode.setText(QCoreApplication.translate("MainWindow", u"Map Mode", None))
         self.label_for_option_small_key_mode.setText(QCoreApplication.translate("MainWindow", u"Small Keys", None))
@@ -2094,6 +2053,7 @@ class Ui_MainWindow(object):
         self.box_convenience_tweaks.setTitle(QCoreApplication.translate("MainWindow", u"Convenience Tweaks", None))
         self.option_fill_dowsing_on_white_sword.setText(QCoreApplication.translate("MainWindow", u"Fill Dowsing on White Sword", None))
         self.option_full_wallet_upgrades.setText(QCoreApplication.translate("MainWindow", u"Full Wallet Upgrades", None))
+        self.label_for_option_ammo_availability.setText(QCoreApplication.translate("MainWindow", u"Ammo Availability", None))
         self.box_vanilla_tweaks.setTitle(QCoreApplication.translate("MainWindow", u"Vanilla Tweaks", None))
         self.label_for_option_bit_patches.setText(QCoreApplication.translate("MainWindow", u"BiT Patches", None))
         self.label_for_option_peatrice_conversations.setText(QCoreApplication.translate("MainWindow", u"Peatrice Conversations", None))

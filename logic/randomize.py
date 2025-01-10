@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 from dataclasses import dataclass
 from functools import cache
 import random
@@ -101,7 +102,9 @@ class Rando:
             self.randomized_dungeon_entrance,
             self.randomized_trial_entrance,
             self.randomized_start_entrance,
+            self.randomized_start_statues,
             list(self.placement.locations),
+            self.puzzles,
         )
 
         logic = Logic(areas, logic_settings, self.placement)
@@ -143,6 +146,7 @@ class Rando:
         self.initialize_items()  # self.randosettings
 
         self.randomize_dungeons_trials_starting_entrances()
+        self.randomize_puzzles()
 
     def randomize_required_dungeons(self):
         """
@@ -157,6 +161,70 @@ class Rando:
         unreq_indices.sort()
         self.required_dungeons = [REGULAR_DUNGEONS[i] for i in req_indices]
         self.unrequired_dungeons = [REGULAR_DUNGEONS[i] for i in unreq_indices]
+
+    def randomize_puzzles(self):
+        if not self.options["random-puzzles"]:
+            self.puzzles = None
+            return
+
+        ssh_hint_order = list(range(4))
+        self.rng.shuffle(ssh_hint_order)
+        ssh_hint_rotations = [self.rng.randint(0, 3) for _ in range(4)]
+
+        # NB these directions are not the in-game direction parameters!
+        # gamepatches maps these to the right format
+
+        # down, up, down, right
+        ssh_starting_directions = [2, 0, 2, 3]
+        ssh_solution = [
+            (
+                ssh_starting_directions[ssh_hint_order[i]]
+                + ssh_hint_rotations[ssh_hint_order[i]]
+            )
+            % 4
+            for i in range(4)
+        ]
+
+        ac_hint_order = list(range(4))
+        self.rng.shuffle(ac_hint_order)
+        # up, down, left, right
+        ac_starting_directions = [0, 2, 1, 3]
+        ac_hint_rotations = [
+            self.rng.randint(0, 3),
+            self.rng.randint(0, 3),
+            self.rng.choice([0, 2]),
+            0,
+        ]
+        ac_hint_rotations[3] = ac_hint_rotations[2]
+        ac_solution = [
+            (
+                ac_starting_directions[ac_hint_order[i]]
+                + ac_hint_rotations[ac_hint_order[i]]
+            )
+            % 4
+            for i in range(4)
+        ]
+
+        # north to south
+        lmf_switches_solution = list(range(3))
+        self.rng.shuffle(lmf_switches_solution)
+
+        self.puzzles = {
+            "isle": {"pedestal_positions": [self.rng.randint(1, 11) for _ in range(3)]},
+            "sandship": {
+                "hint_order": ssh_hint_order,
+                "hint_rotations": ssh_hint_rotations,
+                "combo": ssh_solution,
+            },
+            "cistern": {
+                "hint_order": ac_hint_order,
+                "hint_rotations": ac_hint_rotations,
+                "combo": ac_solution,
+            },
+            "lmf": {
+                "switch_combo": lmf_switches_solution,
+            },
+        }
 
     def randomize_starting_items(self):
         """
@@ -281,9 +349,11 @@ class Rando:
         elif self.options["got-dungeon-requirement"] == "Unrequired":
             horde_door_requirement &= DNFInventory(dungeons_req)
 
-        everything_list = {
-            check["req_index"] for check in self.areas.checks.values()
-        } | {EXTENDED_ITEM[self.short_to_full(DEMISE)]}
+        everything_list = (
+            {check["req_index"] for check in self.areas.checks.values()}
+            | {check["req_index"] for check in self.areas.gossip_stones.values()}
+            | {EXTENDED_ITEM[self.short_to_full(DEMISE)]}
+        )
         everything_req = DNFInventory(Inventory(everything_list))
 
         self.endgame_requirements = {
@@ -315,6 +385,15 @@ class Rando:
             else:
                 raise ValueError(f"Option rupoor-mode has unknown value {rupoor_mode}.")
             self.placement.add_unplaced_items(set(unplaced))
+
+        self.no_logic_requirements = {}
+        if self.options["logic-mode"] == "No Logic":
+            self.no_logic_requirements = {
+                item: DNFInventory(True)
+                for item in EXTENDED_ITEM.items_list
+                if EXTENDED_ITEM[item] != BANNED_BIT
+                if item not in self.placement.unplaced_items
+            }
 
         must_be_placed_items = (
             PROGRESS_ITEMS
@@ -358,6 +437,7 @@ class Rando:
             NONLETHAL_HOT_CAVE: damage_multiplier < 12,
             UPGRADED_SKYWARD_STRIKE: self.options["upgraded-skyward-strike"],
             FS_LAVA_FLOW_OPTION: self.options["fs-lava-flow"],
+            NO_RANDOM_PUZZLES_OPTION: not self.options["random-puzzles"],
         }
 
         enabled_tricks = set(self.options["enabled-tricks-bitless"])
@@ -368,12 +448,6 @@ class Rando:
             EIN(trick(trick_name)): DNFInventory(trick_name in enabled_tricks)
             for trick_name in OPTIONS["enabled-tricks-bitless"]["choices"]
         }
-
-        self.no_logic_requirements = {}
-        if self.options["logic-mode"] == "No Logic":
-            self.no_logic_requirements = {
-                item: DNFInventory(True) for item in EXTENDED_ITEM.items_list
-            }
 
         self.placement |= SINGLE_CRYSTAL_PLACEMENT(self.norm, self.areas.checks)
 
@@ -578,6 +652,41 @@ class Rando:
                 entrance_of_exit(trial_exit)
             )
 
+        self.randomize_starting_entrance()
+
+        # Starting bird statue rando
+
+        bsr = self.options["random-start-statues"]
+
+        possible_bird_statues = [
+            (entrance, values)
+            for entrance, values in self.areas.map_entrances.items()
+            if values.get("subtype") == "bird-statue-entrance"
+            and (bsr or values.get("vanilla-start-statue"))
+        ]
+
+        self.randomized_start_statues = {
+            province: self.rng.choice(
+                [
+                    (entrance, values)
+                    for entrance, values in possible_bird_statues
+                    if values.get("province") == province
+                    and "Fire Sanctuary" not in entrance
+                ]
+            )
+            for province in ALL_SURFACE_PROVINCES
+        }
+
+        # Logically bind the first-time dive to the statue to unlock it
+
+        for exit, values in self.areas.map_exits.items():
+            # First time dives have the 'pillar-province' field in entrances.yaml
+            if (province := values.get("pillar-province")) is not None:
+                self.placement.map_transitions[exit] = self.randomized_start_statues[
+                    province
+                ][0]
+
+    def randomize_starting_entrance(self):
         # Starting Entrance Rando.
         ser = self.options["random-start-entrance"]
         limit_ser = self.options["limit-start-entrance"]
@@ -587,6 +696,15 @@ class Rando:
             if item in TABLETS
         ]
         allowed_provinces.append(THE_SKY)
+        # With Limit Start Entrance and fewer than 3 starting tablets, surface entrances
+        # for a given seed are less likely compared to always available entrances in The Sky,
+        # so proportionally increase the chance of a surface entrance to adjust for
+        # the unavailable provinces. This makes spawns more uniform across seeds.
+        surface_province_weight_scale = (
+            3.0 / self.options["starting-tablet-count"]
+            if limit_ser and self.options["starting-tablet-count"]
+            else 1.0
+        )
 
         possible_start_entrances = [
             (entrance, values)
@@ -612,7 +730,27 @@ class Rando:
             )
         ]
 
-        start_entrance = self.rng.choice(possible_start_entrances)
+        entrance_weight_scale = lambda e: (
+            surface_province_weight_scale
+            if e["province"] in ALL_SURFACE_PROVINCES
+            else 1.0
+        )
+
+        weights = None
+        if ser == "Any Surface Region" or ser == "Any":
+            # If we're not restricted to Bird Statues, weight entrances by inverse
+            # number of eligible entrances in that region to penalize overly
+            # entrance-dense regions like Skyloft
+            entrances_by_region = defaultdict(lambda: 0)
+            for _, entrance in possible_start_entrances:
+                entrances_by_region[entrance["hint_region"]] += 1
+            # print(entrances_by_region, sum(entrances_by_region.values()))
+            weights = [
+                entrance_weight_scale(v[1]) / entrances_by_region[v[1]["hint_region"]]
+                for v in possible_start_entrances
+            ]
+
+        start_entrance = self.rng.choices(possible_start_entrances, weights, k=1)[0]
         self.placement.map_transitions["\Start"] = start_entrance[0]
         values = start_entrance[1]
 

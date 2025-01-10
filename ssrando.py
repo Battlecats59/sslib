@@ -148,6 +148,13 @@ class Randomizer(BaseRandomizer):
         self.progress_callback = progress_callback
 
     def randomize(self):
+        # make sure the output path is valid if we're writing the patched game
+        if not (
+            self.options["dry-run"] or (dir := self.options["output-folder"]).is_dir()
+        ):
+            raise ValueError(
+                f"Path {dir} is not a directory. Please specify a valid output folder."
+            )
         useroutput = UserOutput(GenerationFailed, self.progress_callback)
         self.progress_callback("randomizing items...")
         self.rando.randomize(useroutput)
@@ -195,6 +202,8 @@ class Randomizer(BaseRandomizer):
                 randomized_dungeon_entrance=self.logic.randomized_dungeon_entrance,
                 randomized_trial_entrance=self.logic.randomized_trial_entrance,
                 randomized_start_entrance=self.logic.randomized_start_entrance,
+                randomized_start_statues=self.logic.randomized_start_statues,
+                puzzles=self.logic.puzzles,
             )
             with log_address.open("w") as f:
                 json.dump(dump, f, indent=2)
@@ -214,6 +223,8 @@ class Randomizer(BaseRandomizer):
                     randomized_dungeon_entrance=self.logic.randomized_dungeon_entrance,
                     randomized_trial_entrance=self.logic.randomized_trial_entrance,
                     randomized_start_entrance=self.logic.randomized_start_entrance,
+                    randomized_start_statues=self.logic.randomized_start_statues,
+                    puzzles=self.logic.puzzles,
                 )
         if not self.dry_run:
             GamePatcher(
@@ -238,6 +249,8 @@ class Randomizer(BaseRandomizer):
         plcmt_file.dungeon_connections = self.logic.randomized_dungeon_entrance
         plcmt_file.trial_connections = self.logic.randomized_trial_entrance
         plcmt_file.start_entrance = self.logic.randomized_start_entrance
+        plcmt_file.start_statues = self.logic.randomized_start_statues
+        plcmt_file.puzzles = self.logic.puzzles
         plcmt_file.hash_str = self.randomizer_hash
         plcmt_file.hints = {
             k: v.to_ingame_text(lambda s: self.areas.prettify(s))
@@ -253,7 +266,6 @@ class Randomizer(BaseRandomizer):
         plcmt_file.trial_object_seed = self.rng.randint(1, MAX_SEED)
         plcmt_file.music_rando_seed = self.rng.randint(1, MAX_SEED)
         plcmt_file.bk_angle_seed = self.rng.randint(0, 2**32 - 1)
-
         plcmt_file.check_valid(self.areas)
 
         return plcmt_file

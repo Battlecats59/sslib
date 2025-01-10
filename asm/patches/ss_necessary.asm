@@ -109,8 +109,28 @@ blr
 bl fix_freestanding_item_y_offset
 
 ; allow triforces to fall down when bonked
+; in AcItem::init
 .org 0x8024edbc
 li r3, 0
+
+; Make triforces whippable
+; set different defenderCollider flags in AcItem::init
+.org 0x8024b548
+li r3, 0
+
+; set different defenderCollider flags in AcItem::setupUnkColliderFlags2
+.org 0x802549f0
+li r3, 0
+
+; Make heart pieces whippable
+; in AcItem::init
+.org 0x8024b538
+li r3, 0
+.org 0x8024b574
+li r3, 0
+.org 0x8024b590
+li r3, 0
+
 
 ; don't treat faron statues differently after levias
 .org 0x80142078
@@ -251,12 +271,6 @@ nop
 .org 0x801e351c
 bl no_minigame_death
 
-;remove heromode check for air meter
-.org 0x801c5d8c
-nop
-nop
-nop
-
 ; branch to function for rando custom text event flows (if no other matches)
 .org 0x801aff2c
 bgt 0x801b0788
@@ -379,6 +393,78 @@ li r3, 1
 .org 0x8024d3b0
 nop
 
+; always show the slingshot model even when you already have scattershot
+.org 0x8016fa7c
+li r3, 0
+
+; change SG statue to use its scene flag
+.org 0x804e7cd8
+.word 0x0000 ; interpret as sceneflag
+.word 0x0000
+.word 0x000A ; use sceneflags for sealed grounds
+.word 0x0023 ; sceneflag 5x08
+
+; replace all is_hero_mode checks with more fine grained options
+; possibly dealing with skyward sword charge speed?
+.org 0x8005e288 
+bl has_upgraded_skyward_strike
+
+; possibly dealing with skyward sword charge speed?
+.org 0x8005e2ac
+bl has_upgraded_skyward_strike
+
+; spin attack related?
+.org 0x801c7a3c
+bl has_upgraded_skyward_strike
+
+.org 0x801c7b70
+bl has_upgraded_skyward_strike
+
+.org 0x801ca16c
+bl has_upgraded_skyward_strike
+
+.org 0x801e21e4
+bl has_upgraded_skyward_strike
+
+; change air meter check
+.org 0x801c5d8c
+bl has_fast_air_meter_drain
+
+; change heart drop checks
+; in item init
+.org 0x8024acf8
+bl has_heart_drops_enabled
+
+; in some func related to chance-based heart spawns / digspots / pots?
+.org 0x800c7c50
+bl has_heart_drops_enabled
+
+; at the end of the cGame update function
+.org 0x801bf4f8
+b game_update_hook
+
+; fix tablet display
+
+.org 0x8015ccf8
+; instead of looping and counting tablets,
+; find the correct keyframe
+bl get_tablet_keyframe_count
+mr r29, r3
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+
+.org 0x8015ce00
+; when you have at least 1 Triforce, tablets are hidden.
+; change keyframe where entire group is hidden from 3.0 -> 7.0 (at 80576fc8)
+; r2 = 0x8057e9c0
+lfs f1, -0x79F8(r2)
+
 .close
 
 
@@ -446,8 +532,8 @@ stw r31,12(r1)
 mr r31,r3 ; r31 is AcOWarp ptr
 lbz r3, 0x4(r31) ; first byte of params1 is itemid
 li r4, -1 ; set pouch slot param to -1, otherwise pouch items break
-li r5, 0 ; 3rd arg for giveItem function call
-bl giveItem ; give the item for the trial and save the pointer to it
+li r5, 0 ; 3rd arg for AcItem__giveItem function call
+bl AcItem__giveItem ; give the item for the trial and save the pointer to it
 stw r3, 0xC94(r31)
 lwz r0,20(r1)
 lwz r31,12(r1)
@@ -596,6 +682,11 @@ ble skip_store_max
 stfs f0,0xfb8(r3)
 skip_store_max:
 b enforce_loftwing_speed_cap
+
+; Increase zipper speed cap
+.org 0xE2C4 ; 0x809bb450
+.float 350.0
+
 .close
 
 .open "d_a_npc_dive_game_judgeNP.rel"
@@ -741,6 +832,36 @@ li r4, 0x39A
 .open "d_a_obj_bellNP.rel"
 .org 0xCE0 ; function called when transitioning to the state after dropping rupee
 b try_end_pumpkin_archery
+
+; (80dba55c - 80db9860) + 130
+.org 0xD98 ; 0x80dba4c8
+lwz r3, SCENEFLAG_MANAGER@sda21(r13)
+li r4, 117 ; sceneflag given when collecting the bell item
+bl SceneflagManager__checkTempOrSceneflag
+li r5, 2 ; green rupee
+cmpwi r3, 0
+bne skip_itemid_from_params1
+lbz r5, 0x7(r30) ; least sig byte of params1
+
+skip_itemid_from_params1:
+li r3, 0 ; academy bell is always in room 0
+; 0xFF1D9600 ; item actor params1 (will set sceneflag 101 on collection)
+lis r4, 0xFF9C
+ori r4, r4, 0xD600
+or r4, r4, r5 ; add itemid from bell params1 to item actor params1
+addi r5, r1, 0x14 ; get pos into r5 (from ghidra)
+addi r6, r1, 0xC ; get rot into r6 (from ghidra)
+li r7, 0 ; no scale needed
+li r8, -1 ; item actor params2
+li r9, 0
+bl AcItem__spawnItem
+li r4, 0x4040 ; most sig bytes of float 3.0
+sth r4, 0x144(r3)
+li r4, 1
+stb r4, 0xD4F(r3) ; prevent timed despawn
+li r4, 0
+stb r4, 0xD50(r3) ; force to have gravity
+b 0xE2C ; 0x80dba55c (return)
 .close
 
 .open "d_a_obj_light_lineNP.rel"
@@ -788,6 +909,13 @@ rlwinm. r0, r0, 0, 23, 23 ; check & 0x100 now
 ; .org 0x80f35a18
 .org 0x8E8
 b set_sot_placed_flag
+
+; .org 0x80f35a34
+; change the check to make sure both night and trial are false
+.org 0x904
+lhz r0, 0x25(r3)
+cmpwi r0, 0
+bne 0x950 ; 0x80f35a80
 .close
 
 .open "d_a_obj_time_boatNP.rel"
@@ -988,4 +1116,29 @@ nop
 .org 0xB04
 li r4, 322 ; Repair Gondo's Junk check flag
 
+.close
+
+.open "d_a_heartfNP.rel"
+; This is in init1 and decides whether or not its spawned.
+; 0x80c925d8 in Ghidra
+.org 0x848
+bl has_heart_drops_enabled
+.close
+
+.open "d_a_e_maguppoNP.rel"
+; 0x80d1fd88 in Ghidra
+.org 0x1338
+bl has_heart_drops_enabled
+.close
+
+.open "d_a_obj_asura_pillarNP.rel"
+; 0x80c2027c in Ghidra
+.org 0x9ec
+bl has_heart_drops_enabled
+.close
+
+.open "d_t_reactionNP.rel"
+; 0x80efced4 in Ghidra (80efced4 - 80efc9e0) + 130
+.org 0x624
+bl has_heart_drops_enabled
 .close

@@ -371,6 +371,12 @@ b checkStoryflagIsSet
 .global do_er_fixes
 .global allow_set_respawn_info
 .global get_glow_color
+.global has_upgraded_skyward_strike
+.global has_fast_air_meter_drain
+.global has_heart_drops_enabled
+.global game_update_hook
+.global add_ammo_drops
+.global remove_ammo_drops
 
 .close
 
@@ -461,7 +467,7 @@ lwz r0, 0x4(r31)
 rlwinm r3,r0,8,24,31
 li r4, -1
 li r5, 0
-bl giveItem
+bl AcItem__giveItem
 lwz r3, SCENEFLAG_MANAGER@sda21(r13); SCENEFLAG_MANAGER
 li r4, 50
 bl SceneflagManager__setTempOrSceneflag
@@ -478,7 +484,7 @@ lwz r0, 0x4(r31)
 rlwinm r3,r0,16,24,31
 li r4, -1
 li r5, 0
-bl giveItem
+bl AcItem__giveItem
 lwz r3, SCENEFLAG_MANAGER@sda21(r13)
 li r4, 51
 bl SceneflagManager__setTempOrSceneflag
@@ -495,7 +501,7 @@ lwz r0, 0xa8(r31)
 rlwinm r3,r0,8,24,31
 li r4, -1
 li r5, 0
-bl giveItem
+bl AcItem__giveItem
 lwz r3, SCENEFLAG_MANAGER@sda21(r13)
 li r4, 52
 bl SceneflagManager__setTempOrSceneflag

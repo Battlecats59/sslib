@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'tricks_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -47,7 +47,7 @@ class Ui_TricksDialog(object):
         self.disabled_tricks = QListView(TricksDialog)
         self.disabled_tricks.setObjectName(u"disabled_tricks")
         self.disabled_tricks.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.disabled_tricks.setProperty("showDropIndicator", False)
+        self.disabled_tricks.setProperty(u"showDropIndicator", False)
         self.disabled_tricks.setSelectionMode(QAbstractItemView.MultiSelection)
         self.disabled_tricks.setSelectionRectVisible(False)
 
@@ -58,13 +58,13 @@ class Ui_TricksDialog(object):
 
         self.vlay_tricks_controls = QVBoxLayout()
         self.vlay_tricks_controls.setObjectName(u"vlay_tricks_controls")
-        self.vspace_tricks_controls_upper = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_tricks_controls_upper = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_tricks_controls.addItem(self.vspace_tricks_controls_upper)
 
         self.disable_trick = QPushButton(TricksDialog)
         self.disable_trick.setObjectName(u"disable_trick")
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.disable_trick.sizePolicy().hasHeightForWidth())
@@ -72,7 +72,7 @@ class Ui_TricksDialog(object):
 
         self.vlay_tricks_controls.addWidget(self.disable_trick)
 
-        self.vspace_tricks_controls_middle = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_tricks_controls_middle = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_tricks_controls.addItem(self.vspace_tricks_controls_middle)
 
@@ -83,7 +83,7 @@ class Ui_TricksDialog(object):
 
         self.vlay_tricks_controls.addWidget(self.enable_trick)
 
-        self.vspace_tricks_controls_lower = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vspace_tricks_controls_lower = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.vlay_tricks_controls.addItem(self.vspace_tricks_controls_lower)
 
@@ -106,7 +106,7 @@ class Ui_TricksDialog(object):
         self.enabled_tricks = QListView(TricksDialog)
         self.enabled_tricks.setObjectName(u"enabled_tricks")
         self.enabled_tricks.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.enabled_tricks.setProperty("showDropIndicator", False)
+        self.enabled_tricks.setProperty(u"showDropIndicator", False)
         self.enabled_tricks.setSelectionMode(QAbstractItemView.MultiSelection)
         self.enabled_tricks.setSelectionRectVisible(False)
 

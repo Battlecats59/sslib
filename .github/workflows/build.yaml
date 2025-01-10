@@ -12,7 +12,7 @@ jobs:
         os: [windows-latest]
         python-version: ["3.10"]
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -46,7 +46,12 @@ jobs:
       - name: Copy Readme and changelog
         run: cp README.md CHANGELOG.md dist
         shell: bash
-      - uses: actions/upload-artifact@v3
+      - uses: SebRollen/toml-action@v1.2.0
+        id: read_toml
         with:
-          name: dist ${{ matrix.os }}
+          file: "pyproject.toml"
+          field: "tool.poetry.version"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Skyward Sword Randomizer v${{ steps.read_toml.outputs.value }}
           path: dist
