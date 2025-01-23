@@ -1565,6 +1565,7 @@ class GamePatcher:
         self.add_asm_patch("ss_necessary")
         self.add_asm_patch("custom_items")
         self.add_asm_patch("post_boko_base_platforms")
+        self.add_asm_patch("archipelago")
         if self.placement_file.options["shopsanity"]:
             self.add_asm_patch("shopsanity")
         self.add_asm_patch("gossip_stone_hints")
@@ -3676,6 +3677,11 @@ class GamePatcher:
             18: 939,
             25: 940,  # bug net
             27: 941,  # bug medal
+            20: 954,  # 300R AP flag
+            21: 955,  # 600R AP flag
+            22: 956,  # 1200R AP flag
+            26: 957,  # 800R AP flag
+            23: 958,  # 1600R AP flag
         }
         SHOP_LIST_OFFSET = 0x6D8C
         ENTRY_SIZE = 0x54

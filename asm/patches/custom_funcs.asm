@@ -378,6 +378,63 @@ b checkStoryflagIsSet
 .global add_ammo_drops
 .global remove_ammo_drops
 
+.global give_archipelago_item
+give_archipelago_item:
+stwu sp, -0x10 (sp)
+mflr r0
+stw r0, 0x14 (sp)
+stmw r29, 0x8 (sp)
+mr r29, r3
+lis r30, give_archipelago_item_array@ha
+addi r30, r30, give_archipelago_item_array@l
+li r31, 0
+  
+give_archipelago_item_loop:
+; If we've looped through the entire array, return
+cmpwi r31, num_give_archipelago_item_array_entries
+bge give_archipelago_item_end
+
+; Load the item ID into r3
+lbzx r3, r30, r31
+
+; If item ID is 0xFF, ignore
+cmpwi r3, 0xFF
+beq give_archipelago_item_loop_end
+
+; Else, overwrite item ID with 0xFF
+li r4, 0xFF
+stbx r4, r30, r31
+
+; Else, branch to ItemGet
+li r4, -1
+li r5, 0
+bl AcItem__giveItem
+
+give_archipelago_item_loop_end:
+; Increment loop counter and continue
+addi r31, r31, 1
+b give_archipelago_item_loop
+
+give_archipelago_item_end:
+; Retore the value of r3
+mr r3, r29
+
+lmw r29, 0x8 (sp)
+lwz r0, 0x14 (sp)
+mtlr r0
+addi sp, sp, 0x10
+li r3, 0x1 ; overwritten line
+blr ; back to where we breakpointed
+
+.global give_archipelago_item_equ
+give_archipelago_item_equ:
+.equ num_give_archipelago_item_array_entries, 0x10
+
+.global give_archipelago_item_array
+give_archipelago_item_array:
+.space num_give_archipelago_item_array_entries, 0xFF
+.align 2 ; Align to the next 4 bytes
+
 .close
 
 .open "d_t_D3_scene_changeNP.rel"

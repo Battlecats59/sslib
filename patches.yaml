@@ -475,6 +475,23 @@ B301: # after Sandship boss
     object:
       params1: 0xC303FF03 # change to zone temp flag 3
       anglez: 0xFFFF # don't set any storyflag here
+D000: # Waterfall Cave
+  - name: Waterfall cave first chest archipelago flag
+    type: objpatch
+    id: 0xFC07
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 127
+  - name: Waterfall cave second chest archipelago flag
+    type: objpatch
+    id: 0xFC0B
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 126
 D003_0: # Sky Keep Courage Room
   - name: Fi text
     type: objdelete
@@ -940,6 +957,7 @@ F000: # Skyloft
       posy: 2893.23999
       posz: -13083.1475
       angley: 59591
+      setscenefid: 119
   - name: Move Chest on goddess statue to layer 0
     type: objmove
     id: 0xFDE9
@@ -1182,6 +1200,46 @@ F000: # Skyloft
       posy: -3157.320068
       posz: -5830
       name: Tubo
+  - name: Shed chest archipelago flag
+    type: objpatch
+    id: 0xFC9A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 118
+  - name: West cliff GC archipelago flag
+    type: objpatch
+    id: 0xFC96
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 107
+  - name: Shed GC archipelago flag
+    type: objpatch
+    id: 0xFC97
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 82
+  - name: Floating island GC archipelago flag
+    type: objpatch
+    id: 0xFC95
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 81
+  - name: Waterfall GC archipelago flag
+    type: objpatch
+    id: 0xFC98
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 80
 F001r: # Knight Academy
   - name: Fi Text in Academy at night
     type: objdelete
@@ -1339,6 +1397,14 @@ F004r: # Bazaar
     objtype: OBJ
     object:
       params1: 0x285FFCFF # >> 21 == 322
+  - name: Bazaar GC archipelago flag
+    type: objpatch
+    id: 0xFC78
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 105
 F005r: # Orielle and Parrow's House
   - name: Always Spawn Parrow
     type: objpatch
@@ -1492,6 +1558,14 @@ F012r: # Batreaux House
     layer: 1
     room: 0
     objtype: OBJ
+  - name: Batreaux 30 crystals chest archipelago flag
+    type: objpatch
+    id: 0xFC0A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 93
 F013r: # Sparrot's House
   - name: Sparrot spawn
     type: objpatch
@@ -1629,6 +1703,150 @@ F020: # Sky
       posy: -10643.59375
       posz: 47020
       name: Tubo
+  - name: Chest in breakable boulder near fun fun island archipelago flag
+    type: objpatch
+    id: 0xFC59
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 75
+  - name: Chest in breakable boulder near lumpy pumpkin archipelago flag
+    type: objpatch
+    id: 0xFC57
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 74
+  - name: Bamboo island GC archipelago flag
+    type: objpatch
+    id: 0xFC20
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 115
+  - name: GC on island next to bamboo island archipelago flag
+    type: objpatch
+    id: 0xFC1A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 114
+  - name: GC in cave on island next to bamboo island archipelago flag
+    type: objpatch
+    id: 0xFC21
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 113
+  - name: Beedle's island GC archipelago flag
+    type: objpatch
+    id: 0xFC36
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 112
+  - name: Beedle's island cage GC archipelago flag
+    type: objpatch
+    id: 0xFC1F
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 123
+  - name: Northeast island GC behind bombable rocks archipelago flag
+    type: objpatch
+    id: 0xFC1B
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 122
+  - name: Northeast island cage GC archipelago flag
+    type: objpatch
+    id: 0xFC1D
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 121
+  - name: Lumpy pumpkin - GC on the roof archipelago flag
+    type: objpatch
+    id: 0xFC1C
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 120
+  - name: Lumpy pumpkin - outside GC archipelago flag
+    type: objpatch
+    id: 0xFC15
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 99
+  - name: GC on island closest to Faron pillar archipelago flag
+    type: objpatch
+    id: 0xFC16
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 98
+  - name: GC outside volcanic island archipelago flag
+    type: objpatch
+    id: 0xFC18
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 97
+  - name: GC inside volcanic island archipelago flag
+    type: objpatch
+    id: 0xFC19
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 96
+  - name: GC under fun fun island archipelago flag
+    type: objpatch
+    id: 0xFC23
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 107
+  - name: Southwest triple island upper GC archipelago flag
+    type: objpatch
+    id: 0xFC17
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 106
+  - name: Southwest triple island lower GC archipelago flag
+    type: objpatch
+    id: 0xFC22
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 105
+  - name: Southwest triple island cage GC archipelago flag
+    type: objpatch
+    id: 0xFC1E
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 104
 F023: # Thunderhead
   - name: Strich layer 1
     type: objadd
@@ -1774,6 +1992,62 @@ F023: # Thunderhead
     type: oarcdelete
     oarc: Pinwheel
     layer: 0
+  - name: East island chest archipelago flag
+    type: objpatch
+    id: 0xFC82
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 73
+  - name: East island GC archipelago flag
+    type: objpatch
+    id: 0xFC5F
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 83
+  - name: GC on top of isle of songs archipelago flag
+    type: objpatch
+    id: 0xFC5E
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 82
+  - name: GC outside isle of songs archipelago flag
+    type: objpatch
+    id: 0xFC60
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 81
+  - name: First GC on mogma mitts island archipelago flag
+    type: objpatch
+    id: 0xFC62
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 80
+  - name: Second GC on mogma mitts island archipelago flag
+    type: objpatch
+    id: 0xFC63
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 91
+  - name: Bug heaven GC archipelago flag
+    type: objpatch
+    id: 0xFC61
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 90
 F100: # Faron main area
   - name: Layer override
     type: layeroverride
@@ -2068,6 +2342,14 @@ F100: # Faron main area
       posy: 2102.997295
       posz: -9485
       name: Tubo
+  - name: Chest behind upper bombable rocks archipelago flag
+    type: objpatch
+    id: 0x5D01
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 118
 F101: # Deep Woods
   - name: Layer override
     type: layeroverride
@@ -2133,6 +2415,14 @@ F101: # Deep Woods
       posy: 760.835083
       posz: 3365
       name: Tubo
+  - name: Deep woods chest archipelago flag
+    type: objpatch
+    id: 0xFC4A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 119
 F102_1: # Outside AC
   - name: Layer override
     type: layeroverride
@@ -2278,6 +2568,14 @@ F102: # lake Floria
       posy: 433.4100037
       posz: 8155
       name: Tubo
+  - name: Lake floria chest archipelago flag
+    type: objpatch
+    id: 0x0C27
+    layer: 0
+    room: 3
+    objtype: OBJS
+    object:
+      setscenefid: 119
 F102_2: # Faron's Lair
   - name: Remove Faron's Lair entry cs
     type: objpatch
@@ -2286,6 +2584,22 @@ F102_2: # Faron's Lair
     objtype: PLY
     object:
       play_cutscene: -1
+  - name: Dragon lair east chest archipelago flag
+    type: objpatch
+    id: 0xFC0A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 118
+  - name: Dragon lair south chest archipelago flag
+    type: objpatch
+    id: 0xFC09
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 117
 F100_1: # Great Tree
   - name: Layer override
     type: layeroverride
@@ -2345,6 +2659,14 @@ F100_1: # Great Tree
       anglez: 20392
       id: 0x0065
       name: NpcAdr
+  - name: Great tree chest archipelago flag
+    type: objpatch
+    id: 0xFC39
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 117
 F103_1: # Flooded Great Tree
   - name: Exit from Flooded GT to GT
     type: objadd
@@ -2742,6 +3064,14 @@ D100: # Skyview
       posy: 300
       posz: -16960
       name: Tubo
+  - name: SV chest near boss door archipelago flag
+    type: objpatch
+    id: 0xFC19
+    layer: 0
+    room: 9
+    objtype: OBJS
+    object:
+      setscenefid: 84
 D101: # Ancient Cistern
   - name: remove stone tablet text
     type: objpatch
@@ -2927,6 +3257,30 @@ D101: # Ancient Cistern
       posy: 7569.609863
       posz: 1370
       name: Tubo
+  - name: AC chest in east part archipelago flag
+    type: objpatch
+    id: 0xFC00
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 98
+  - name: AC chest near vines archipelago flag
+    type: objpatch
+    id: 0xFC36
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 97
+  - name: AC chest behind the waterfall archipelago flag
+    type: objpatch
+    id: 0xFC1B
+    layer: 0
+    room: 3
+    objtype: OBJS
+    object:
+      setscenefid: 120
 F200: # Eldin main area
   - name: Layer override
     type: layeroverride
@@ -3499,6 +3853,38 @@ F200: # Eldin main area
       posy: 13800
       posz: -24700
       name: Tubo
+  - name: Chest behind bombable wall in first room archipelago flag
+    type: objpatch
+    id: 0x0410
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 126
+  - name: Chest after crawlspace archipelago flag
+    type: objpatch
+    id: 0x080E
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 110
+  - name: Chest behind bombable wall near cliff archipelago flag
+    type: objpatch
+    id: 0x1026
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 22 # 3x40 Repurposed for AP
+  - name: Chest behind bombable wall near volcano ascent archipelago flag
+    type: objpatch
+    id: 0x1436
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 68
 F202: # Boko Base
   - name: Remove Shiekah Stone from Boko Base
     type: objdelete
@@ -3922,6 +4308,38 @@ F210: # Mogma Turf
     layer: 0
     room: 0
     objtype: STAG
+  - name: Free fall chest archipelago flag
+    type: objpatch
+    id: 0x0010
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 108
+  - name: Chest behind bombable wall at entrance archipelago flag
+    type: objpatch
+    id: 0x0011
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 114
+  - name: Sand slide chest archipelago flag
+    type: objpatch
+    id: 0x0026
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 113
+  - name: Chest behind bombable wall in fire maze archipelago flag
+    type: objpatch
+    id: 0xFC1C
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 112
 F211: # Thrill Digger
   - name: Remove thrill digger entry CS
     type: objpatch
@@ -4020,6 +4438,7 @@ F201_2: # Boko Base Volcano Summit
       anglez: 37379 # >> 9 = chest flag 73
       id: 0xFC26
       name: TBox
+      setscenefid: 55 # AP flag
   - name: Force layer 2 when entering Fire Dragon's Lair
     type: objpatch
     index: 0
@@ -4058,6 +4477,14 @@ F201_2: # Boko Base Volcano Summit
       posy: 0
       posz: -810
       name: Tubo
+  - name: First chest in volcano summit archipelago flag
+    type: objpatch
+    id: 0xFC26
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 54
 F201_3: # FS entrance
   - name: Layer override
     type: layeroverride
@@ -4155,6 +4582,14 @@ F201_4: # Volcano Waterfall
       anglez: 0
       id: 0xFC30
       name: Bombf
+  - name: First chest in volcano summit archipelago flag
+    type: objpatch
+    id: 0xFC02
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 127
 D200: # ET
   - name: Ledd Text before Bomb Bag
     type: objdelete
@@ -4268,6 +4703,38 @@ D200: # ET
       posy: 6050
       posz: -13970
       name: Tubo
+  - name: ET vent chest archipelago flag
+    type: objpatch
+    id: 0x041E
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 63
+  - name: ET chest behind bombable rock archipelago flag
+    type: objpatch
+    id: 0x100A
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 62
+  - name: ET chest left of main room bridge archipelago flag
+    type: objpatch
+    id: 0x105F
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 61
+  - name: ET chest guarded by lizalfos archipelago flag
+    type: objpatch
+    id: 0x1446
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 60
 B200: # Boss Room
   - name: Layer override
     type: layeroverride
@@ -4354,6 +4821,22 @@ D201: # FS A
       posy: -550
       posz: -14240
       name: Tubo
+  - name: FS plats chest archipelago flag
+    type: objpatch
+    id: 0xFC6A
+    layer: 0
+    room: 3
+    objtype: OBJS
+    object:
+      setscenefid: 108
+  - name: FS chest in staircase room archipelago flag
+    type: objpatch
+    id: 0xFC27
+    layer: 0
+    room: 9
+    objtype: OBJS
+    object:
+      setscenefid: 17
 D201_1: # FS B
   - name: Clawshot Target for 2nd small Key
     type: objadd
@@ -4498,6 +4981,54 @@ D201_1: # FS B
       posy: -550
       posz: -14240
       name: Tubo
+  - name: FS chest in second room archipelago flag
+    type: objpatch
+    id: 0xFC37
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 113
+  - name: FS chest on balcony archipelago flag
+    type: objpatch
+    id: 0xFC08
+    layer: 0
+    room: 6
+    objtype: OBJS
+    object:
+      setscenefid: 126
+  - name: FS chest near first trapped mogma archipelago flag
+    type: objpatch
+    id: 0xFC10
+    layer: 0
+    room: 5
+    objtype: OBJS
+    object:
+      setscenefid: 123
+  - name: FS first chest in water fruit room archipelago flag
+    type: objpatch
+    id: 0xFC09
+    layer: 0
+    room: 7
+    objtype: OBJS
+    object:
+      setscenefid: 122
+  - name: FS second chest in water fruit room archipelago flag
+    type: objpatch
+    id: 0xFC0E
+    layer: 0
+    room: 7
+    objtype: OBJS
+    object:
+      setscenefid: 102
+  - name: FS rescue first trapped mogma archipelago flag
+    type: objpatch
+    id: 0xFC0F
+    layer: 0
+    room: 5
+    objtype: OBJS
+    object:
+      setscenefid: 100
 B201: # G2 fight
   - name: Layer override
     type: layeroverride
@@ -4529,6 +5060,7 @@ F300: # lanayru Main Area
     objtype: OBJS
     object:
       spawnscenefid: 30 # 0x1E
+      setscenefid: 48 # AP Flag
   - name: Chest on LMF
     type: objmove
     id: 0xFE12
@@ -4655,6 +5187,38 @@ F300: # lanayru Main Area
       posy: 218.9002533
       posz: 10200
       name: Tubo
+  - name: Chest near party wheel archipelago flag
+    type: objpatch
+    id: 0xFC01
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 43
+  - name: Chest on platform near fire node archipelago flag
+    type: objpatch
+    id: 0xFC61
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 42
+  - name: Chest on platform near lightning node archipelago flag
+    type: objpatch
+    id: 0xFC5B
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 41
+  - name: Chest near sand oasis archipelago flag
+    type: objpatch
+    id: 0xFC3E
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 72
 F300_1: # Lanayru Mine
   - name: Layer override
     type: layeroverride
@@ -4705,6 +5269,38 @@ F300_1: # Lanayru Mine
       posy: 2302.375
       posz: 35480
       name: Tubo
+  - name: Chest at first landing archipelago flag
+    type: objpatch
+    id: 0xFC28
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 47
+  - name: Chest near first timeshift stone archipelago flag
+    type: objpatch
+    id: 0xFC01
+    layer: 0
+    room: 1
+    objtype: OBJS
+    object:
+      setscenefid: 46
+  - name: Chest behind statue archipelago flag
+    type: objpatch
+    id: 0xFC14
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 45
+  - name: Chest at end of mine archipelago flag
+    type: objpatch
+    id: 0xFC0B
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 44
 F300_2: # Thunder node
   - name: extra Bomb flower
     type: objadd
@@ -4734,6 +5330,30 @@ F300_2: # Thunder node
     layer: 0
     room: 0
     objtype: OBJ
+  - name: LN first chest archipelago flag
+    type: objpatch
+    id: 0xFC13
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 107
+  - name: LN second chest archipelago flag
+    type: objpatch
+    id: 0xFC18
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 85
+  - name: LN raised chest near generator archipelago flag
+    type: objpatch
+    id: 0xFC1A
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 86
 F300_3: # Fire node
   - name: Fi text for generator
     type: objdelete
@@ -4765,6 +5385,46 @@ F300_3: # Fire node
       - posx: -1275.0
         posy: 240.0
         posz: -4150.0
+  - name: FN shortcut chest archipelago flag
+    type: objpatch
+    id: 0xFC18
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 82
+  - name: FN first small chest archipelago flag
+    type: objpatch
+    id: 0xFC0F
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 83
+  - name: FN second small chest archipelago flag
+    type: objpatch
+    id: 0xFC1B
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 110
+  - name: FN left ending chest archipelago flag
+    type: objpatch
+    id: 0xFC1C
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 125
+  - name: FN right ending chest archipelago flag
+    type: objpatch
+    id: 0xFC1D
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 127
 F300_4: # Temple of Time
   - name: Layer override
     type: layeroverride
@@ -5110,6 +5770,30 @@ F301_2: # inside Pirate Stronghold
     layer: 0
     room: 6
     objtype: STAG
+  - name: First chest archipelago flag
+    type: objpatch
+    id: 0xFC05
+    layer: 0
+    room: 4
+    objtype: OBJS
+    object:
+      setscenefid: 116
+  - name: Second chest archipelago flag
+    type: objpatch
+    id: 0xFC06
+    layer: 0
+    room: 5
+    objtype: OBJS
+    object:
+      setscenefid: 115
+  - name: Third chest archipelago flag
+    type: objpatch
+    id: 0xFC0C
+    layer: 0
+    room: 6
+    objtype: OBJS
+    object:
+      setscenefid: 114
 F301_3: # Skipper's Retreat
   - name: Text after intro
     type: objdelete
@@ -5154,6 +5838,30 @@ F301_3: # Skipper's Retreat
       posy: 50
       posz: 8550
       name: Tubo
+  - name: Chest after moblin archipelago flag
+    type: objpatch
+    id: 0xFC28
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 119
+  - name: Chest on top of cacti pillar archipelago flag
+    type: objpatch
+    id: 0xFC16
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 118
+  - name: Skydive chest archipelago flag
+    type: objpatch
+    id: 0xFC18
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 117
 F301_4: # Shipyard
   - name: Text after intro
     type: objdelete
@@ -5346,6 +6054,46 @@ D300: # LMF A
       posy: 0
       posz: 2180
       name: Tubo
+  - name: LMF chest behind bars archipelago flag
+    type: objpatch
+    id: 0xFC07
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 45
+  - name: LMF chest in first west room archipelago flag
+    type: objpatch
+    id: 0xFC10
+    layer: 0
+    room: 3
+    objtype: OBJS
+    object:
+      setscenefid: 42
+  - name: LMF chest in key locked room archipelago flag
+    type: objpatch
+    id: 0xFC16
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 41
+  - name: LMF raised chest in hop across boxes room archipelago flag
+    type: objpatch
+    id: 0xFC00
+    layer: 0
+    room: 4
+    objtype: OBJS
+    object:
+      setscenefid: 57
+  - name: LMF lower chest in hop across boxes room archipelago flag
+    type: objpatch
+    id: 0xFC23
+    layer: 0
+    room: 4
+    objtype: OBJS
+    object:
+      setscenefid: 49
 D300_1: # LMF B
   - name: Fi Text in front of boss door
     type: objdelete
@@ -5444,6 +6192,38 @@ D300_1: # LMF B
       posy: 1100
       posz: -22785
       name: Tubo
+  - name: LMF first chest in hub room archipelago flag
+    type: objpatch
+    id: 0xFC08
+    layer: 0
+    room: 5
+    objtype: OBJS
+    object:
+      setscenefid: 61
+  - name: LMF shortcut chest in main hub archipelago flag
+    type: objpatch
+    id: 0xFC5D
+    layer: 0
+    room: 5
+    objtype: OBJS
+    object:
+      setscenefid: 48
+  - name: LMF chest behind first crawlspace archipelago flag
+    type: objpatch
+    id: 0xFC03
+    layer: 0
+    room: 9
+    objtype: OBJS
+    object:
+      setscenefid: 55
+  - name: LMF chest in spike maze archipelago flag
+    type: objpatch
+    id: 0xFC3A
+    layer: 0
+    room: 7
+    objtype: OBJS
+    object:
+      setscenefid: 52
 D301: # Sandship A
   - name: extra Bomb flower
     type: objadd
@@ -5634,6 +6414,22 @@ D301: # Sandship A
       posy: -1600
       posz: 1690
       name: Tubo
+  - name: SSH chest before 4 door corridor archipelago flag
+    type: objpatch
+    id: 0xFC15
+    layer: 0
+    room: 3
+    objtype: OBJS
+    object:
+      setscenefid: 127
+  - name: SSH chest behind combination lock archipelago flag
+    type: objpatch
+    id: 0x2804
+    layer: 0
+    room: 10
+    objtype: OBJS
+    object:
+      setscenefid: 126
 D301_1: # Sandship B
   - name: Fi text before tentalus
     type: objdelete
@@ -6029,6 +6825,14 @@ F402: # Sealed Temple
       posy: 7599.990234
       posz: 10540
       name: Tubo
+  - name: Sealed temple chest archipelago flag
+    type: objpatch
+    id: 0xFC0D
+    layer: 0
+    room: 2
+    objtype: OBJS
+    object:
+      setscenefid: 87
 F401: # Sealed grounds Whirlpool
   - name: Layer override
     type: layeroverride

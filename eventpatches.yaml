@@ -2420,6 +2420,11 @@
       param2: 1
       next: -1
       param3: 2
+  - name: Skip setting scene flag 22 # Temporary solution bc i needed to repurpose one more scene flag for a AP chest
+    type: flowpatch
+    index: 349
+    flow:
+      next: -1
 301-MountainD1:
   - name: remove ghirahim text before scaldera
     type: flowpatch
@@ -2536,6 +2541,11 @@
       param2: 7
       next: -1
       param3: 7
+  - name: Skip setting mogma scene flags # Temporary solution bc i needed to repurpose two more scene flags for AP chests
+    type: flowpatch
+    index: 14
+    flow:
+      next: 12 # Frees up scene flags Cx10 and Dx10
 305-MountainF3:
   - name: Boko Base entry
     type: flowpatch
