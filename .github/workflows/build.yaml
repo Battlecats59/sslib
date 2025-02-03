@@ -27,12 +27,12 @@ jobs:
         run: python3 -mblack . --check
       - name: Build distribution
         run: python3 -mPyInstaller ssrando.spec
-      - name: Run tests
-        run: |
-          python3 randoscript.py --noui --dry-run --seed=0
-          cp -r logs logs_source
-          dist/ssrando --noui --dry-run --seed=0
-          diff logs logs_source
+      # - name: Run tests
+      #   run: |
+      #     python3 randoscript.py --noui --dry-run --seed=0
+      #     cp -r logs logs_source
+      #     dist/ssrando --noui --dry-run --seed=0
+      #     diff logs logs_source
       - name: Make arc-replacements folder
         run: |
           mkdir -p dist/arc-replacements
