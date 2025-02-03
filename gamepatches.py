@@ -110,7 +110,7 @@ DEFAULT_AREA = OrderedDict(
     angle=0,
     area_link=-1,
     unk3=0,
-    dummy=b"\xFF\xFF\xFF",
+    dummy=b"\xff\xff\xff",
 )
 
 DEFAULT_PATH = OrderedDict(
@@ -118,14 +118,14 @@ DEFAULT_PATH = OrderedDict(
     unk2=-1,
     pnt_start_idx=0,
     pnt_total_count=0,
-    unk3=b"\xFF\xFF\xFF\xFF\x00\xFF",
+    unk3=b"\xff\xff\xff\xff\x00\xff",
 )
 
 DEFAULT_PNT = OrderedDict(
     posx=0.0,
     posy=0.0,
     posz=0.0,
-    unk=b"\xFF\xFF\xFF\xFF",
+    unk=b"\xff\xff\xff\xff",
 )
 
 # cutscenes to use to set storyflags, sceneflags and itemflags
@@ -1329,7 +1329,8 @@ def get_patches_from_location_item_list(all_checks, filled_checks, chest_dowsing
                 objname = stage_match.group("objname")
                 objid = stage_match.group("objid")
                 oarc = item["oarc"]
-                if oarc:
+                # don't add arcs for TBox, they are supposed to be loaded just in time
+                if oarc and objname != "TBox":
                     if isinstance(oarc, list):
                         for o in oarc:
                             stageoarcs[(stage, layer)].add(o)

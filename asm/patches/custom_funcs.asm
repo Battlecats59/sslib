@@ -385,13 +385,34 @@ mflr r0
 stw r0, 0x14 (sp)
 stmw r29, 0x8 (sp)
 mr r29, r3
+
+; First, check Link's actionflags
+; If not on his feet, do not run the loop
+; Poor Link, no items for him
+lwz r5, LINK_PTR@sda21(r13)
+cmpwi r5, 0
+beq give_archipelago_item_end ; necessary so the game doesn't error on the first loading frame
+lwz r5, 0x364(r5)
+
+rlwinm r4, r5, 0x0, 0x0, 0x0 ; is Link on foot?
+cmpwi r4, 0
+beq give_archipelago_item_end ; if not on foot, branch past loop
+rlwinm r4, r5, 0x0, 0x15, 0x15 ; not in control
+cmpwi r4, 0
+bne give_archipelago_item_end
+
+; Basically, the functions above just make sure Link is in a valid state to receive items.
+; If not, the game will hold all of the items in an angry array of potential energy waiting
+; for Link to enter a valid state, then it will slam the player with all items to give.
+; The AP Client itself will also be checking Link's state before placing items in the array.
+
 lis r30, give_archipelago_item_array@ha
 addi r30, r30, give_archipelago_item_array@l
 li r31, 0
   
 give_archipelago_item_loop:
 ; If we've looped through the entire array, return
-cmpwi r31, num_give_archipelago_item_array_entries
+cmpwi r31, 0x1 ; num_give_archipelago_item_array_entries
 bge give_archipelago_item_end
 
 ; Load the item ID into r3
@@ -401,14 +422,45 @@ lbzx r3, r30, r31
 cmpwi r3, 0xFF
 beq give_archipelago_item_loop_end
 
-; Else, overwrite item ID with 0xFF
-li r4, 0xFF
-stbx r4, r30, r31
+; check if arcs are currently loading, so we don't increase the ref count too much
+li r4, 0x12
+lbzx r3, r30, r4
+cmpwi r3, 0xFF
+bne check_for_ap_arcs ; If item is currently loading, skip loading arcs
+lbzx r3, r30, r31
 
-; Else, branch to ItemGet
+; Load the arcs for the received item, item ID in r3
+; After loading arcs, reload the item ID into r3 for the giveItem function
+bl load_arcs_for_item
+li r4, 0x12
+lbzx r3, r30, r31
+stbx r3, r30, r4 ; store itemid in loading arc address
+
+check_for_ap_arcs:
+lbzx r5, r30, r31
+cmpw r3, r5
+bne give_archipelago_item_loop_end
+bl check_arcs_loaded
+cmpwi r3, 0 ; if arcs not loaded, branch away
+beq give_archipelago_item_loop_end
+lbzx r3, r30, r31
+
+; Branch to giveItem
 li r4, -1
 li r5, 0
 bl AcItem__giveItem
+
+; Reset item ID in memory by overwriting with 0xFF
+; Also reset the loading arc address to 0xFF
+lbzx r3, r30, r31
+li r5, 0xFF
+li r4, 0x12 ; loading arc address index
+stbx r5, r30, r31
+stbx r5, r30, r4
+
+; Reset register 5 to 0 and unload arcs
+li r5, 0
+bl unload_arcs_for_item
 
 give_archipelago_item_loop_end:
 ; Increment loop counter and continue
@@ -434,6 +486,12 @@ give_archipelago_item_equ:
 give_archipelago_item_array:
 .space num_give_archipelago_item_array_entries, 0xFF
 .align 2 ; Align to the next 4 bytes
+
+give_archipelago_expected_item_index:
+.space 0x2, 0x00 ; 2 bytes
+
+give_archipelago_expected_item_id:
+.space 0x2, 0xFF ; 2 bytes, only use 1
 
 .close
 

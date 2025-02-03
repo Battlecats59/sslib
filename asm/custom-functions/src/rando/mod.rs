@@ -28,6 +28,9 @@ use crate::{
     system::{button::*, math::*},
 };
 
+mod custom_actor;
+mod item_arc_loader;
+
 #[link_section = "data"]
 static mut IS_FILE_START: bool = false;
 
@@ -324,6 +327,7 @@ extern "C" fn get_item_arc_name(
     match item_id {
         214 => oarc_name = cstr!("Onp").as_ptr(),         // tadtone
         215 => oarc_name = cstr!("DesertRobot").as_ptr(), // scrapper
+        216 => oarc_name = cstr!("GetFruitB").as_ptr(),   // archipelago
         _ => oarc_name = vanilla_item_str,
     }
 
@@ -335,6 +339,7 @@ extern "C" fn get_item_model_name_ptr(item_id: u32) -> *const c_char {
     match item_id {
         214 => return cstr!("OnpB").as_ptr(),        // tadtone
         215 => return cstr!("DesertRobot").as_ptr(), // scrapper
+        216 => return cstr!("GetFruitB").as_ptr(),   // archipelago
         _ => return core::ptr::null(),
     }
 }
@@ -503,9 +508,12 @@ extern "C" fn get_glow_color(item_id: u32) -> u32 {
     4
 }
 
+#[link_section = "data"]
+#[no_mangle]
+static mut ITEM_ID: u16 = 0;
+
 #[no_mangle]
 extern "C" fn game_update_hook() -> u32 {
-    // This gets called everytime the game actor updates
     1
 }
 

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QThread, Signal
 
-from ssrando import Randomizer, StartupException
+from ssrando import ArchipelagoRandomizer, StartupException
 from extractmanager import ExtractManager
 
 
@@ -18,7 +18,10 @@ class RandomizerThread(QThread):
     canceled = False
 
     def __init__(
-        self, randomizer: Randomizer, extract_manager: ExtractManager, output_folder
+        self,
+        randomizer: ArchipelagoRandomizer,
+        extract_manager: ExtractManager,
+        output_folder,
     ):
         QThread.__init__(self)
 

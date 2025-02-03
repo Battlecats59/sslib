@@ -33,15 +33,13 @@ from PySide6.QtWidgets import (
 )
 from gui.components.color_button import ColorButton
 
-from gui.dialogs.tricks.tricks_dialog import TricksDialog
 from gui.dialogs.custom_theme.custom_theme_dialog import CustomThemeDialog
-from logic.constants import LOCATION_FILTER_TYPES
 
 from logic.logic_input import Areas
 from options import OPTIONS, Options
 from gui.dialogs.progressbar.progressdialog import ProgressDialog
 from gui.guithreads import RandomizerThread, ExtractSetupThread
-from ssrando import Randomizer, VERSION
+from ssrando import ArchipelagoRandomizer, VERSION
 from paths import RANDO_ROOT_PATH
 from gui.ui_randogui import Ui_MainWindow
 from yaml_files import checks
@@ -51,13 +49,6 @@ from extractmanager import ExtractManager
 import signal
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-LOGIC_MODE_TO_TRICKS_SETTING = {
-    "Glitchless": None,
-    "BiTless": "enabled-tricks-bitless",
-    "Glitched": "enabled-tricks-glitched",
-    "No Logic": None,
-}
 
 NEW_PRESET = "[New Preset]"
 DEFAULT_PRESETS_PATH = RANDO_ROOT_PATH / "gui" / "presets" / "default_presets.json"
@@ -102,12 +93,6 @@ class RandoGUI(QMainWindow):
         self.areas = areas
         self.options = options
         self.settings_path = "settings.txt"
-        if os.path.isfile(self.settings_path):
-            with open(self.settings_path) as f:
-                try:
-                    self.options.update_from_dict(json.load(f))
-                except Exception as e:
-                    print("couldn't update from saved settings!", e)
 
         self.option_map = {}
         for option_key, option in OPTIONS.items():
@@ -190,81 +175,6 @@ class RandoGUI(QMainWindow):
 
         self.ui.reset_font_button.clicked.connect(self.reset_font)
 
-        # setup misc controls
-        self.ui.edit_tricks.clicked.connect(self.launch_tricks_dialog)
-        self.logic_mode_changed()
-
-        # Exlcuded Locations UI
-        self.exclude_locations_pair = ListPair(
-            self.ui.excluded_locations,
-            self.ui.included_locations,
-            "excluded-locations",
-            self.ui.exclude_location,
-            self.ui.include_location,
-            checks,
-        )
-        self.exclude_locations_pair.listPairChanged.connect(self.update_settings)
-
-        self.ui.excluded_free_search.textChanged.connect(
-            self.exclude_locations_pair.update_option_list_filter
-        )
-        self.ui.included_free_search.textChanged.connect(
-            self.exclude_locations_pair.update_non_option_list_filter
-        )
-
-        self.ui.include_category_filters.addItem("All")
-        self.ui.include_category_filters.addItems(LOCATION_FILTER_TYPES)
-        self.ui.include_category_filters.currentTextChanged.connect(
-            self.exclude_locations_pair.update_non_option_list_type_filter
-        )
-
-        self.ui.exclude_category_filters.addItem("All")
-        self.ui.exclude_category_filters.addItems(LOCATION_FILTER_TYPES)
-        self.ui.exclude_category_filters.currentTextChanged.connect(
-            self.exclude_locations_pair.update_option_list_type_filter
-        )
-
-        # Starting Items UI
-        self.starting_items_pair = ListPair(
-            self.ui.starting_items,
-            self.ui.randomized_items,
-            "starting-items",
-            self.ui.start_with_item,
-            self.ui.randomize_item,
-        )
-        self.starting_items_pair.listPairChanged.connect(self.update_settings)
-
-        self.ui.starting_items_free_search.textChanged.connect(
-            self.starting_items_pair.update_option_list_filter
-        )
-        self.ui.randomized_items_free_search.textChanged.connect(
-            self.starting_items_pair.update_non_option_list_filter
-        )
-
-        # setup presets
-        self.default_presets = {}
-        self.user_presets = {}
-        self.user_presets_path = Path("presets.txt")
-        self.setup_presets(
-            self.default_presets,
-            self.user_presets,
-            self.ui.presets_list,
-            DEFAULT_PRESETS_PATH,
-            self.user_presets_path,
-        )
-        self.ui.presets_list.currentIndexChanged.connect(self.preset_selection_changed)
-        self.ui.load_preset.clicked.connect(self.load_preset)
-        self.ui.save_preset.clicked.connect(self.save_preset)
-        self.ui.delete_preset.clicked.connect(self.delete_preset)
-        self.preset_selection_changed()
-
-        # initialize color presets - setup_presets will be run each time a model pack is loaded, including at initialization.
-        self.default_color_presets = {}
-        self.user_color_presets = {}
-        # self.setup_presets(self.default_color_presets, self.user_color_presets, self.ui.color_presets_list, DEFAULT_LINK_PRESETS_PATH, LINK_PLAYER_PRESETS_PATH)
-        self.ui.color_presets_list.currentIndexChanged.connect(
-            self.color_preset_selection_changed
-        )
         self.ui.button_load_color_preset.clicked.connect(self.load_color_preset)
         self.ui.button_save_color_preset.clicked.connect(self.save_color_preset)
         self.ui.button_delete_color_preset.clicked.connect(self.delete_color_preset)
@@ -314,24 +224,12 @@ class RandoGUI(QMainWindow):
         self.ui.option_model_type_select.addItem("Player")
         self.ui.option_model_type_select.addItem("Loftwing")
 
-        # hide currently unsupported options to make this version viable for public use
-        getattr(self.ui, "label_for_option_got_starting_state").setVisible(False)
-        getattr(self.ui, "option_got_starting_state").setVisible(False)
-        getattr(self.ui, "label_for_option_got_dungeon_requirement").setVisible(False)
-        getattr(self.ui, "option_got_dungeon_requirement").setVisible(False)
-
         # hide supporting elements
-        getattr(self.ui, "option_plando").setVisible(False)
-        getattr(self.ui, "plando_file").setVisible(False)
-        getattr(self.ui, "plando_file_browse").setVisible(False)
         getattr(self.ui, "option_json_spoiler").setVisible(False)
 
         self.ui.ouput_folder_browse_button.clicked.connect(self.browse_for_output_dir)
+        self.ui.apssr_file_browse.clicked.connect(self.browse_for_apssr)
         self.ui.randomize_button.clicked.connect(self.randomize)
-        self.ui.permalink.textChanged.connect(self.permalink_updated)
-        self.ui.seed.textChanged.connect(self.update_settings)
-        self.ui.seed_button.clicked.connect(self.gen_new_seed)
-        self.ui.copy_permalink_button.clicked.connect(self.copy_permalink_to_clipboard)
         self.update_ui_for_settings()
         self.update_font()
         self.update_settings()
@@ -374,7 +272,7 @@ class RandoGUI(QMainWindow):
             self.ask_for_clean_iso()
             return
         # make sure user can't mess with the options now
-        self.rando = Randomizer(self.areas, self.options.copy())
+        self.rando = ArchipelagoRandomizer(self.areas, self.options.copy())
 
         if dry_run:
             extra_steps = 1  # done
@@ -490,117 +388,58 @@ class RandoGUI(QMainWindow):
         self.ui.output_folder.setText(output_folder)
         self.update_settings()
 
+    def browse_for_apssr(self):
+        if self.options["apssr"] and os.path.isfile(self.options["apssr"]):
+            default_dir = os.path.dirname(self.options["apssr"])
+        else:
+            default_dir = None
+
+        apssr_file = QFileDialog.getOpenFileName(
+            self,
+            "Select APSSR file",
+            None,
+            "Skyward Sword Archipelago World (*.apssr)",
+        )
+        if not apssr_file:
+            return
+        self.ui.apssr_file.setText(apssr_file[0])
+        self.update_settings()
+
     def update_ui_for_settings(self):
         current_settings = self.options.copy()
         self.ui.output_folder.setText(str(self.options["output-folder"]))
-        self.ui.seed.setText(str(self.options["seed"]))
+        self.ui.apssr_file.setText(str(self.options["apssr"]))
         for option_key, option in OPTIONS.items():
-            if option["name"] != "Seed":
-                ui_name = option.get("ui", None)
-                if not ui_name:
-                    continue
-                widget = getattr(self.ui, ui_name)
-                if isinstance(widget, QAbstractButton):
-                    widget.setChecked(current_settings[option_key])
-                elif isinstance(widget, QComboBox):
-                    if option["name"] in ("Font Family", "Selected Model Pack"):
-                        widget.setCurrentIndex(
-                            widget.findText(current_settings[option_key])
-                        )
-                    else:
-                        widget.setCurrentIndex(
-                            option["choices"].index(current_settings[option_key])
-                        )
-                elif isinstance(widget, QListView):
-                    pass
-                elif isinstance(widget, QSpinBox):
-                    widget.setValue(current_settings[option_key])
-                    getattr(self.ui, f"label_for_{ui_name}").installEventFilter(self)
-                    # Update health counter label.
-                    if ui_name in (
-                        "option_starting_heart_containers",
-                        "option_starting_heart_pieces",
-                    ):
-                        heart_string = getattr(
-                            self.ui, "current_starting_health_counter"
-                        )
-                        heart_containers = current_settings["starting-heart-containers"]
-                        heart_pieces = current_settings["starting-heart-pieces"]
-                        health = 24 + heart_containers * 4 + heart_pieces
-                        health_string = str(health // 4) + " hearts"
-                        if health % 4 == 1:
-                            health_string += " and 1 piece"
-                        elif health % 4 > 1:
-                            health_string += " and " + str(health % 4) + " pieces"
-                        heart_string.setText(health_string)
-        # Update tricks.
-        if (
-            tricks_cmd := LOGIC_MODE_TO_TRICKS_SETTING[self.options["logic-mode"]]
-        ) is not None:
-            self.enabled_tricks = current_settings[tricks_cmd]
-
-        # Update locations.
-        self.exclude_locations_pair.update(current_settings["excluded-locations"])
-
-        # Update starting items.
-        self.starting_items_pair.update(current_settings["starting-items"])
-
-        self.ui.permalink.setText(current_settings.get_permalink())
-
-    def save_settings(self):
-        with open(self.settings_path, "w") as f:
-            json.dump(self.options.to_dict(), f)
+            ui_name = option.get("ui", None)
+            if not ui_name:
+                continue
+            widget = getattr(self.ui, ui_name)
+            if isinstance(widget, QAbstractButton):
+                widget.setChecked(current_settings[option_key])
+            elif isinstance(widget, QComboBox):
+                if option["name"] in ("Font Family", "Selected Model Pack"):
+                    widget.setCurrentIndex(
+                        widget.findText(current_settings[option_key])
+                    )
+                else:
+                    widget.setCurrentIndex(
+                        option["choices"].index(current_settings[option_key])
+                    )
+            elif isinstance(widget, QListView):
+                pass
+            elif isinstance(widget, QSpinBox):
+                widget.setValue(current_settings[option_key])
+                getattr(self.ui, f"label_for_{ui_name}").installEventFilter(self)
 
     def update_settings(self):
         self.options.set_option("output-folder", self.ui.output_folder.text())
-        try:
-            self.options.set_option("seed", int(self.ui.seed.text()))
-        except ValueError:
-            if self.ui.seed.text() == "":
-                self.options.set_option("seed", -1)
-            else:
-                # TODO: give an error dialog or some sort of error message that the seed is invalid
-                pass
+        self.options.set_option("apssr", self.ui.apssr_file.text())
 
         for option_command, option in OPTIONS.items():
-            if option["name"] != "Seed" and "Enabled Tricks" not in option["name"]:
-                ui_name = option.get("ui", None)
-                if not ui_name:
-                    continue
-                self.options.set_option(option_command, self.get_option_value(ui_name))
-
-        # handle tricks
-        logic_mode = getattr(self.ui, "option_logic_mode").currentText()
-        if "Glitchless" in logic_mode:
-            self.options.set_option("enabled-tricks-bitless", [])
-            self.options.set_option("enabled-tricks-glitched", [])
-        elif "BiTless" in logic_mode:
-            self.options.set_option("enabled-tricks-bitless", self.enabled_tricks)
-            self.options.set_option("enabled-tricks-glitched", [])
-        elif "Glitched" in logic_mode:
-            self.options.set_option("enabled-tricks-bitless", [])
-            self.options.set_option("enabled-tricks-glitched", self.enabled_tricks)
-        else:  # this should only be no logic
-            self.options.set_option("enabled-tricks-bitless", [])
-            self.options.set_option("enabled-tricks-glitched", [])
-
-        self.options.set_option(
-            "excluded-locations", self.exclude_locations_pair.get_added()
-        )
-
-        self.options.set_option("starting-items", self.starting_items_pair.get_added())
-
-        self.save_settings()
-        self.ui.permalink.setText(self.options.get_permalink())
-
-    def logic_mode_changed(self):
-        value = getattr(self.ui, "option_logic_mode").currentText()
-        if (tricks_cmd := LOGIC_MODE_TO_TRICKS_SETTING[value]) is not None:
-            self.enabled_tricks = self.options[tricks_cmd]
-            self.enable_trick_interface()
-        else:  # Glitchless and No Logic
-            self.disable_trick_interface()
-            self.enabled_tricks = []
+            ui_name = option.get("ui", None)
+            if not ui_name:
+                continue
+            self.options.set_option(option_command, self.get_option_value(ui_name))
 
     def toggle_sharp_corners(self, state: int):
         self.options.set_option("use-sharp-corners", bool(state))
@@ -679,12 +518,6 @@ class RandoGUI(QMainWindow):
         self.ui.option_font_family.setCurrentIndex(font_index)
         self.ui.option_font_size.setValue(OPTIONS["font-size"]["default"])
 
-    def enable_trick_interface(self):
-        getattr(self.ui, "edit_tricks").setEnabled(True)
-
-    def disable_trick_interface(self):
-        getattr(self.ui, "edit_tricks").setEnabled(False)
-
     def get_option_value(self, option_name: str) -> bool | str | int | list:
         widget = getattr(self.ui, option_name)
         if isinstance(widget, QCheckBox) or isinstance(widget, QRadioButton):
@@ -702,84 +535,6 @@ class RandoGUI(QMainWindow):
             return items
         else:
             print("Option widget is invalid: %s" % option_name)
-
-    def load_preset(self):
-        preset = self.ui.presets_list.currentText()
-        # prevent loading the new preset option
-        if preset == NEW_PRESET:
-            return
-        if preset in self.default_presets:
-            self.options.update_from_dict(self.default_presets[preset])
-        else:
-            self.options.update_from_dict(self.user_presets[preset])
-        self.update_ui_for_settings()
-        self.update_settings()
-
-    def save_preset(self):
-        preset = self.ui.presets_list.currentText()
-        if preset in self.default_presets:
-            self.error_msg = QErrorMessage()
-            self.error_msg.showMessage(
-                "Default presets are protected and cannot be updated"
-            )
-            return
-        if preset == NEW_PRESET:
-            (name, ok) = QInputDialog.getText(
-                self,
-                "Create New Preset",
-                "Enter a name for the new preset",
-                QLineEdit.Normal,
-            )
-            if ok:
-                if name in self.default_presets or name in self.user_presets:
-                    self.error_msg = QErrorMessage()
-                    self.error_msg.showMessage("Cannot have duplicate preset names")
-                    return
-                elif name == NEW_PRESET:
-                    self.error_msg = QErrorMessage()
-                    self.error_msg.showMessage("Invalid preset name")
-                    return
-                else:
-                    preset = name
-                    self.ui.presets_list.addItem(preset)
-                    self.ui.presets_list.setCurrentText(preset)
-        self.user_presets[preset] = self.options.to_dict(
-            True,
-            [
-                "no-spoiler-log",
-            ],
-        )
-        self.write_presets(self.user_presets_path, self.user_presets)
-
-    def preset_selection_changed(self):
-        preset = self.ui.presets_list.currentText()
-        if preset == NEW_PRESET:
-            self.ui.load_preset.setDisabled(True)
-            self.ui.save_preset.setDisabled(False)
-            self.ui.delete_preset.setDisabled(True)
-        elif preset in self.default_presets:
-            self.ui.load_preset.setDisabled(False)
-            self.ui.save_preset.setDisabled(True)
-            self.ui.delete_preset.setDisabled(True)
-        else:
-            self.ui.load_preset.setDisabled(False)
-            self.ui.save_preset.setDisabled(False)
-            self.ui.delete_preset.setDisabled(False)
-
-    def delete_preset(self):
-        preset = self.ui.presets_list.currentText()
-        # protect from deleting default presets
-        if preset == NEW_PRESET or preset in self.default_presets:
-            self.error_msg = QErrorMessage()
-            self.error_msg.showMessage(
-                "Default presets are protected and cannot be deleted"
-            )
-            return
-        index = self.ui.presets_list.currentIndex()
-        del self.user_presets[preset]
-        self.ui.presets_list.removeItem(index)
-        self.ui.presets_list.setCurrentIndex(0)
-        self.write_presets(self.user_presets_path, self.user_presets)
 
     def load_color_preset(self):
         preset = self.ui.color_presets_list.currentText()
@@ -943,16 +698,6 @@ class RandoGUI(QMainWindow):
         with open(presets_path, "w") as f:
             json.dump(presets_dict, f)
 
-    def launch_tricks_dialog(self):
-        dialog = TricksDialog(
-            self.enabled_tricks,
-            LOGIC_MODE_TO_TRICKS_SETTING[self.options["logic-mode"]],
-            self.styleSheet(),
-        )
-        if dialog.exec():
-            self.enabled_tricks = dialog.getTrickValues()
-            self.update_settings()
-
     # Custom model customisation funcs
 
     def change_model_type(self, index: int):
@@ -1005,12 +750,10 @@ class RandoGUI(QMainWindow):
                 else:
                     self.ui.option_tunic_swap.setEnabled(True)
 
-                self.save_settings()
             case "Loftwing":
                 self.options.set_option(
                     "selected-loftwing-model-pack", self.current_model_pack
                 )
-                self.save_settings()
 
         self.update_model_customisation()
         # clear the presets list to avoid weird interactions when switching models
@@ -1324,23 +1067,6 @@ class RandoGUI(QMainWindow):
         else:
             self.ui.option_description.setText(new_description)
             self.ui.option_description.setStyleSheet("")
-
-    def permalink_updated(self):
-        try:
-            self.options.update_from_permalink(self.ui.permalink.text())
-            self.save_settings()
-        except ValueError as e:
-            # Ignore errors from faultly permalinks, with updating ui it gets reset anyways
-            print(e)
-        except IndexError as e:
-            print(e)
-        self.update_ui_for_settings()
-
-    def copy_permalink_to_clipboard(self):
-        pyclip.copy(self.ui.permalink.text())
-
-    def gen_new_seed(self):
-        self.ui.seed.setText(str(random.randrange(0, 1_000_000)))
 
 
 def run_main_gui(areas: Areas, options: Options):

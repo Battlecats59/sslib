@@ -38,9 +38,10 @@ def shuffle_indices(self, list, indices=None):
 
 
 class Rando:
-    def __init__(self, areas: Areas, options: Options, rng: random.Random):
+    def __init__(self, areas: Areas, options: Options, rng: random.Random, ap: bool):
         self.options = options
         self.rng = rng
+        self.ap = ap
 
         self.areas = areas
         self.short_to_full = areas.short_to_full
@@ -111,7 +112,11 @@ class Rando:
 
         self.rando_algo = FillAlgorithm(logic, self.rng, self.randosettings)
 
-        self.randomised = False
+        if ap:
+            self.randomised = True
+            # Thanks to our lovely apssr plando file, we can assume the game is "randomized" already
+        else:
+            self.randomised = False
 
         def fun():
             if not self.randomised:

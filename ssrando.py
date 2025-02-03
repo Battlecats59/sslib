@@ -18,6 +18,7 @@ from logic.logic_input import Areas
 from logic.placement_file import PlacementFile
 import SpoilerLog
 
+from archipelago import Archipelago
 from gamepatches import GamePatcher, GAMEPATCH_TOTAL_STEP_COUNT
 from paths import CUSTOM_HINT_DISTRIBUTION_PATH, RANDO_ROOT_PATH, IS_RUNNING_FROM_SOURCE
 from options import OPTIONS, Options
@@ -83,6 +84,141 @@ def calculate_rando_hash(seed: int, options: Options):
     return " ".join(hash_random.choice(names) for _ in range(3))
 
 
+class ArchipelagoRandomizer(BaseRandomizer):
+    def __init__(
+        self, areas: Areas, options: Options, progress_callback=dummy_progress_callback
+    ):
+        super().__init__(progress_callback)
+        self.archipelago = Archipelago(options["apssr"])
+
+        self.options = options
+        self.areas = areas
+        self.dry_run = self.options["dry-run"]
+        self.seed = self.archipelago.randoseed
+        self.rng = random.Random(self.seed)
+        self.placement_file = self.archipelago.fill_placement_file(
+            self.options, self.areas, self.rng
+        )
+
+        self.options.set_option("seed", self.seed)
+        self.no_logs = self.options["no-spoiler-log"]
+        self.randomizer_hash = self.placement_file.hash_str
+        print("Seed: " + str(self.seed))
+        print("Hash: " + self.randomizer_hash)
+
+        self.rando = Rando(self.areas, self.options, self.rng, ap=True)
+        self.logic = self.rando.extract_hint_logic()
+
+        self.placement_file.start_entrance = self.logic.randomized_start_entrance
+        self.placement_file.start_statues = self.logic.randomized_start_statues
+        self.placement_file.puzzles = self.logic.puzzles
+        self.placement_file.hash_str = self.randomizer_hash
+
+        del self.rando
+
+    def check_valid_directory_setup(self):
+        # catch common errors with directory setup
+        if not self.actual_extract_path.is_dir():
+            raise StartupException(
+                "ERROR: directory actual-extract doesn't exist! Make sure you have the ISO extracted into that directory."
+            )
+        if not self.modified_extract_path.is_dir():
+            raise StartupException(
+                "ERROR: directory modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
+            )
+        if not (self.actual_extract_path / "DATA").is_dir():
+            raise StartupException(
+                "ERROR: directory actual-extract doesn't contain a DATA directory! Make sure you have the ISO properly extracted into actual-extract."
+            )
+        if not (self.modified_extract_path / "DATA").is_dir():
+            raise StartupException(
+                "ERROR: directory 'DATA' in modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
+            )
+        if not (
+            self.modified_extract_path
+            / "DATA"
+            / "files"
+            / "COPYDATE_CODE_2011-09-28_153155"
+        ).exists():
+            raise StartupException(
+                "ERROR: the randomizer only supports NTSC-U 1.00 (North American)."
+            )
+
+    @cached_property
+    def get_total_progress_steps(self):
+        if self.dry_run:
+            return 1
+        else:
+            return GAMEPATCH_TOTAL_STEP_COUNT + 1
+
+    def set_progress_callback(self, progress_callback: Callable[[str], None]):
+        self.progress_callback = progress_callback
+
+    def randomize(self):
+        if self.no_logs:
+            self.progress_callback("writing anti spoiler log...")
+        else:
+            self.progress_callback("writing spoiler log...")
+        plcmt_file = self.placement_file
+        if self.options["out-placement-file"] and not self.no_logs:
+            (self.log_file_path / f"ap_placement_file_{self.seed}.json").write_text(
+                plcmt_file.to_json_str()
+            )
+
+        anti = "Anti " if self.no_logs else ""
+        ext = "json" if self.options["json"] else "txt"
+        log_address = self.log_file_path / (
+            f"AP P{self.archipelago.player} SS Random {self.seed} - {anti}Spoiler Log.{ext}"
+        )
+
+        if self.options["json"]:
+            dump = SpoilerLog.dump_json(
+                self.placement_file.options,
+                hash=self.randomizer_hash,
+                item_locations=self.placement_file.item_locations,
+                hints=self.placement_file.hints,
+                required_dungeons=self.placement_file.required_dungeons,
+                randomized_dungeon_entrance=self.placement_file.dungeon_connections,
+                randomized_trial_entrance=self.placement_file.trial_connections,
+                randomized_start_entrance=self.placement_file.start_entrance,
+                randomized_start_statues=self.placement_file.start_statues,
+                puzzles=self.placement_file.puzzles,
+            )
+            with log_address.open("w") as f:
+                json.dump(dump, f, indent=2)
+        else:
+            with log_address.open("w") as f:
+                SpoilerLog.write(
+                    f,
+                    self.placement_file.options,
+                    self.areas,
+                    hash=self.randomizer_hash,
+                    item_locations=self.placement_file.item_locations,
+                    starting_items=self.placement_file.starting_items,
+                    hints=self.placement_file.hints,
+                    required_dungeons=self.placement_file.required_dungeons,
+                    randomized_dungeon_entrance=self.placement_file.dungeon_connections,
+                    randomized_trial_entrance=self.placement_file.trial_connections,
+                    randomized_start_entrance=self.placement_file.start_entrance,
+                    randomized_start_statues=self.placement_file.start_statues,
+                    puzzles=self.placement_file.puzzles,
+                )
+
+        if not self.dry_run:
+            GamePatcher(
+                self.areas,
+                self.placement_file.options,
+                self.progress_callback,
+                self.actual_extract_path,
+                self.rando_root_path,
+                self.exe_root_path,
+                self.modified_extract_path,
+                self.oarc_cache_path,
+                self.arc_replacement_path,
+                self.placement_file,
+            ).do_all_gamepatches()
+
+
 class Randomizer(BaseRandomizer):
     def __init__(
         self, areas: Areas, options: Options, progress_callback=dummy_progress_callback
@@ -103,7 +239,7 @@ class Randomizer(BaseRandomizer):
         if self.no_logs:
             for _ in range(100):
                 self.rng.random()
-        self.rando = Rando(self.areas, self.options, self.rng)
+        self.rando = Rando(self.areas, self.options, self.rng, ap=False)
         self.excluded_locations = self.options["excluded-locations"]
         self.dry_run = bool(self.options["dry-run"])
         self.randomizer_hash = calculate_rando_hash(self.seed, self.options)

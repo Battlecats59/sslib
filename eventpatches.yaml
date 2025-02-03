@@ -61,6 +61,23 @@
     index: 93
     text: "Travel to the world of the past and defeat the\nrevived <r<Demise>>."
 003-ItemGet:
+  - name: Archipelago Entry
+    type: entryadd
+    entry:
+      name: "003_216"
+      value: Show Archipelago Item Get Text
+  - name: Archipelago Item Get Text
+    type: textadd
+    unk1: 5
+    unk2: 1
+    text: "You found an <y<Archipelago>> item!"
+  - name: Show Archipelago Item Get Text
+    type: flowadd
+    flow:
+      type: type1
+      next: -1
+      param3: 3
+      param4: Archipelago Item Get Text
   - name: Scrapper Entry
     type: entryadd
     entry:

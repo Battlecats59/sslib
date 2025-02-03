@@ -556,3 +556,8 @@
   oarc: DesertRobot
   getarcname: DesertRobot
   getmodelname: DesertRobot
+- id: 216
+  name: Archipelago
+  oarc: GetFruitB
+  getarcname: GetFruitB
+  getmodelname: GetFruitB
