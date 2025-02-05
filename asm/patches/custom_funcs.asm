@@ -642,19 +642,8 @@ check_needs_custom_storyflag_subtype:
 ;           || i == 25
 ;           || i == 27;
 ;}
-addi r9,r4,-24
-cmplwi r9,1
-ble lbl_21
-addi r9,r4,-17
-cmplwi r9,1
-ble lbl_21
-xori r5,r4,27
-cntlzw r5,r5
-srwi r5,r5,5
-b lbl_end
-lbl_21:
-li r5,1
-lbl_end:
+; For AP, we want all items to set storyflags, so just return true for all items
+li r5, 1
 cmpwi r5, 1
 blr
 
