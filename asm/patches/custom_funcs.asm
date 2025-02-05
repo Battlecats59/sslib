@@ -387,16 +387,18 @@ stmw r29, 0x8 (sp)
 mr r29, r3
 
 ; First, check Link's actionflags
-; If not on his feet, do not run the loop
+; If not on his feet or in water, do not run the loop
 ; Poor Link, no items for him
 lwz r5, LINK_PTR@sda21(r13)
 cmpwi r5, 0
 beq give_archipelago_item_end ; necessary so the game doesn't error on the first loading frame
 lwz r5, 0x364(r5)
 
-rlwinm r4, r5, 0x0, 0x0, 0x0 ; is Link on foot?
-cmpwi r4, 0
-beq give_archipelago_item_end ; if not on foot, branch past loop
+rlwinm r3, r5, 0x0, 0x3, 0x3 ; is Link on foot?
+rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
+or r3, r3, r4
+cmpwi r3, 0
+beq give_archipelago_item_end ; if not on foot or in water, branch past loop
 rlwinm r4, r5, 0x0, 0x15, 0x15 ; not in control
 cmpwi r4, 0
 bne give_archipelago_item_end
@@ -486,9 +488,6 @@ give_archipelago_item_equ:
 give_archipelago_item_array:
 .space num_give_archipelago_item_array_entries, 0xFF
 .align 2 ; Align to the next 4 bytes
-
-give_archipelago_expected_item_index:
-.space 0x2, 0x00 ; 2 bytes
 
 give_archipelago_expected_item_id:
 .space 0x2, 0xFF ; 2 bytes, only use 1

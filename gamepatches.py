@@ -1904,7 +1904,7 @@ class GamePatcher:
                     location.replace("Beedle", "Beedle's Shop")
                 ]
                 ap_player = self.archipelago.all_players[ap_item["player"] - 1]
-                sold_item_text = f"{ap_player}'s <y<{ap_item["name"]}>>"
+                sold_item_text = f"{ap_player}'s <y<{ap_item['name']}>>"
             else:
                 sold_item_text = f"a <y<{sold_item}>>"
             normal_text = (
@@ -2273,9 +2273,11 @@ class GamePatcher:
                     dungeon_events,
                 )
             )
-            required_dungeon_storyflag_event["flow"]["param2"] = (
-                REQUIRED_DUNGEON_STORYFLAGS[i]
-            )  # param2 is storyflag of event
+            required_dungeon_storyflag_event["flow"][
+                "param2"
+            ] = REQUIRED_DUNGEON_STORYFLAGS[
+                i
+            ]  # param2 is storyflag of event
 
         required_dungeon_count = len(self.placement_file.required_dungeons)
         # set flags for unrequired dungeons beforehand

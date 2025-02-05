@@ -177,6 +177,7 @@ version-with-git.txt
 
 # settings save file
 settings.txt
+apsettings.txt
 
 # presets save file
 presets.txt
