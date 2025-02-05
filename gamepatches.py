@@ -1899,7 +1899,7 @@ class GamePatcher:
                 self.areas.short_to_full(location)
             ]
             sold_item = strip_item_number(sold_item)
-            if sold_item == "Archipelago":
+            if "Archipelago" in sold_item:
                 ap_item = self.archipelago.locations[
                     location.replace("Beedle", "Beedle's Shop")
                 ]
