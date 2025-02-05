@@ -1909,7 +1909,7 @@ class GamePatcher:
                 sold_item_text = f"a <y<{sold_item}>>"
             normal_text = (
                 break_lines(
-                    f"That there is <y<{sold_item_text}>>. "
+                    f"That there is {sold_item_text}. "
                     f"I'm selling it for only <r<{normal_price}>> rupees! "
                     f"Want to buy it?\n"
                 )
