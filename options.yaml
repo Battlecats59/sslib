@@ -313,8 +313,8 @@
   choices:
     - Removed
     - Vanilla
-    - Own Dungeon - Restricted
-    - Own Dungeon - Unrestricted
+    - Own Dungeon
+    - Own Dungeon - Any World
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
@@ -331,7 +331,8 @@
   bits: 3
   choices:
     - Vanilla
-    - Own Dungeon - Restricted
+    - Own Dungeon
+    - Own Dungeon - Any World
     # - Own Dungeon - Unrestricted
     - Lanayru Caves Key Only
     # - Overworld Only
@@ -351,6 +352,7 @@
   choices:
     - Vanilla
     - Own Dungeon
+    - Own Dungeon - Any World
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
