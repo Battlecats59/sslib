@@ -2507,21 +2507,21 @@ class GamePatcher:
 
     def add_impa_hint(self):
         # Skip over Impa SoT hint if SoT is a starting item.
-        if ITEM_FLAGS[STONE_OF_TRIALS] in self.startitemflags:
+        if ITEM_FLAGS[STONE_OF_TRIALS] in self.startitemflags or self.archipelago.impa_hint is None:
             return
 
-        loc = {v: k for k, v in self.placement_file.item_locations.items()}[
-            STONE_OF_TRIALS
-        ]
-        region = self.areas.checks[loc]["hint_region"]
+        sot_loc_region, sot_loc_world = self.archipelago.impa_hint
         self.eventpatches["502-CenterFieldBack"].append(
             {
                 "name": "Past Impa SoT Hint",
                 "type": "textpatch",
                 "index": 6,
-                "text": break_lines(
-                    f"Do not fear for <b<Zelda>>. I will watch over her here. Go now to "
-                    f"<b<{region}>>. The <r<item you need to fulfill your destiny>> is there."
+                "text": (
+                    f"Do not fear for <b<Zelda>>. I will watch over her here.\n\n\n\n" +
+                    break_lines(
+                        f"The <r<item you need to fulfill your destiny>> can be obtained by "
+                        f"<b<{sot_loc_world}>> upon traveling to <r<{sot_loc_region}>>. "
+                    )
                 ),
             }
         )

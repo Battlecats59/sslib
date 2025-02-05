@@ -31,6 +31,7 @@ class Archipelago:
         self.dungeons: list[str] = apdata["Required Dungeons"]
         self.locations: dict[str, dict] = apdata["Locations"]
         self.hints: dict[str, list] = apdata["Hints"]
+        self.impa_hint: tuple[str, str] | None = apdata["SoT Location"]
         self.dungeon_connections: dict[str, str] = apdata["Dungeon Entrances"]
         self.trial_connections: dict[str, str] = apdata["Trial Entrances"]
 
@@ -155,7 +156,6 @@ UNTOUCHED_OPTIONS = [
 ]
 
 FORCED_OPTIONS = {
-    "impa-sot-hint": False,
     "logic-mode": "BiTless",
     "enabled-tricks-bitless": [],
     "enabled-tricks-glitched": [],
