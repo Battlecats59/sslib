@@ -181,7 +181,28 @@ pub fn get_item_arc_names_for_item(item_id: u16) -> ArrayVec<*const c_char, 2> {
     match item_id {
         214 => return single_arrayvec(cstr::cstr!("Onp").as_ptr()), // tadtone
         215 => return single_arrayvec(cstr::cstr!("DesertRobot").as_ptr()), // scrapper
-        216 => return single_arrayvec(cstr::cstr!("GetFruitB").as_ptr()), // ap item
+        216 => return single_arrayvec(cstr::cstr!("GetKobunALetter").as_ptr()), // ap item
+        217 => return single_arrayvec(cstr::cstr!("GetSwordA").as_ptr()), // ap sword
+        218 => return single_arrayvec(cstr::cstr!("GetHarp").as_ptr()), // ap harp
+        219 => return single_arrayvec(cstr::cstr!("GetBowA").as_ptr()), // ap bow
+        220 => return single_arrayvec(cstr::cstr!("GetHookShot").as_ptr()), // ap clawshots
+        221 => return single_arrayvec(cstr::cstr!("GetBirdStatue").as_ptr()), // ap spiral charge
+        222 => return single_arrayvec(cstr::cstr!("GetVacuum").as_ptr()), // ap bellows
+        223 => return single_arrayvec(cstr::cstr!("GetPachinkoA").as_ptr()), // ap slingshot
+        224 => return single_arrayvec(cstr::cstr!("GetBeetleA").as_ptr()), // ap beetle
+        225 => return single_arrayvec(cstr::cstr!("GetMoleGloveA").as_ptr()), // ap mitts
+        226 => return single_arrayvec(cstr::cstr!("GetUroko").as_ptr()), // ap scale
+        227 => return single_arrayvec(cstr::cstr!("GetNetA").as_ptr()), // ap net
+        228 => return single_arrayvec(cstr::cstr!("GetBombBag").as_ptr()), // ap bomb bag
+        229 => return single_arrayvec(cstr::cstr!("GetTriForceSingle").as_ptr()), // ap triforce
+        230 => return single_arrayvec(cstr::cstr!("GetWhip").as_ptr()), // ap whip
+        231 => return single_arrayvec(cstr::cstr!("GetEarring").as_ptr()), // ap earrings
+        232 => return single_arrayvec(cstr::cstr!("GetSozaiC").as_ptr()), // ap tumbleweed
+        233 => return single_arrayvec(cstr::cstr!("SekibanMapA").as_ptr()), // ap emerald tablet
+        234 => return single_arrayvec(cstr::cstr!("SekibanMapB").as_ptr()), // ap ruby tablet
+        235 => return single_arrayvec(cstr::cstr!("SekibanMapC").as_ptr()), // ap amber tablet
+        236 => return single_arrayvec(cstr::cstr!("GetSirenKey").as_ptr()), // ap stone of trials
+        237 => return single_arrayvec(cstr::cstr!("DesertRobot").as_ptr()), // ap scrapper
         _ => (),
     }
     unsafe {

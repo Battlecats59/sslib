@@ -557,7 +557,114 @@
   getarcname: DesertRobot
   getmodelname: DesertRobot
 - id: 216
-  name: Archipelago
-  oarc: GetFruitB
-  getarcname: GetFruitB
-  getmodelname: GetFruitB
+  name: Archipelago Item
+  oarc: GetKobunALetter
+  getarcname: GetKobunALetter
+  getmodelname: GetKobunALetter
+- id: 217
+  name: Archipelago Sword
+  oarc: GetSwordA
+  getarcname: GetSwordA
+  getmodelname: GetSwordA
+- id: 218
+  name: Archipelago Harp
+  oarc: GetHarp
+  getarcname: GetHarp
+  getmodelname: GetHarp
+- id: 219
+  name: Archipelago Bow
+  oarc: GetBowA
+  getarcname: GetBowA
+  getmodelname: GetBowA
+- id: 220
+  name: Archipelago Clawshots
+  oarc: GetHookShot
+  getarcname: GetHookShot
+  getmodelname: GetHookShot
+- id: 221
+  name: Archipelago Spiral Charge
+  oarc: GetBirdStatue
+  getarcname: GetBirdStatue
+  getmodelname: GetBirdStatue
+- id: 222
+  name: Archipelago Gust Bellows
+  oarc: GetVacuum
+  getarcname: GetVacuum
+  getmodelname: GetVacuum
+- id: 223
+  name: Archipelago Slingshot
+  oarc: GetPachinkoA
+  getarcname: GetPachinkoA
+  getmodelname: GetPachinkoA
+- id: 224
+  name: Archipelago Beetle
+  oarc: GetBeetleA
+  getarcname: GetBeetleA
+  getmodelname: GetBeetleA
+- id: 225
+  name: Archipelago Mitts
+  oarc: GetMoleGloveA
+  getarcname: GetMoleGloveA
+  getmodelname: GetMoleGloveA
+- id: 226
+  name: Archipelago Scale
+  oarc: GetUroko
+  getarcname: GetUroko
+  getmodelname: GetUroko
+- id: 227
+  name: Archipelago Bug Net
+  oarc: GetNetA
+  getarcname: GetNetA
+  getmodelname: GetNetA
+- id: 228
+  name: Archipelago Bomb Bag
+  oarc: GetBombBag
+  getarcname: GetBombBag
+  getmodelname: GetBombBag
+- id: 229
+  name: Archipelago Triforce
+  oarc:
+  - PutTriForceSingle
+  - GetTriForceSingle
+  getarcname: GetTriForceSingle
+  getmodelname: GetTriForceSingle
+- id: 230
+  name: Archipelago Whip
+  oarc: GetWhip
+  getarcname: GetWhip
+  getmodelname: GetWhip
+- id: 231
+  name: Archipelago Earrings
+  oarc: GetEarring
+  getarcname: GetEarring
+  getmodelname: GetEarring
+- id: 232
+  name: Archipelago Tumbleweed
+  oarc: GetSozaiC
+  getarcname: GetSozaiC
+  getmodelname: GetSozaiC
+- id: 233
+  name: Archipelago Emerald Tablet
+  oarc: GetSekibanMapA
+  getarcname: GetSekibanMapA
+  getmodelname: SekibanMapA
+- id: 234
+  name: Archipelago Ruby Tablet
+  oarc: GetSekibanMapB
+  getarcname: GetSekibanMapB
+  getmodelname: SekibanMapB
+- id: 235
+  name: Archipelago Amber Tablet
+  oarc: GetSekibanMapC
+  getarcname: GetSekibanMapC
+  getmodelname: SekibanMapC
+- id: 236
+  name: Archipelago Stone of Trials
+  oarc: GetSirenKey
+  getarcname: GetSirenKey
+  getmodelname: GetSirenKey
+- id: 237
+  name: Archipelago Scrapper
+  oarc: DesertRobot
+  getarcname: DesertRobot
+  getmodelname: DesertRobot

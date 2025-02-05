@@ -25,6 +25,7 @@ class Archipelago:
         self.randoseed: int = apdata["Rando Seed"]
         self.player: int = apdata["Slot"]
         self.name: str = apdata["Name"]
+        self.all_players: list[str] = apdata["All Players"]
         self.options: dict[str, any] = apdata["Options"]
         self.starting_items: list = apdata["Starting Items"]
         self.dungeons: list[str] = apdata["Required Dungeons"]
@@ -73,7 +74,15 @@ class Archipelago:
         self.placement_file.required_dungeons.extend(self.dungeons)
         for loc, itm in self.locations.items():
             if itm["player"] != self.player:
-                item_to_place = "Archipelago"  # Represents an Archipelago item, for now
+                if itm["game"] == "Skyward Sword":
+                    if itm["name"] in SS_ARCHIPELAGO_SPECIAL_ITEMS:
+                        item_to_place = SS_ARCHIPELAGO_SPECIAL_ITEMS[itm["name"]][0]
+                    else:
+                        item_to_place = "Archipelago Item"
+                else:
+                    item_to_place = (
+                        "Archipelago Item"  # Represents a general Archipelago item
+                    )
             else:
                 item_to_place = itm["name"]
             self.placement_file.item_locations[areas.short_to_full(loc)] = item_to_place
@@ -99,6 +108,33 @@ class Archipelago:
         apssr_decoded = base64.b64decode(apssr_encoded)
         return yaml.safe_load(apssr_decoded)
 
+
+SS_ARCHIPELAGO_SPECIAL_ITEMS = {
+    # These items have their normal models if you find another player's
+    "Progressive Sword": ["Archipelago Sword", 217],
+    "Goddess's Harp": ["Archipelago Harp", 218],
+    "Progressive Bow": ["Archipelago Bow", 219],
+    "Clawshots": ["Archipelago Clawshots", 220],
+    "Spiral Charge": ["Archipelago Spiral Charge", 221],
+    "Gust Bellows": ["Archipelago Gust Bellows", 222],
+    "Progressive Slingshot": ["Archipelago Slingshot", 223],
+    "Progressive Beetle": ["Archipelago Beetle", 224],
+    "Progressive Mitts": ["Archipelago Mitts", 225],
+    "Water Dragon's Scale": ["Archipelago Scale", 226],
+    "Progressive Bug Net": ["Archipelago Bug Net", 227],
+    "Bomb Bag": ["Archipelago Bomb Bag", 228],
+    "Triforce of Courage": ["Archipelago Triforce", 229],
+    "Triforce of Power": ["Archipelago Triforce", 229],
+    "Triforce of Wisdom": ["Archipelago Triforce", 229],
+    "Whip": ["Archipelago Whip", 230],
+    "Fireshield Earrings": ["Archipelago Earrings", 231],
+    "Tumbleweed": ["Archipelago Tumbleweed", 232],
+    "Emerald Tablet": ["Archipelago Emerald Tablet", 233],
+    "Ruby Tablet": ["Archipelago Ruby Tablet", 234],
+    "Amber Tablet": ["Archipelago Amber Tablet", 235],
+    "Stone of Trials": ["Archipelago Stone of Trials", 236],
+    "Scrapper": ["Archipelago Scrapper", 237],
+}
 
 UNTOUCHED_OPTIONS = [
     # If cosmetic, assume untouched

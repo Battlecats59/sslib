@@ -327,7 +327,28 @@ extern "C" fn get_item_arc_name(
     match item_id {
         214 => oarc_name = cstr!("Onp").as_ptr(),         // tadtone
         215 => oarc_name = cstr!("DesertRobot").as_ptr(), // scrapper
-        216 => oarc_name = cstr!("GetFruitB").as_ptr(),   // archipelago
+        216 => oarc_name = cstr!("GetKobunALetter").as_ptr(), // ap item
+        217 => oarc_name = cstr!("GetSwordA").as_ptr(),   // ap sword
+        218 => oarc_name = cstr!("GetHarp").as_ptr(),     // ap harp
+        219 => oarc_name = cstr!("GetBowA").as_ptr(),     // ap bow
+        220 => oarc_name = cstr!("GetHookShot").as_ptr(), // ap clawshots
+        221 => oarc_name = cstr!("GetBirdStatue").as_ptr(), // ap spiral charge
+        222 => oarc_name = cstr!("GetVacuum").as_ptr(),   // ap bellows
+        223 => oarc_name = cstr!("GetPachinkoA").as_ptr(), // ap slingshot
+        224 => oarc_name = cstr!("GetBeetleA").as_ptr(),  // ap beetle
+        225 => oarc_name = cstr!("GetMoleGloveA").as_ptr(), // ap mitts
+        226 => oarc_name = cstr!("GetUroko").as_ptr(),    // ap scale
+        227 => oarc_name = cstr!("GetNetA").as_ptr(),     // ap net
+        228 => oarc_name = cstr!("GetBombBag").as_ptr(),  // ap bomb bag
+        229 => oarc_name = cstr!("GetTriForceSingle").as_ptr(), // ap triforce
+        230 => oarc_name = cstr!("GetWhip").as_ptr(),     // ap whip
+        231 => oarc_name = cstr!("GetEarring").as_ptr(),  // ap earrings
+        232 => oarc_name = cstr!("GetSozaiC").as_ptr(),   // ap tumbleweed
+        233 => oarc_name = cstr!("GetSekibanMapA").as_ptr(), // ap emerald tablet
+        234 => oarc_name = cstr!("GetSekibanMapB").as_ptr(), // ap ruby tablet
+        235 => oarc_name = cstr!("GetSekibanMapC").as_ptr(), // ap amber tablet
+        236 => oarc_name = cstr!("GetSirenKey").as_ptr(), // ap stone of trials
+        237 => oarc_name = cstr!("DesertRobot").as_ptr(), // ap scrapper
         _ => oarc_name = vanilla_item_str,
     }
 
@@ -337,9 +358,30 @@ extern "C" fn get_item_arc_name(
 #[no_mangle]
 extern "C" fn get_item_model_name_ptr(item_id: u32) -> *const c_char {
     match item_id {
-        214 => return cstr!("OnpB").as_ptr(),        // tadtone
-        215 => return cstr!("DesertRobot").as_ptr(), // scrapper
-        216 => return cstr!("GetFruitB").as_ptr(),   // archipelago
+        214 => return cstr!("OnpB").as_ptr(),              // tadtone
+        215 => return cstr!("DesertRobot").as_ptr(),       // scrapper
+        216 => return cstr!("GetKobunALetter").as_ptr(),   // ap item
+        217 => return cstr!("GetSwordA").as_ptr(),         // ap sword
+        218 => return cstr!("GetHarp").as_ptr(),           // ap harp
+        219 => return cstr!("GetBowA").as_ptr(),           // ap bow
+        220 => return cstr!("GetHookShot").as_ptr(),       // ap clawshots
+        221 => return cstr!("GetBirdStatue").as_ptr(),     // ap spiral charge
+        222 => return cstr!("GetVacuum").as_ptr(),         // ap bellows
+        223 => return cstr!("GetPachinkoA").as_ptr(),      // ap slingshot
+        224 => return cstr!("GetBeetleA").as_ptr(),        // ap beetle
+        225 => return cstr!("GetMoleGloveA").as_ptr(),     // ap mitts
+        226 => return cstr!("GetUroko").as_ptr(),          // ap scale
+        227 => return cstr!("GetNetA").as_ptr(),           // ap net
+        228 => return cstr!("GetBombBag").as_ptr(),        // ap bomb bag
+        229 => return cstr!("GetTriForceSingle").as_ptr(), // ap triforce
+        230 => return cstr!("GetWhip").as_ptr(),           // ap whip
+        231 => return cstr!("GetEarring").as_ptr(),        // ap earrings
+        232 => return cstr!("GetSozaiC").as_ptr(),         // ap tumbleweed
+        233 => return cstr!("SekibanMapA").as_ptr(),       // ap emerald tablet
+        234 => return cstr!("SekibanMapB").as_ptr(),       // ap ruby tablet
+        235 => return cstr!("SekibanMapC").as_ptr(),       // ap amber tablet
+        236 => return cstr!("GetSirenKey").as_ptr(),       // ap stone of trials
+        237 => return cstr!("DesertRobot").as_ptr(),       // ap scrapper
         _ => return core::ptr::null(),
     }
 }

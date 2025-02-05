@@ -25,6 +25,7 @@ from sslib.rel import REL
 from paths import RANDO_ROOT_PATH
 from tboxSubtypes import tboxSubtypes
 from musicrando import music_rando
+from archipelago import Archipelago, SS_ARCHIPELAGO_SPECIAL_ITEMS
 
 from logic.bool_expression import check_static_option_req
 from logic.constants import *
@@ -1433,6 +1434,7 @@ class GamePatcher:
         oarc_cache_path,
         arc_replacement_path,
         placement_file: PlacementFile,
+        archipelago: Archipelago,
     ):
         self.areas = areas
         self.options = options
@@ -1442,6 +1444,7 @@ class GamePatcher:
         self.exe_root_path = exe_root_path
         self.actual_extract_path = actual_extract_path
         self.modified_extract_path = modified_extract_path
+        self.archipelago = archipelago
 
         self.patcher = AllPatcher(
             actual_extract_path=actual_extract_path,
@@ -1461,6 +1464,7 @@ class GamePatcher:
 
     def do_all_gamepatches(self):
         self.load_base_patches()
+        self.add_archipelago_patches()
         self.add_entrance_rando_patches()
         self.add_trial_rando_patches()
         if self.placement_file.options["shopsanity"]:
@@ -1674,6 +1678,48 @@ class GamePatcher:
         for exec_file, patches in asm_patch_file_data.items():
             self.all_asm_patches[exec_file].update(patches)
 
+    def add_archipelago_patches(self):
+        ap_item_indexes = []
+        for ss_item, ap_data in SS_ARCHIPELAGO_SPECIAL_ITEMS.items():
+            ap_item, idx = ap_data
+            if idx in ap_item_indexes:
+                continue
+            ap_item_indexes.append(idx)
+            ss_item_text = ss_item if not "Triforce" in ss_item else "Triforce"
+            self.eventpatches["003-ItemGet"].append(
+                {
+                    "name": f"{ap_item} Entry",
+                    "type": "entryadd",
+                    "entry": {
+                        "name": f"003_{idx}",
+                        "value": f"Show {ap_item} Item Get Text",
+                    },
+                }
+            )
+            self.eventpatches["003-ItemGet"].append(
+                {
+                    "name": f"{ap_item} Item Get Text",
+                    "type": "textadd",
+                    "unk1": 5,
+                    "unk2": 1,
+                    "text": break_lines(
+                        f"You found another player's <y<{ss_item_text}>>!"
+                    ),
+                }
+            )
+            self.eventpatches["003-ItemGet"].append(
+                {
+                    "name": f"Show {ap_item} Item Get Text",
+                    "type": "flowadd",
+                    "flow": {
+                        "type": "type1",
+                        "next": -1,
+                        "param3": 3,
+                        "param4": f"{ap_item} Item Get Text",
+                    },
+                }
+            )
+
     def add_entrance_rando_patches(self):
         for entrance, dungeon in self.placement_file.dungeon_connections.items():
             entrance_stage, entrance_room, entrance_scen = DUNGEON_ENTRANCE_STAGES[
@@ -1853,9 +1899,17 @@ class GamePatcher:
                 self.areas.short_to_full(location)
             ]
             sold_item = strip_item_number(sold_item)
+            if sold_item == "Archipelago":
+                ap_item = self.archipelago.locations[
+                    location.replace("Beedle", "Beedle's Shop")
+                ]
+                ap_player = self.archipelago.all_players[ap_item["player"] - 1]
+                sold_item_text = f"{ap_player}'s <y<{ap_item["name"]}>>"
+            else:
+                sold_item_text = f"a <y<{sold_item}>>"
             normal_text = (
                 break_lines(
-                    f"That there is a <y<{sold_item}>>. "
+                    f"That there is <y<{sold_item_text}>>. "
                     f"I'm selling it for only <r<{normal_price}>> rupees! "
                     f"Want to buy it?\n"
                 )
@@ -1863,7 +1917,7 @@ class GamePatcher:
             )
             discount_text = (
                 break_lines(
-                    f"That there is a <y<{sold_item}>>. "
+                    f"That there is {sold_item_text}. "
                     f"Just this once it's half off! "
                     f"It can be yours for just <r<{discount_price}>> rupees! "
                     f"Want to buy it?"

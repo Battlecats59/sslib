@@ -216,6 +216,7 @@ class ArchipelagoRandomizer(BaseRandomizer):
                 self.oarc_cache_path,
                 self.arc_replacement_path,
                 self.placement_file,
+                self.archipelago,
             ).do_all_gamepatches()
 
 
