@@ -87,7 +87,9 @@ class Archipelago:
             else:
                 item_to_place = itm["name"]
             self.placement_file.item_locations[areas.short_to_full(loc)] = item_to_place
-            self.placement_file.chest_dowsing[areas.short_to_full(loc)] = self.get_dowsing_slot(itm, options)
+            self.placement_file.chest_dowsing[
+                areas.short_to_full(loc)
+            ] = self.get_dowsing_slot(itm, options)
         for hint, data in self.hints.items():
             if "Gossip Stone" in hint:
                 self.placement_file.hints[areas.short_to_full(hint)] = data
@@ -126,9 +128,14 @@ class Archipelago:
             return 0
         else:
             assert dowsing_setting == "Progress Items"
-            if item["classification"] in ["progression", "progression_skip_balancing", "trap"]:
+            if item["classification"] in [
+                "progression",
+                "progression_skip_balancing",
+                "trap",
+            ]:
                 return 0
             return 8
+
 
 SS_ARCHIPELAGO_SPECIAL_ITEMS = {
     # These items have their normal models if you find another player's
