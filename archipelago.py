@@ -87,9 +87,7 @@ class Archipelago:
             else:
                 item_to_place = itm["name"]
             self.placement_file.item_locations[areas.short_to_full(loc)] = item_to_place
-            self.placement_file.chest_dowsing[areas.short_to_full(loc)] = itm[
-                "chest_dowsing"
-            ]
+            self.placement_file.chest_dowsing[areas.short_to_full(loc)] = self.get_dowsing_slot(itm, options)
         for hint, data in self.hints.items():
             if "Gossip Stone" in hint:
                 self.placement_file.hints[areas.short_to_full(hint)] = data
@@ -109,6 +107,28 @@ class Archipelago:
         apssr_decoded = base64.b64decode(apssr_encoded)
         return yaml.safe_load(apssr_decoded)
 
+    def get_dowsing_slot(self, item, options) -> int:
+        # Get info for which dowsing slot (if any) a chest should respond to.
+        # Dowsing slots:
+        # 0: Main quest
+        # 1: Rupee
+        # 2: Key Piece / Scrapper Quest
+        # 3: Crystal
+        # 4: Heart
+        # 5: Goddess Cube
+        # 6: Look around (not usable afaik)
+        # 7: Treasure
+        # 8: None
+        dowsing_setting = options.get("chest-dowsing")
+        if dowsing_setting == "Vanilla":
+            return 8
+        elif dowsing_setting == "All Chests":
+            return 0
+        else:
+            assert dowsing_setting == "Progress Items"
+            if item["classification"] in ["progression", "progression_skip_balancing", "trap"]:
+                return 0
+            return 8
 
 SS_ARCHIPELAGO_SPECIAL_ITEMS = {
     # These items have their normal models if you find another player's
