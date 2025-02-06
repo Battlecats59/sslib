@@ -318,7 +318,7 @@
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
-  default: Own Dungeon - Restricted
+  default: Own Dungeon
   help: "Determines the placement of maps.
         **Removed**: maps are removed.
         **Vanilla**: maps appear in their vanilla locations.
@@ -338,7 +338,7 @@
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
-  default: Own Dungeon - Restricted
+  default: Own Dungeon
   help: "Determines the placement of small keys.
         **Vanilla**: keys will be in their vanilla locations (The Skyview Digging Spot will not contain a key).
         **Restricted**: keys will be within their own dungeons.

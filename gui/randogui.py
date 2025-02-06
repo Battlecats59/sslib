@@ -92,7 +92,13 @@ class RandoGUI(QMainWindow):
 
         self.areas = areas
         self.options = options
-        self.settings_path = "settings.txt"
+        self.settings_path = "apsettings.txt"
+        if os.path.isfile(self.settings_path):
+            with open(self.settings_path) as f:
+                try:
+                    self.options.update_from_dict(json.load(f))
+                except Exception as e:
+                    print("couldn't update from saved settings!", e)
 
         self.option_map = {}
         for option_key, option in OPTIONS.items():
@@ -249,6 +255,10 @@ class RandoGUI(QMainWindow):
 
         elif not self.extract_manager.actual_extract_already_exists():
             self.ask_for_clean_iso()
+
+    def save_settings(self):
+        with open(self.settings_path, "w") as f:
+            json.dump(self.options.to_dict(), f)
 
     def ask_for_clean_iso(self):
         selected = QMessageBox.question(
@@ -440,6 +450,8 @@ class RandoGUI(QMainWindow):
             if not ui_name:
                 continue
             self.options.set_option(option_command, self.get_option_value(ui_name))
+
+        self.save_settings()
 
     def toggle_sharp_corners(self, state: int):
         self.options.set_option("use-sharp-corners", bool(state))
