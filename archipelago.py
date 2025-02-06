@@ -87,9 +87,9 @@ class Archipelago:
             else:
                 item_to_place = itm["name"]
             self.placement_file.item_locations[areas.short_to_full(loc)] = item_to_place
-            self.placement_file.chest_dowsing[
-                areas.short_to_full(loc)
-            ] = self.get_dowsing_slot(itm, options)
+            self.placement_file.chest_dowsing[areas.short_to_full(loc)] = (
+                self.get_dowsing_slot(itm, options)
+            )
         for hint, data in self.hints.items():
             if "Gossip Stone" in hint:
                 self.placement_file.hints[areas.short_to_full(hint)] = data
