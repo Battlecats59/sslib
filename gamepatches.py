@@ -2273,11 +2273,9 @@ class GamePatcher:
                     dungeon_events,
                 )
             )
-            required_dungeon_storyflag_event["flow"][
-                "param2"
-            ] = REQUIRED_DUNGEON_STORYFLAGS[
-                i
-            ]  # param2 is storyflag of event
+            required_dungeon_storyflag_event["flow"]["param2"] = (
+                REQUIRED_DUNGEON_STORYFLAGS[i]
+            )  # param2 is storyflag of event
 
         required_dungeon_count = len(self.placement_file.required_dungeons)
         # set flags for unrequired dungeons beforehand
@@ -2509,7 +2507,10 @@ class GamePatcher:
 
     def add_impa_hint(self):
         # Skip over Impa SoT hint if SoT is a starting item.
-        if ITEM_FLAGS[STONE_OF_TRIALS] in self.startitemflags or self.archipelago.impa_hint is None:
+        if (
+            ITEM_FLAGS[STONE_OF_TRIALS] in self.startitemflags
+            or self.archipelago.impa_hint is None
+        ):
             return
 
         sot_loc_region, sot_loc_world = self.archipelago.impa_hint
@@ -2519,8 +2520,8 @@ class GamePatcher:
                 "type": "textpatch",
                 "index": 6,
                 "text": (
-                    f"Do not fear for <b<Zelda>>. I will watch over her here.\n\n\n\n" +
-                    break_lines(
+                    f"Do not fear for <b<Zelda>>. I will watch over her here.\n\n\n\n"
+                    + break_lines(
                         f"The <r<item you need to fulfill your destiny>> can be obtained by "
                         f"<b<{sot_loc_world}>> upon traveling to <r<{sot_loc_region}>>. "
                     )

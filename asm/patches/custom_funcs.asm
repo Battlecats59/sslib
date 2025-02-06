@@ -399,9 +399,6 @@ rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
 or r3, r3, r4
 cmpwi r3, 0
 beq give_archipelago_item_end ; if not on foot or in water, branch past loop
-rlwinm r4, r5, 0x0, 0x15, 0x15 ; not in control
-cmpwi r4, 0
-bne give_archipelago_item_end
 
 ; Basically, the functions above just make sure Link is in a valid state to receive items.
 ; If not, the game will hold all of the items in an angry array of potential energy waiting
@@ -490,7 +487,7 @@ give_archipelago_item_array:
 .align 2 ; Align to the next 4 bytes
 
 give_archipelago_expected_item_id:
-.space 0x2, 0xFF ; 2 bytes, only use 1
+.space 0x4, 0xFF ; 4 bytes
 
 .close
 
