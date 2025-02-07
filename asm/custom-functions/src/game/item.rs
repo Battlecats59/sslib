@@ -198,9 +198,9 @@ pub fn get_item_arc_names_for_item(item_id: u16) -> ArrayVec<*const c_char, 2> {
         230 => return single_arrayvec(cstr::cstr!("GetWhip").as_ptr()), // ap whip
         231 => return single_arrayvec(cstr::cstr!("GetEarring").as_ptr()), // ap earrings
         232 => return single_arrayvec(cstr::cstr!("GetSozaiC").as_ptr()), // ap tumbleweed
-        233 => return single_arrayvec(cstr::cstr!("SekibanMapA").as_ptr()), // ap emerald tablet
-        234 => return single_arrayvec(cstr::cstr!("SekibanMapB").as_ptr()), // ap ruby tablet
-        235 => return single_arrayvec(cstr::cstr!("SekibanMapC").as_ptr()), // ap amber tablet
+        233 => return single_arrayvec(cstr::cstr!("GetSekibanMapA").as_ptr()), // ap emerald tablet
+        234 => return single_arrayvec(cstr::cstr!("GetSekibanMapB").as_ptr()), // ap ruby tablet
+        235 => return single_arrayvec(cstr::cstr!("GetSekibanMapC").as_ptr()), // ap amber tablet
         236 => return single_arrayvec(cstr::cstr!("GetSirenKey").as_ptr()), // ap stone of trials
         237 => return single_arrayvec(cstr::cstr!("DesertRobot").as_ptr()), // ap scrapper
         _ => (),
