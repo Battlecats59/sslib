@@ -5295,6 +5295,14 @@ F300: # lanayru Main Area
     objtype: OBJS
     object:
       setscenefid: 72
+  - name: Secret passageway chest archipelago flag
+    type: objpatch
+    id: 0xFC63
+    layer: 0
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 54
 F300_1: # Lanayru Mine
   - name: Layer override
     type: layeroverride
@@ -5413,7 +5421,7 @@ F300_2: # Thunder node
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 107
+      setscenefid: 84
   - name: LN second chest archipelago flag
     type: objpatch
     id: 0xFC18
@@ -5468,7 +5476,7 @@ F300_3: # Fire node
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 82
+      setscenefid: 107
   - name: FN first small chest archipelago flag
     type: objpatch
     id: 0xFC0F

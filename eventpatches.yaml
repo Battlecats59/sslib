@@ -1851,6 +1851,20 @@
       param3: 9
       param4: 0
       param5: 0
+  - name: Go to Owlan's Crystals Storyflag
+    type: flowpatch
+    index: 299
+    flow:
+      next: Owlan's Crystals Storyflag
+  - name: Owlan's Crystals Storyflag
+    type: flowadd
+    flow:
+      type: type3
+      subType: 0
+      param1: 0
+      param2: 482
+      next: 157 # give item
+      param3: 0
 120-Nushi:
   - name: Fix Levias
     type: flowpatch
