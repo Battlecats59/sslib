@@ -5476,7 +5476,7 @@ F300_3: # Fire node
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 107
+      setscenefid: 82
   - name: FN first small chest archipelago flag
     type: objpatch
     id: 0xFC0F
@@ -5508,7 +5508,7 @@ F300_3: # Fire node
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 127
+      setscenefid: 107
 F300_4: # Temple of Time
   - name: Layer override
     type: layeroverride
