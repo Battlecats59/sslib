@@ -3112,6 +3112,22 @@
     type: textpatch
     index: 25
     text: "Understood, Master <heroname>.\nThank you for taking me on this\njourney with you."
+  - name: Go to give Demise defeated AP storyflag
+    onlyif: Option "skip-demise" Enabled
+    type: flowpatch
+    index: 65
+    flow:
+      next: Give Demise defeated AP storyflag
+  - name: Give Demise defeated AP storyflag
+    onlyif: Option "skip-demise" Enabled
+    type: flowadd
+    flow:
+      type: type3
+      subType: 0
+      param1: 0
+      param2: 959 # Demise defeated storyflag
+      next: -1
+      param3: 0
   - name: Impa Complete Triforce text
     type: textadd
     text: "Though your wish has been granted by\nthe <y+<Triforce>>, <b<Ghirahim>> escaped with\nZelda through the <r<great doors\nat the front of the temple>>.\nYou may yet catch him before it's too\nlate. Hurry, <heroname>!"

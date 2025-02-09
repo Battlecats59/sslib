@@ -992,3 +992,28 @@ addi r1, r1, 0x10
 blr
 
 .close
+
+.open "d_a_b_lastbossNP.rel"
+.org @NextFreeSpace
+
+.global set_demise_defeated_storyflag
+set_demise_defeated_storyflag:
+stwu r1, -0x10(r1)
+mflr r0
+stw r0, 0x14(r1)
+stmw r29, 0x8 (r1)
+mr r29, r3
+
+li r3, 0x3BF
+li r4, 1
+bl setStoryflagToValue
+addi r4, r31, 0x4F8
+
+mr r3, r29
+lmw r29, 0x8 (r1)
+lwz r0, 0x14(r1)
+mtlr r0
+addi r1, r1, 0x10
+blr
+
+.close
