@@ -2273,9 +2273,11 @@ class GamePatcher:
                     dungeon_events,
                 )
             )
-            required_dungeon_storyflag_event["flow"]["param2"] = (
-                REQUIRED_DUNGEON_STORYFLAGS[i]
-            )  # param2 is storyflag of event
+            required_dungeon_storyflag_event["flow"][
+                "param2"
+            ] = REQUIRED_DUNGEON_STORYFLAGS[
+                i
+            ]  # param2 is storyflag of event
 
         required_dungeon_count = len(self.placement_file.required_dungeons)
         # set flags for unrequired dungeons beforehand
@@ -2550,9 +2552,7 @@ class GamePatcher:
                     "name": f"Go to storyflag for {hintname}",
                     "type": "flowpatch",
                     "index": hintdef["eventflowindex"],
-                    "flow": {
-                        "next": f"Set storyflag for {hintname}"
-                    }
+                    "flow": {"next": f"Set storyflag for {hintname}"},
                 },
             )
 
@@ -2567,7 +2567,7 @@ class GamePatcher:
                         "param1": 0,
                         "param2": storyflag,
                         "next": -1,
-                    }
+                    },
                 },
             )
 
