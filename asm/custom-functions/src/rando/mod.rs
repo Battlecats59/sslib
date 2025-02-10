@@ -349,6 +349,14 @@ extern "C" fn get_item_arc_name(
         235 => oarc_name = cstr!("GetSekibanMapC").as_ptr(), // ap amber tablet
         236 => oarc_name = cstr!("GetSirenKey").as_ptr(), // ap stone of trials
         237 => oarc_name = cstr!("DesertRobot").as_ptr(), // ap scrapper
+        238 => oarc_name = cstr!("GetMap").as_ptr(),      // ap map
+        239 => oarc_name = cstr!("GetKeySmall").as_ptr(), // ap small key
+        240 => oarc_name = cstr!("GetKeyBoss2A").as_ptr(), // ap ac boss key
+        241 => oarc_name = cstr!("GetKeyBoss2B").as_ptr(), // ap fs boss key
+        242 => oarc_name = cstr!("GetKeyBoss2C").as_ptr(), // ap ssh boss key
+        243 => oarc_name = cstr!("GetKeyBossA").as_ptr(), // ap sv boss key
+        244 => oarc_name = cstr!("GetKeyBossB").as_ptr(), // ap et boss key
+        245 => oarc_name = cstr!("GetKeyBossC").as_ptr(), // ap lmf boss key
         _ => oarc_name = vanilla_item_str,
     }
 
@@ -382,6 +390,14 @@ extern "C" fn get_item_model_name_ptr(item_id: u32) -> *const c_char {
         235 => return cstr!("SekibanMapC").as_ptr(),       // ap amber tablet
         236 => return cstr!("GetSirenKey").as_ptr(),       // ap stone of trials
         237 => return cstr!("DesertRobot").as_ptr(),       // ap scrapper
+        238 => return cstr!("GetMap").as_ptr(),            // ap map
+        239 => return cstr!("GetKeySmallNormal").as_ptr(), // ap small key
+        240 => return cstr!("GetKeyBoss2A").as_ptr(),      // ap ac boss key
+        241 => return cstr!("GetKeyBoss2B").as_ptr(),      // ap fs boss key
+        242 => return cstr!("GetKeyBoss2C").as_ptr(),      // ap ssh boss key
+        243 => return cstr!("GetKeyBossA").as_ptr(),       // ap sv boss key
+        244 => return cstr!("GetKeyBossB").as_ptr(),       // ap et boss key
+        245 => return cstr!("GetKeyBossC").as_ptr(),       // ap lmf boss key
         _ => return core::ptr::null(),
     }
 }

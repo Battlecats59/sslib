@@ -1686,6 +1686,12 @@ class GamePatcher:
                 continue
             ap_item_indexes.append(idx)
             ss_item_text = ss_item if not "Triforce" in ss_item else "Triforce"
+            text_ext = ""
+            if "Map" in ss_item:
+                ss_item_text = "Map"
+                text_ext = " Hopefully they won't get lost."
+            elif "Small Key" in ss_item:
+                ss_item_text = "Small Key"
             self.eventpatches["003-ItemGet"].append(
                 {
                     "name": f"{ap_item} Entry",
@@ -1703,7 +1709,7 @@ class GamePatcher:
                     "unk1": 5,
                     "unk2": 1,
                     "text": break_lines(
-                        f"You found another player's <y<{ss_item_text}>>!"
+                        f"You found another player's <y<{ss_item_text}>>!{text_ext}"
                     ),
                 }
             )

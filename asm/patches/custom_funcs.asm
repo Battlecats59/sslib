@@ -395,9 +395,8 @@ beq give_archipelago_item_end ; necessary so the game doesn't error on the first
 lwz r5, 0x364(r5)
 
 rlwinm r3, r5, 0x0, 0x3, 0x3 ; is Link on foot?
-; rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
-; or r3, r3, r4
-; For now, link being in water will be an invalid state
+rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
+or r3, r3, r4
 cmpwi r3, 0
 beq give_archipelago_item_end ; if not on foot or in water, branch past loop
 
@@ -632,15 +631,17 @@ blr
 check_needs_custom_storyflag_subtype:
 ; r3 cannot be modified, r4 is the shopitemid and can't be modified
 ; the result is in the condition register, equal flag has to be set if the shopitemid is one we care about
-; bool test(int i) {
-;    return i == 24
-;           || i == 17
-;           || i == 18
-;           || i == 25
-;           || i == 27;
-;}
-; For AP, we want all items to set storyflags, so just return true for all items
+; For AP, we want all Beedle items to return true
+; Rupin items, <= 8, and potion items, >= 30, must return false or it breaks, really bad
+cmpwi r4, 30
+bge check_custom_storyflag_false
+cmpwi r4, 8
+ble check_custom_storyflag_false
 li r5, 1
+b check_custom_storyflag_end
+check_custom_storyflag_false:
+li r5, 0
+check_custom_storyflag_end:
 cmpwi r5, 1
 blr
 

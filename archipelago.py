@@ -162,6 +162,30 @@ SS_ARCHIPELAGO_SPECIAL_ITEMS = {
     "Amber Tablet": ["Archipelago Amber Tablet", 235],
     "Stone of Trials": ["Archipelago Stone of Trials", 236],
     "Scrapper": ["Archipelago Scrapper", 237],
+
+    # Dungeon Items
+    "Skyview Map": ["Archipelago Map", 238],
+    "Earth Temple Map": ["Archipelago Map", 238],
+    "Lanayru Mining Facility Map": ["Archipelago Map", 238],
+    "Ancient Cistern Map": ["Archipelago Map", 238],
+    "Fire Sanctuary Map": ["Archipelago Map", 238],
+    "Sandship Map": ["Archipelago Map", 238],
+    "Sky Keep Map": ["Archipelago Map", 238],
+
+    "Skyview Small Key": ["Archipelago Small Key", 239],
+    "Lanayru Mining Facility Small Key": ["Archipelago Small Key", 239],
+    "Ancient Cistern Small Key": ["Archipelago Small Key", 239],
+    "Fire Sanctuary Small Key": ["Archipelago Small Key", 239],
+    "Sandship Small Key": ["Archipelago Small Key", 239],
+    "Sky Keep Small Key": ["Archipelago Small Key", 239],
+    "Lanayru Caves Small Key": ["Archipelago Small Key", 239],
+
+    "Ancient Cistern Boss Key": ["Archipelago Ancient Cistern Boss Key", 240],
+    "Fire Sanctuary Boss Key": ["Archipelago Fire Sanctuary Boss Key", 241],
+    "Sandship Boss Key": ["Archipelago Sandship Boss Key", 242],
+    "Skyview Boss Key": ["Archipelago Skyview Boss Key", 243],
+    "Earth Temple Boss Key": ["Archipelago Earth Temple Boss Key", 244],
+    "Lanayru Mining Facility Boss Key": ["Archipelago Lanayru Mining Facility Boss Key", 245],
 }
 
 UNTOUCHED_OPTIONS = [

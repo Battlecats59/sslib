@@ -668,3 +668,43 @@
   oarc: DesertRobot
   getarcname: DesertRobot
   getmodelname: DesertRobot
+- id: 238
+  name: Archipelago Map
+  oarc: null
+  getarcname: GetMap
+  getmodelname: GetMap
+- id: 239
+  name: Archipelago Small Key
+  oarc: null
+  getarcname: GetKeySmall
+  getmodelname: GetKeySmallNormal
+- id: 240
+  name: Archipelago Ancient Cistern Boss Key
+  oarc: GetKeyBoss2A
+  getarcname: GetKeyBoss2A
+  getmodelname: GetKeyBoss2A
+- id: 241
+  name: Archipelago Fire Sanctuary Boss Key
+  oarc: GetKeyBoss2B
+  getarcname: GetKeyBoss2B
+  getmodelname: GetKeyBoss2B
+- id: 242
+  name: Archipelago Sandship Boss Key
+  oarc: GetKeyBoss2C
+  getarcname: GetKeyBoss2C
+  getmodelname: GetKeyBoss2C
+- id: 243
+  name: Archipelago Skyview Boss Key
+  oarc: GetKeyBossA
+  getarcname: GetKeyBossA
+  getmodelname: GetKeyBossA
+- id: 244
+  name: Archipelago Earth Temple Boss Key
+  oarc: GetKeyBossB
+  getarcname: GetKeyBossB
+  getmodelname: GetKeyBossB
+- id: 245
+  name: Archipelago Lanayru Mining Facility Boss Key
+  oarc: GetKeyBossC
+  getarcname: GetKeyBossC
+  getmodelname: GetKeyBossC
