@@ -395,8 +395,9 @@ beq give_archipelago_item_end ; necessary so the game doesn't error on the first
 lwz r5, 0x364(r5)
 
 rlwinm r3, r5, 0x0, 0x3, 0x3 ; is Link on foot?
-rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
-or r3, r3, r4
+; rlwinm r4, r5, 0x0, 0xD, 0xD ; is Link in water?
+; or r3, r3, r4
+; For now, link being in water will be an invalid state
 cmpwi r3, 0
 beq give_archipelago_item_end ; if not on foot or in water, branch past loop
 
