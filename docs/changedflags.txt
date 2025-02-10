@@ -82,6 +82,8 @@ New Trial Completed Storyflags:
 
 953: Group of Tadtones Counter
 
+960 -> 977: Gossip stone found flags
+
 Sceneflags
 
 Skyloft:

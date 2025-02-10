@@ -2530,6 +2530,7 @@ class GamePatcher:
         )
 
     def add_stone_hint_patches(self):
+        storyflag = 960
         for hintname, hintdef in self.areas.gossip_stones.items():
             self.add_patch_to_event(
                 hintdef["textfile"],
@@ -2542,6 +2543,35 @@ class GamePatcher:
                     ),
                 },
             )
+
+            self.add_patch_to_event(
+                hintdef["textfile"],
+                {
+                    "name": f"Go to storyflag for {hintname}",
+                    "type": "flowpatch",
+                    "index": hintdef["eventflowindex"],
+                    "flow": {
+                        "next": f"Set storyflag for {hintname}"
+                    }
+                },
+            )
+
+            self.add_patch_to_event(
+                hintdef["textfile"],
+                {
+                    "name": f"Set storyflag for {hintname}",
+                    "type": "flowadd",
+                    "flow": {
+                        "type": "type3",
+                        "subType": 0,
+                        "param1": 0,
+                        "param2": storyflag,
+                        "next": -1,
+                    }
+                },
+            )
+
+            storyflag += 1
 
     def add_race_integrity_patches(self):
         self.add_patch_to_event(
