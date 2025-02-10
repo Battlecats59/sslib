@@ -1,71 +1,89 @@
 Central Skyloft - Gossip Stone on Waterfall Island:
   textfile: 124-Town6
   textindex: 18
+  eventflowindex: 51
 
 Sky - Gossip Stone on Lumpy Pumpkin:
   textfile: 004-Object
   textindex: 27
+  eventflowindex: 40
 
 Sky - Gossip Stone on Volcanic Island:
   textfile: 004-Object
   textindex: 30
+  eventflowindex: 64
 
 Sky - Gossip Stone on Bamboo Island:
   textfile: 004-Object
   textindex: 11
+  eventflowindex: 18
 
 Thunderhead - Gossip Stone near Bug Heaven:
   textfile: 004-Object
   textindex: 12
+  eventflowindex: 20
 
 Sealed Grounds - Gossip Stone behind the Temple:
   textfile: 004-Object
   textindex: 13
+  eventflowindex: 22
 
 Faron Woods - Gossip Stone in Deep Woods:
   textfile: 004-Object
   textindex: 15
+  eventflowindex: 26
 
 Lake Floria - Gossip Stone outside Ancient Cistern:
   textfile: 004-Object
   textindex: 28
+  eventflowindex: 42
 
 Eldin Volcano - Gossip Stone next to Earth Temple:
   textfile: 004-Object
   textindex: 14
+  eventflowindex: 24
 
 Eldin Volcano - Gossip Stone in Thrill Digger Cave:
   textfile: 004-Object
   textindex: 16
+  eventflowindex: 28
 
 Eldin Volcano - Gossip Stone in Lower Platform Cave:
   textfile: 004-Object
   textindex: 17
+  eventflowindex: 56
 
 Eldin Volcano - Gossip Stone in Upper Platform Cave:
   textfile: 004-Object
   textindex: 21
+  eventflowindex: 30
 
 Volcano Summit - Gossip Stone near Second Thirsty Frog:
   textfile: 004-Object
   textindex: 31
+  eventflowindex: 76
 
 Volcano Summit - Gossip Stone in Waterfall Area:
   textfile: 004-Object
   textindex: 26
+  eventflowindex: 38
 
 Temple of Time - Gossip Stone in Temple of Time Area:
   textfile: 004-Object
   textindex: 25
+  eventflowindex: 36
 
 Lanayru Sand Sea - Gossip Stone in Shipyard:
   textfile: 004-Object
   textindex: 23
+  eventflowindex: 32
 
 Lanayru Caves - Gossip Stone in Center:
   textfile: 004-Object
   textindex: 24
+  eventflowindex: 34
 
 Lanayru Caves - Gossip Stone towards Lanayru Gorge:
   textfile: 004-Object
   textindex: 29
+  eventflowindex: 44
