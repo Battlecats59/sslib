@@ -1,4 +1,5 @@
 import base64
+import zipfile
 import yaml
 import random
 import os
@@ -104,10 +105,11 @@ class Archipelago:
         return self.placement_file
 
     def load_apssr_yaml(self, fp) -> dict:
-        with open(fp, "r") as apssr:
-            apssr_encoded = apssr.read()
-        apssr_decoded = base64.b64decode(apssr_encoded)
-        return yaml.safe_load(apssr_decoded)
+        with zipfile.ZipFile(fp, "r") as apssr:
+            with apssr.open("plando") as plando_file:
+                plando_encoded = plando_file.read()
+        plando_decoded = base64.b64decode(plando_encoded)
+        return yaml.safe_load(plando_decoded)
 
     def get_dowsing_slot(self, item, options) -> int:
         # Get info for which dowsing slot (if any) a chest should respond to.
