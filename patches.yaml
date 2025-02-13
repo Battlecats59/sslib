@@ -1239,7 +1239,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 80
+      setscenefid: 48
   # - name: test actor
   #   type: objadd
   #   layer: 0
