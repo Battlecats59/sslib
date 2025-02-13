@@ -33,6 +33,7 @@ class Archipelago:
         self.dungeons: list[str] = apdata["Required Dungeons"]
         self.locations: dict[str, dict] = apdata["Locations"]
         self.hints: dict[str, list] = apdata["Hints"]
+        self.log_hints: dict[str, list] = apdata["Log Hints"]
         self.impa_hint: tuple[str, str] | None = apdata["SoT Location"]
         self.dungeon_connections: dict[str, str] = apdata["Dungeon Entrances"]
         self.trial_connections: dict[str, str] = apdata["Trial Entrances"]
@@ -52,7 +53,9 @@ class Archipelago:
                 self.placement_file.options.set_option(optkey, FORCED_OPTIONS[optkey])
                 options.set_option(optkey, FORCED_OPTIONS[optkey])
             elif optkey == "excluded-locations":
-                self.placement_file.options.set_option(optkey, list(self.excluded_locations))
+                self.placement_file.options.set_option(
+                    optkey, list(self.excluded_locations)
+                )
                 options.set_option(optkey, list(self.excluded_locations))
             elif optkey in self.options:
                 if opt["type"] == "boolean":

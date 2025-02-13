@@ -30,8 +30,11 @@ def write(
     areas: Areas,
     *,
     hash,
+    slot,
+    all_players,
     starting_items,
     item_locations,
+    ap_locations,
     # progression_spheres,
     hints,
     required_dungeons,
@@ -174,7 +177,13 @@ def write(
     for zone_name, locations_in_zone in itertools.groupby(with_regions, lambda x: x[0]):
         file.write(zone_name + ":\n")
         for _, loc, item in locations_in_zone:
-            file.write(f"    {loc + ':':{max_location_name_length}} {item}\n")
+            ap_loc = ap_locations[zone_name + " - " + loc]
+            ap_item = (
+                f"{all_players[ap_loc['player'] - 1]}'s {ap_loc['name']}"
+                if ap_loc["player"] != slot
+                else item
+            )
+            file.write(f"    {loc + ':':{max_location_name_length}} {ap_item}\n")
 
     file.write("\n\n\n")
 
