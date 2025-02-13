@@ -462,7 +462,7 @@ class Ui_MainWindow(object):
         self.scroll_area_colors.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.scroll_area_widget_contents_colors = QWidget()
         self.scroll_area_widget_contents_colors.setObjectName(u"scroll_area_widget_contents_colors")
-        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 576, 527))
+        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 98, 46))
         self.verticalLayout_34 = QVBoxLayout(self.scroll_area_widget_contents_colors)
         self.verticalLayout_34.setObjectName(u"verticalLayout_34")
         self.vlay_texture_colors = QVBoxLayout()
@@ -696,15 +696,21 @@ class Ui_MainWindow(object):
 
         self.vlay_bottom_controls = QVBoxLayout()
         self.vlay_bottom_controls.setObjectName(u"vlay_bottom_controls")
-        self.hlay_permalink = QHBoxLayout()
-        self.hlay_permalink.setObjectName(u"hlay_permalink")
+        self.hlay_settings_string = QHBoxLayout()
+        self.hlay_settings_string.setObjectName(u"hlay_settings_string")
+        self.label_for_settings_string = QLabel(self.centralwidget)
+        self.label_for_settings_string.setObjectName(u"label_for_settings_string")
 
-        self.vlay_bottom_controls.addLayout(self.hlay_permalink)
+        self.hlay_settings_string.addWidget(self.label_for_settings_string)
 
-        self.hlay_seed = QHBoxLayout()
-        self.hlay_seed.setObjectName(u"hlay_seed")
+        self.settings_string = QLineEdit(self.centralwidget)
+        self.settings_string.setObjectName(u"settings_string")
+        self.settings_string.setReadOnly(True)
 
-        self.vlay_bottom_controls.addLayout(self.hlay_seed)
+        self.hlay_settings_string.addWidget(self.settings_string)
+
+
+        self.vlay_bottom_controls.addLayout(self.hlay_settings_string)
 
         self.hlay_button_row = QHBoxLayout()
         self.hlay_button_row.setObjectName(u"hlay_button_row")
@@ -723,7 +729,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.option_model_pack_select.setCurrentIndex(-1)
 
 
@@ -790,6 +796,7 @@ class Ui_MainWindow(object):
         self.box_3.setTitle("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_accessibility), QCoreApplication.translate("MainWindow", u"Accessibility", None))
         self.option_description.setText("")
+        self.label_for_settings_string.setText(QCoreApplication.translate("MainWindow", u"Last Generated Settings String:", None))
         self.randomize_button.setText(QCoreApplication.translate("MainWindow", u"Randomize", None))
     # retranslateUi
 

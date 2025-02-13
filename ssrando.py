@@ -102,9 +102,11 @@ class ArchipelagoRandomizer(BaseRandomizer):
 
         self.options.set_option("seed", self.seed)
         self.no_logs = self.options["no-spoiler-log"]
+        self.permalink = self.placement_file.options.get_permalink()
         self.randomizer_hash = self.placement_file.hash_str
         print("Seed: " + str(self.seed))
         print("Hash: " + self.randomizer_hash)
+        print("Settings String: " + self.permalink)
 
         self.rando = Rando(self.areas, self.options, self.rng, ap=True)
         self.logic = self.rando.extract_hint_logic()

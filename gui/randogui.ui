@@ -60,7 +60,7 @@
        <number>-6</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -667,8 +667,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>576</width>
-               <height>527</height>
+               <width>98</width>
+               <height>46</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -1084,10 +1084,22 @@
     <item>
      <layout class="QVBoxLayout" name="vlay_bottom_controls">
       <item>
-       <layout class="QHBoxLayout" name="hlay_permalink"/>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="hlay_seed"/>
+       <layout class="QHBoxLayout" name="hlay_settings_string">
+        <item>
+         <widget class="QLabel" name="label_for_settings_string">
+          <property name="text">
+           <string>Last Generated Settings String:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="settings_string">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="hlay_button_row">

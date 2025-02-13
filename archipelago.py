@@ -28,6 +28,7 @@ class Archipelago:
         self.name: str = apdata["Name"]
         self.all_players: list[str] = apdata["All Players"]
         self.options: dict[str, any] = apdata["Options"]
+        self.excluded_locations: set = apdata["Excluded Locations"]
         self.starting_items: list = apdata["Starting Items"]
         self.dungeons: list[str] = apdata["Required Dungeons"]
         self.locations: dict[str, dict] = apdata["Locations"]
@@ -50,6 +51,9 @@ class Archipelago:
             elif optkey in FORCED_OPTIONS:
                 self.placement_file.options.set_option(optkey, FORCED_OPTIONS[optkey])
                 options.set_option(optkey, FORCED_OPTIONS[optkey])
+            elif optkey == "excluded-locations":
+                self.placement_file.options.set_option(optkey, list(self.excluded_locations))
+                options.set_option(optkey, list(self.excluded_locations))
             elif optkey in self.options:
                 if opt["type"] == "boolean":
                     self.placement_file.options.set_option(
@@ -212,6 +216,5 @@ FORCED_OPTIONS = {
     "logic-mode": "BiTless",
     "enabled-tricks-bitless": [],
     "enabled-tricks-glitched": [],
-    "excluded-locations": [],
     "hint-distribution": "Balanced",
 }
