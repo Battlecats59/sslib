@@ -486,8 +486,17 @@ give_archipelago_item_array:
 .space num_give_archipelago_item_array_entries, 0xFF
 .align 2 ; Align to the next 4 bytes
 
-give_archipelago_expected_item_id:
+.global archipelago_arc_array
+archipelago_arc_array:
 .space 0x4, 0xFF ; 4 bytes
+
+.global archipelago_slot_name
+archipelago_slot_name:
+.space 0x10, 0xFF ; 16 bytes
+
+.global archipelago_seed
+archipelago_seed:
+.space 0x14, 0xFF ; 20 bytes
 
 .close
 

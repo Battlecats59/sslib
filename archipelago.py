@@ -22,10 +22,10 @@ class Archipelago:
         self.apversion: list = apdata["AP Version"]
         self.worldversion: list = apdata["World Version"]
         self.hash: str = apdata["Hash"]
-        self.apseed: int = int(apdata["AP Seed"])
+        self.apseed: str = apdata["AP Seed"]  # Treat this as a string
         self.randoseed: int = apdata["Rando Seed"]
         self.player: int = apdata["Slot"]
-        self.name: str = apdata["Name"]
+        self.slot_name: str = apdata["Name"]
         self.all_players: list[str] = apdata["All Players"]
         self.options: dict[str, any] = apdata["Options"]
         self.excluded_locations: set = apdata["Excluded Locations"]
