@@ -38,6 +38,19 @@ class Archipelago:
         self.dungeon_connections: dict[str, str] = apdata["Dungeon Entrances"]
         self.trial_connections: dict[str, str] = apdata["Trial Entrances"]
 
+        # Check valid APSSR
+        if len(self.slot_name) > 16:
+            raise Exception("Slot name should be under 16 characters!")
+        if len(self.apseed) != 20:
+            raise Exception(
+                "AP Seed was not 20 characters long. Something went really wrong."
+            )
+            # Should never happen, but we patch this into 20 bytes in memory so let's be safe
+        print(
+            f"Skyward Sword AP World Version {self.worldversion[0]}.{self.worldversion[1]}.{self.worldversion[2]}"
+        )
+        print(f"Patching AP seed {self.apseed} for player {self.slot_name}")
+
     def fill_placement_file(
         self, options: Options, areas: Areas, rng: random.Random
     ) -> PlacementFile:

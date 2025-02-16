@@ -5319,7 +5319,7 @@ F300: # lanayru Main Area
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 54
+      setscenefid: 94
 F300_1: # Lanayru Mine
   - name: Layer override
     type: layeroverride
