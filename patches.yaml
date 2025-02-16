@@ -1239,7 +1239,7 @@ F000: # Skyloft
     room: 0
     objtype: OBJS
     object:
-      setscenefid: 80
+      setscenefid: 48
   # - name: test actor
   #   type: objadd
   #   layer: 0
@@ -4477,6 +4477,23 @@ F201_1: # Inside Volcano
       anglez: 37379 # >> 9 = chest flag 73
       id: 0xFC26
       name: TBox
+      setscenefid: 55
+  - name: First chest in volcano summit VS archipelago flag
+    type: objpatch
+    id: 0xFC2E
+    layer: 4
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 54
+  - name: Chest in volcano summit alcove VS archipelago flag
+    type: objpatch
+    id: 0xFC2D
+    layer: 4
+    room: 0
+    objtype: OBJS
+    object:
+      setscenefid: 62
   - name: Patch loadzone to Fire Dragon's Lair
     type: objpatch
     index: 3
@@ -4553,7 +4570,7 @@ F201_2: # Boko Base Volcano Summit
       posy: 0
       posz: -810
       name: Tubo
-  - name: First chest in volcano summit archipelago flag
+  - name: First chest in volcano summit BB archipelago flag
     type: objpatch
     id: 0xFC26
     layer: 0

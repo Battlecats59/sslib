@@ -22,16 +22,18 @@ class Archipelago:
         self.apversion: list = apdata["AP Version"]
         self.worldversion: list = apdata["World Version"]
         self.hash: str = apdata["Hash"]
-        self.apseed: int = int(apdata["AP Seed"])
+        self.apseed: str = apdata["AP Seed"]  # Treat this as a string
         self.randoseed: int = apdata["Rando Seed"]
         self.player: int = apdata["Slot"]
-        self.name: str = apdata["Name"]
+        self.slot_name: str = apdata["Name"]
         self.all_players: list[str] = apdata["All Players"]
         self.options: dict[str, any] = apdata["Options"]
+        self.excluded_locations: set = apdata["Excluded Locations"]
         self.starting_items: list = apdata["Starting Items"]
         self.dungeons: list[str] = apdata["Required Dungeons"]
         self.locations: dict[str, dict] = apdata["Locations"]
         self.hints: dict[str, list] = apdata["Hints"]
+        self.log_hints: dict[str, list] = apdata["Log Hints"]
         self.impa_hint: tuple[str, str] | None = apdata["SoT Location"]
         self.dungeon_connections: dict[str, str] = apdata["Dungeon Entrances"]
         self.trial_connections: dict[str, str] = apdata["Trial Entrances"]
@@ -50,6 +52,11 @@ class Archipelago:
             elif optkey in FORCED_OPTIONS:
                 self.placement_file.options.set_option(optkey, FORCED_OPTIONS[optkey])
                 options.set_option(optkey, FORCED_OPTIONS[optkey])
+            elif optkey == "excluded-locations":
+                self.placement_file.options.set_option(
+                    optkey, list(self.excluded_locations)
+                )
+                options.set_option(optkey, list(self.excluded_locations))
             elif optkey in self.options:
                 if opt["type"] == "boolean":
                     self.placement_file.options.set_option(
@@ -212,6 +219,5 @@ FORCED_OPTIONS = {
     "logic-mode": "BiTless",
     "enabled-tricks-bitless": [],
     "enabled-tricks-glitched": [],
-    "excluded-locations": [],
     "hint-distribution": "Balanced",
 }

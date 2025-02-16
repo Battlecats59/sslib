@@ -19,7 +19,7 @@ from brresTools.brres import BRRES
 from sslib import AllPatcher, U8File
 from sslib.msb import process_control_sequences
 from sslib.utils import write_bytes_create_dirs, encodeBytes, toBytes
-from sslib.fs_helpers import write_str, write_u16, write_float, write_u8
+from sslib.fs_helpers import write_str, write_u16, write_float, write_u8, write_bytes
 from sslib.dol import DOL
 from sslib.rel import REL
 from paths import RANDO_ROOT_PATH
@@ -3696,6 +3696,16 @@ class GamePatcher:
             write_u8,
             self.custom_symbols["main.dol"]["HERO_MODE_OPTIONS"],
             fine_grained_hero_mode_options,
+        )
+
+        dol.write_data_bytes(
+            self.custom_symbols["main.dol"]["archipelago_slot_name"],
+            self.archipelago.slot_name.encode("utf-8"),
+        )
+
+        dol.write_data_bytes(
+            self.custom_symbols["main.dol"]["archipelago_seed"],
+            self.archipelago.apseed.encode("utf-8"),
         )
 
         dol.save_changes()

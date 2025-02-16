@@ -351,6 +351,8 @@ class RandoGUI(QMainWindow):
         self.complete_dialog.show()
         self.randomizer_thread = None
 
+        self.ui.settings_string.setText(self.rando.permalink)
+
     def browse_for_iso(self):
         clean_iso_path, selected_filter = QFileDialog.getOpenFileName(
             self,

@@ -102,9 +102,11 @@ class ArchipelagoRandomizer(BaseRandomizer):
 
         self.options.set_option("seed", self.seed)
         self.no_logs = self.options["no-spoiler-log"]
+        self.permalink = self.placement_file.options.get_permalink()
         self.randomizer_hash = self.placement_file.hash_str
         print("Seed: " + str(self.seed))
         print("Hash: " + self.randomizer_hash)
+        print("Settings String: " + self.permalink)
 
         self.rando = Rando(self.areas, self.options, self.rng, ap=True)
         self.logic = self.rando.extract_hint_logic()
@@ -176,7 +178,7 @@ class ArchipelagoRandomizer(BaseRandomizer):
                 self.placement_file.options,
                 hash=self.randomizer_hash,
                 item_locations=self.placement_file.item_locations,
-                hints=self.placement_file.hints,
+                hints=self.archipelago.log_hints,
                 required_dungeons=self.placement_file.required_dungeons,
                 randomized_dungeon_entrance=self.placement_file.dungeon_connections,
                 randomized_trial_entrance=self.placement_file.trial_connections,
@@ -193,9 +195,12 @@ class ArchipelagoRandomizer(BaseRandomizer):
                     self.placement_file.options,
                     self.areas,
                     hash=self.randomizer_hash,
+                    slot=self.archipelago.player,
+                    all_players=self.archipelago.all_players,
                     item_locations=self.placement_file.item_locations,
+                    ap_locations=self.archipelago.locations,
                     starting_items=self.placement_file.starting_items,
-                    hints=self.placement_file.hints,
+                    hints=self.archipelago.log_hints,
                     required_dungeons=self.placement_file.required_dungeons,
                     randomized_dungeon_entrance=self.placement_file.dungeon_connections,
                     randomized_trial_entrance=self.placement_file.trial_connections,
