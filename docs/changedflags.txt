@@ -84,6 +84,8 @@ New Trial Completed Storyflags:
 
 960 -> 977: Gossip stone found flags
 
+978: Set by obtaining all Song of the Hero parts
+
 Sceneflags
 
 Skyloft:

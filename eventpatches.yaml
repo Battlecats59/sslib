@@ -491,7 +491,7 @@
       type: type3
       subType: 0
       param1: 0
-      param2: 369 # storyflag
+      param2: 978 # custom storyflag
       next: 477 # to full SotH text
       param3: 0
   - name: To Set Adventure Pouch Storyflag

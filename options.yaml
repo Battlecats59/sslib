@@ -319,7 +319,7 @@
     # - Overworld Only
     # - Any Dungeon
     - Anywhere
-  default: Own Dungeon
+  default: Own Dungeon - Restricted
   help: "Determines the placement of maps.
         **Removed**: maps are removed.
         **Vanilla**: maps appear in their vanilla locations.
