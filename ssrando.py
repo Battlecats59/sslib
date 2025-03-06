@@ -111,8 +111,6 @@ class ArchipelagoRandomizer(BaseRandomizer):
         self.rando = Rando(self.areas, self.options, self.rng, ap=True)
         self.logic = self.rando.extract_hint_logic()
 
-        self.placement_file.start_entrance = self.logic.randomized_start_entrance
-        self.placement_file.start_statues = self.logic.randomized_start_statues
         self.placement_file.puzzles = self.logic.puzzles
         self.placement_file.hash_str = self.randomizer_hash
 
