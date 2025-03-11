@@ -1642,6 +1642,14 @@ F012r: # Batreaux House
     objtype: OBJS
     object:
       setscenefid: 93
+  - name: Make Kukiel Appear Permanently
+    type: objpatch
+    id: 0xFC01
+    layer: 0
+    room: 0
+    objtype: OBJ
+    object:
+      untrigstoryfid: -1 # Never despawns
 F013r: # Sparrot's House
   - name: Sparrot spawn
     type: objpatch
