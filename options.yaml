@@ -1080,7 +1080,6 @@
         **Vanilla**: Ammo will appear when breaking pots and barrels in the same way as the vanilla game.
         **Useful**: Ammo pots will be added in key places near checks requiring a specific ammo to reduce back-tracking.
         **Plentiful**: Ammo pots will be added next to all Bird Statues."
-  ui: option_ammo_availability
 - name: Batreaux Crystal Counts
   command: batreaux-counts
   type: singlechoice
@@ -1098,4 +1097,3 @@
         **Shuffled**: Completely random required crystal counts (min 1, max 80).
         **Shuffled - High**: Higher random required crystal counts (min 30, max 80).
         **Shuffled - Low**: Lower random required crystal counts (min 1, max 50)."
-  ui: option_batreaux_counts

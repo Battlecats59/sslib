@@ -837,15 +837,15 @@ TRIAL_OBJECT_IDS = {
 
 CLEF_OBJECT_IDS = {}
 
-BATREAUX_REWARDS = [
-    0x2EF8,  # 80
-    0x2F00,  # 70
-    0x2F08,  # 50
-    0x2F10,  # 40
-    0x2F18,  # 30
-    0x2F20,  # 10
-    0x2F28,  # 05
-]
+BATREAUX_REWARDS = {
+    "Final Reward": 0x2EF8,  # 80
+    "Sixth Reward": 0x2F00,  # 70
+    "Fifth Reward": 0x2F08,  # 50
+    "Fourth Reward": 0x2F10,  # 40
+    "Third Reward": 0x2F18,  # 30
+    "Second Reward": 0x2F20,  # 10
+    "First Reward": 0x2F28,  # 05
+}
 
 
 class FlagEventTypes(IntEnum):
@@ -1658,15 +1658,13 @@ class GamePatcher:
 
         # Batreaux crystal counts
         # Patching the game so it checks for the new amounts of crystals
-        for offset in BATREAUX_REWARDS:
+        for reward, offset in BATREAUX_REWARDS.items():
             self.all_asm_patches["d_a_npc_akumakunNP.rel"][offset] = {
                 "Data": [
                     0x3B,
                     0xE0,
                     0x00,
-                    self.options.batreaux_crystal_counts[
-                        BATREAUX_REWARDS.index(offset)
-                    ],
+                    self.archipelago.batreaux_rewards[reward],
                 ]
             }
         self.all_asm_patches["d_a_npc_akumakunNP.rel"][0x2F40] = (
@@ -1675,7 +1673,7 @@ class GamePatcher:
                     0x2C,
                     0x1F,
                     0x00,
-                    self.options.batreaux_crystal_counts[0],
+                    self.archipelago.batreaux_rewards["Final Reward"],
                 ]
             }
         )
@@ -2326,9 +2324,20 @@ class GamePatcher:
             self.startstoryflags.append(required_dungeon_storyflag)
 
     def add_batreaux_patches(self):
-        for reward in self.options.batreaux_crystal_counts:
-            ix = self.options.batreaux_crystal_counts.index(reward)
-            if ix == 6:
+        for reward, count in self.archipelago.batreaux_rewards.items():
+            if reward == "Final Reward":
+                ix = 0
+            elif reward == "Sixth Reward":
+                ix = 1
+            elif reward == "Fifth Reward":
+                ix = 2
+            elif reward == "Fourth Reward":
+                ix = 3
+            elif reward == "Third Reward":
+                ix = 4
+            elif reward == "Second Reward":
+                ix = 5
+            elif reward == "First Reward":
                 continue
             self.add_patch_to_event(
                 "121-AkumaKun",
@@ -2336,11 +2345,11 @@ class GamePatcher:
                     "name": f"Batreaux Reward Level {7-ix} Text Patch",
                     "type": "textpatch",
                     "index": 20 - ix,
-                    "text": f"Oh, I want to be a human so badly it\npains me! Please hurry and gather\nmore <y<Gratitude Crystals>>!\n\nNext, come and see me when you've\ngathered <r<{reward}>> of them!",
+                    "text": f"Oh, I want to be a human so badly it\npains me! Please hurry and gather\nmore <y<Gratitude Crystals>>!\n\nNext, come and see me when you've\ngathered <r<{count}>> of them!",
                 },
             )
-        first_reward = self.options.batreaux_crystal_counts[6]  # First Reward
-        final_reward = self.options.batreaux_crystal_counts[0]  # Last Reward
+        first_reward = self.archipelago.batreaux_rewards["First Reward"]  # First Reward
+        final_reward = self.archipelago.batreaux_rewards["Final Reward"]  # Last Reward
         self.add_patch_to_event(
             "121-AkumaKun",
             {
@@ -2388,14 +2397,20 @@ class GamePatcher:
         )
 
         # Add a hint for Batreaux counts on Kukiel in Batreaux's house
-        crystal_counts = self.options.batreaux_crystal_counts.copy()
-        crystal_counts.reverse()
         rewards_str = (
             ", ".join(
-                [str(rew) for rew in crystal_counts if crystal_counts.index(rew) != 6]
+                sorted(
+                    [
+                        str(rew)
+                        for rew in self.archipelago.batreaux_rewards.values()
+                        if rew != final_reward
+                    ],
+                    key=lambda rew: int(rew),
+                )
             )
-            + f", and {str(crystal_counts[6])}"
+            + f", and {str(final_reward)}"
         )
+        print(rewards_str)
         self.add_patch_to_event(
             "118-Town3",
             {
