@@ -2410,7 +2410,6 @@ class GamePatcher:
             )
             + f", and {str(final_reward)}"
         )
-        print(rewards_str)
         self.add_patch_to_event(
             "118-Town3",
             {
