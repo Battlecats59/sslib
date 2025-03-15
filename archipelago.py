@@ -32,11 +32,14 @@ class Archipelago:
         self.starting_items: list = apdata["Starting Items"]
         self.dungeons: list[str] = apdata["Required Dungeons"]
         self.locations: dict[str, dict] = apdata["Locations"]
+        self.batreaux_rewards: dict[str, int] = apdata["Batreaux Rewards"]
         self.hints: dict[str, list] = apdata["Hints"]
         self.log_hints: dict[str, list] = apdata["Log Hints"]
         self.impa_hint: tuple[str, str] | None = apdata["SoT Location"]
         self.dungeon_connections: dict[str, str] = apdata["Dungeon Entrances"]
         self.trial_connections: dict[str, str] = apdata["Trial Entrances"]
+        self.start_statues: dict = apdata["Starting Statues"]
+        self.start_entrance: dict = apdata["Starting Entrance"]
 
         # Check valid APSSR
         if len(self.slot_name) > 16:
@@ -118,6 +121,8 @@ class Archipelago:
                 self.placement_file.hints[hint] = data
         self.placement_file.dungeon_connections = self.dungeon_connections
         self.placement_file.trial_connections = self.trial_connections
+        self.placement_file.start_statues = self.start_statues
+        self.placement_file.start_entrance = self.start_entrance
         self.placement_file.trial_object_seed = rng.randint(1, 1_000_000)
         self.placement_file.music_rando_seed = rng.randint(1, 1_000_000)
         self.placement_file.bk_angle_seed = rng.randint(1, 2**32 - 1)
