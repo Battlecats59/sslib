@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'randogui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -165,17 +165,6 @@ class Ui_MainWindow(object):
         self.option_dry_run.setObjectName(u"option_dry_run")
 
         self.vlay_advanced.addWidget(self.option_dry_run)
-
-        self.option_print_messages = QCheckBox(self.box_advanced)
-        self.option_print_messages.setObjectName(u"option_print_messages")
-        self.option_print_messages.setEnabled(False)
-
-        self.vlay_advanced.addWidget(self.option_print_messages)
-
-        self.option_use_socket = QCheckBox(self.box_advanced)
-        self.option_use_socket.setObjectName(u"option_use_socket")
-
-        self.vlay_advanced.addWidget(self.option_use_socket)
 
         self.vspace_advanced = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -473,7 +462,7 @@ class Ui_MainWindow(object):
         self.scroll_area_colors.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.scroll_area_widget_contents_colors = QWidget()
         self.scroll_area_widget_contents_colors.setObjectName(u"scroll_area_widget_contents_colors")
-        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 96, 46))
+        self.scroll_area_widget_contents_colors.setGeometry(QRect(0, 0, 98, 46))
         self.verticalLayout_34 = QVBoxLayout(self.scroll_area_widget_contents_colors)
         self.verticalLayout_34.setObjectName(u"verticalLayout_34")
         self.vlay_texture_colors = QVBoxLayout()
@@ -763,8 +752,6 @@ class Ui_MainWindow(object):
         self.option_out_placement_file.setText(QCoreApplication.translate("MainWindow", u"Generate Placement File", None))
         self.box_advanced.setTitle(QCoreApplication.translate("MainWindow", u"Advanced Options", None))
         self.option_dry_run.setText(QCoreApplication.translate("MainWindow", u"Dry Run", None))
-        self.option_print_messages.setText(QCoreApplication.translate("MainWindow", u"Print Client Messages", None))
-        self.option_use_socket.setText(QCoreApplication.translate("MainWindow", u"Use Wii UDP Socket", None))
         self.box_cosmetics.setTitle(QCoreApplication.translate("MainWindow", u"Cosmetics", None))
         self.option_cryptic_location_hints.setText(QCoreApplication.translate("MainWindow", u"Cryptic Location Hints", None))
         self.option_lightning_skyward_strike.setText(QCoreApplication.translate("MainWindow", u"Lightning Skyward Strike", None))
@@ -812,4 +799,3 @@ class Ui_MainWindow(object):
         self.label_for_settings_string.setText(QCoreApplication.translate("MainWindow", u"Last Generated Settings String:", None))
         self.randomize_button.setText(QCoreApplication.translate("MainWindow", u"Randomize", None))
     # retranslateUi
-

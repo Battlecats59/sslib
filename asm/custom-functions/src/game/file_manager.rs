@@ -57,6 +57,13 @@ pub fn load_selected_to_A() {
 pub fn get_current_health() -> u16 {
     unsafe { FileManager__GetCurrentHealth(FILE_MANAGER) }
 }
+pub fn set_current_health(health: u16) {
+    unsafe {
+        if let Some(f) = get_current_file().as_mut() {
+            f.current_health = health;
+        }
+    }
+}
 pub fn get_current_file() -> *mut SaveFile {
     unsafe { FileManager__GetCurrentFile(FILE_MANAGER) }
 }
@@ -64,5 +71,11 @@ pub fn get_current_scene_flags() -> [u8; 416usize] {
     unsafe {
         let file = *get_current_file();
         core::mem::transmute(file.scene_flags)
+    }
+}
+pub fn get_current_story_flags() -> [u8; 256usize] {
+    unsafe {
+        let file = *get_current_file();
+        core::mem::transmute(file.storyFlags)
     }
 }

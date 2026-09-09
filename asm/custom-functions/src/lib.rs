@@ -46,13 +46,6 @@ macro_rules! println {
     }};
 }
 
-// Not actually mutable but needs to be to show up in custom_symbols
-#[no_mangle]
-#[link_section = "data"]
-pub static mut SHOULD_PRINT_AP_BUFFER: bool = false;
-#[no_mangle]
-#[link_section = "data"]
-pub static mut SHOULD_OPEN_SOCKET: bool = false;
 #[no_mangle]
 #[link_section = "data"]
 pub static mut BUFFER_TAG_PROCESSOR: Option<Box<TagProcessor>> = None;
@@ -64,30 +57,26 @@ static mut INIT_CONNECTION_TIMER: u8 = 255;
 #[no_mangle]
 fn custom_main_additions() -> u32 {
     unsafe {
-        if SHOULD_OPEN_SOCKET {
-            if INIT_CONNECTION_TIMER == 0 {
-                crate::rando::networking::run_net_init();
-                INIT_CONNECTION_TIMER = 255;
-                if BUFFER_TAG_PROCESSOR.is_none() {
-                    // Create our own tag processor; subtype 27 means text defaults to white
-                    BUFFER_TAG_PROCESSOR = Some(Box::new(TagProcessor::with_window_subtype(27)));
-                }
-            } else if !SOCK_STATUS.active {
-                INIT_CONNECTION_TIMER -= 1;
+        if INIT_CONNECTION_TIMER == 0 {
+            crate::rando::networking::run_net_init();
+            INIT_CONNECTION_TIMER = 255;
+            if BUFFER_TAG_PROCESSOR.is_none() {
+                // Create our own tag processor; subtype 27 means text defaults to white
+                BUFFER_TAG_PROCESSOR = Some(Box::new(TagProcessor::with_window_subtype(27)));
             }
+        } else if !SOCK_STATUS.active {
+            INIT_CONNECTION_TIMER -= 1;
+        }
 
-            display_socket_status();
-            if button::is_pressed(button::Z | button::C) {
-                // Toggle IP display
-                SOCK_STATUS.show_ip ^= true;
-            }
+        display_socket_status();
+        if button::is_pressed(button::Z | button::C) {
+            // Toggle IP display
+            SOCK_STATUS.show_ip ^= true;
         }
     }
 
-    rando::give_ap_rs();
-    if unsafe { SHOULD_PRINT_AP_BUFFER } {
-        crate::rando::print_archipelago_text();
-    }
+    rando::multiworld::give_ap_rs();
+    crate::rando::multiworld::print_client_text();
 
     return 1;
 }
@@ -106,7 +95,7 @@ fn display_socket_status() {
         match status.last_error_code {
             -10 => {
                 let _ = console
-                    .write_str("(network is busy)\nThis usually requires reopening the game.");
+                    .write_str("\n(network is busy)\nThis usually requires reopening the game.");
             },
             _ => {},
         }
@@ -131,6 +120,19 @@ fn display_socket_status() {
         console.set_bg_color(0x00000055);
         console.set_font_color(0xFFFFFFFF);
         console.set_font_size(0.5f32);
+        if status.last_read_err != 0 {
+            let _ = console.write_fmt(format_args!(
+                "Got a read error code: {}\n",
+                status.last_read_err
+            ));
+        }
+        // if unsafe { rando::networking::EMULATOR_MODE } {
+        // if status.progress != ServerProgress::ConnectionEstablished {
+        // let _ = console.write_str("Waiting for connection from AP client");
+        // } else {
+        // let _ = console.write_str("Type /console 127.0.0.1 if connection was lost");
+        // }
+        // } else {
         if status.progress != ServerProgress::ConnectionEstablished {
             let _ = console.write_str("Waiting for connection from AP client\n");
         }

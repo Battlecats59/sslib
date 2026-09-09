@@ -378,7 +378,6 @@ b checkStoryflagIsSet
 .global add_ammo_drops
 .global remove_ammo_drops
 .global print_archipelago_text
-.global net_mgr_shutdown
 .global add_more_colors
 .global increment_item_queue
 .global decrement_item_queue
@@ -495,9 +494,6 @@ mr r29, r3
 ;   archipelago_arc_array:
 ;   .space 0x4, 0xFF ; 4 bytes
 ;   
-.global archipelago_slot_name
-archipelago_slot_name:
-.space 0x10, 0xFF ; 16 bytes
 
 .global archipelago_seed
 archipelago_seed:

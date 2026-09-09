@@ -4029,7 +4029,7 @@ class GamePatcher:
         )
 
         dol.write_data_bytes(
-            self.custom_symbols["main.dol"]["archipelago_slot_name"],
+            self.custom_symbols["main.dol"]["ARCHIPELAGO_SLOT_NAME"],
             self.archipelago.slot_name.encode("utf-8"),
         )
 
@@ -4038,17 +4038,11 @@ class GamePatcher:
             self.archipelago.apseed.encode("utf-8"),
         )
 
-        dol.write_data(
-            write_u8,
-            self.custom_symbols["main.dol"]["SHOULD_PRINT_AP_BUFFER"],
-            1 if self.placement_file.options["print-client-messages"] else 0,
-        )
-
-        dol.write_data(
-            write_u8,
-            self.custom_symbols["main.dol"]["SHOULD_OPEN_SOCKET"],
-            1 if self.placement_file.options["use-wii-udp-socket"] else 0,
-        )
+        # dol.write_data(
+        #    write_u8,
+        #    self.custom_symbols["main.dol"]["EMULATOR_MODE"],
+        #    1 if self.placement_file.options["emulator-mode"] else 0,
+        # )
 
         dol.save_changes()
         write_bytes_create_dirs(
